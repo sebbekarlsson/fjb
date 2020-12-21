@@ -342,6 +342,12 @@ token_T* lexer_switch_id(lexer_T* lexer, token_T* token)
     token->type = TOKEN_BREAK;
   else if (strcmp(token->value, "instanceof") == 0)
     token->type = TOKEN_INSTANCEOF;
+  else if (strcmp(token->value, "async") == 0)
+    token->type = TOKEN_ASYNC;
+  else if (strcmp(token->value, "await") == 0)
+    token->type = TOKEN_AWAIT;
+  else if (strcmp(token->value, "assert") == 0)
+    token->type = TOKEN_ASSERT;
 
   return token;
 }
