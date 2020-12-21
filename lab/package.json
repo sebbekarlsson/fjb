@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "randomstring": "^1.1.5",
+    "secure-random-password": "^0.2.2"
+  }
+}
