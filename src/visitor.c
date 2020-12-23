@@ -302,6 +302,9 @@ AST_T* visitor_visit_colon_assignment(visitor_T* visitor, AST_T* ast, list_T* ar
 {
   AST_T* new_ast = init_ast(AST_COLON_ASSIGNMENT);
   new_ast->ptr = ast->ptr;
+  new_ast->name = ast->name;
+  new_ast->string_value = ast->string_value;
+  new_ast->expr = ast->expr;
 
   if (ast->left)
   {
@@ -338,6 +341,7 @@ AST_T* visitor_visit_call(visitor_T* visitor, AST_T* ast, list_T* args)
 {
   AST_T* new_ast = init_ast(AST_CALL);
   new_ast->ptr = ast->ptr;
+  new_ast->string_value = ast->string_value;
 
   if (ast->phony_value)
     new_ast->phony_value = ast->phony_value;
@@ -379,7 +383,7 @@ AST_T* visitor_visit_binop(visitor_T* visitor, AST_T* ast, list_T* args)
   if (ast->right)
     new_ast->right = visitor_visit(visitor, ast->right, args);
 
-  if (new_ast->left)
+  /*if (new_ast->left)
   {
     if (new_ast->left->ptr && new_ast->left->ptr->type == AST_OBJECT)
     {
@@ -393,7 +397,7 @@ AST_T* visitor_visit_binop(visitor_T* visitor, AST_T* ast, list_T* args)
     new_ast->left = visitor_visit(visitor, new_ast->left, args); 
 
   if (new_ast->right)
-    new_ast->right = visitor_visit(visitor, new_ast->right, args);
+    new_ast->right = visitor_visit(visitor, new_ast->right, args);*/
 
   if (phony_import && phony_import->value && ast->right && ast->right->type == AST_CALL)
   { 

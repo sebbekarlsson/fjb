@@ -1,5 +1,5 @@
-const apa = require("./helpers");
+import _ from 'lodash';
 
-const getItems = () => [1, 2, 3];
+const apa = _.partition([1, 2, 3, 4], n => n % 2);
 
-getItems()[0];
+console.log(apa);

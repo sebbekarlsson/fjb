@@ -17,6 +17,8 @@ const char *get_filename_ext(const char *filename);
 
 char* int_to_str(int x);
 
+char* float_to_str(float x);
+
 unsigned int is_special(char c);
 
 char* resolve_import(char* basepath, char* filepath);

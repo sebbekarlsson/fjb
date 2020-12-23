@@ -12,6 +12,7 @@ typedef struct FJB_TOKEN_STRUCT {
     TOKEN_LPAREN,
     TOKEN_RPAREN,
     TOKEN_STRING,
+    TOKEN_REGEX,
     TOKEN_INT,
     TOKEN_FLOAT,
     TOKEN_EOF,
@@ -30,6 +31,11 @@ typedef struct FJB_TOKEN_STRUCT {
     TOKEN_GT,
     TOKEN_GT_EQUALS,
     TOKEN_ARROW_RIGHT,
+    TOKEN_SHIFT_RIGHT_UNSIGNED,
+    TOKEN_SHIFT_RIGHT_UNSIGNED_EQUALS,
+    TOKEN_PIPE_EQUALS,
+    TOKEN_AND_EQUALS,
+    TOKEN_TILDE,
     TOKEN_DOT,
     TOKEN_COMMA,
     TOKEN_COLON,
@@ -49,6 +55,7 @@ typedef struct FJB_TOKEN_STRUCT {
     TOKEN_CATCH,
     TOKEN_THROW,
     TOKEN_RETURN,
+    TOKEN_DELETE,
     TOKEN_NEW,
     TOKEN_IMPORT,
     TOKEN_EXPORT,
@@ -70,10 +77,17 @@ typedef struct FJB_TOKEN_STRUCT {
     TOKEN_PIPE,
     TOKEN_PIPE_PIPE,
     TOKEN_QUESTION,
+    TOKEN_ESCAPE,
+    TOKEN_HASH,
+    TOKEN_SQUARED,
+    TOKEN_DOLLAR,
+    TOKEN_SPREAD,
   } type;
 } token_T;
 
 token_T* init_token(char* value, int type);
 
 char* token_to_str(token_T* token);
+
+char* token_type_to_str(int type);
 #endif

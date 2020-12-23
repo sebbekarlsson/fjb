@@ -81,6 +81,14 @@ char* int_to_str(int x)
   return str;
 }
 
+char* float_to_str(float x)
+{
+  char* str = calloc(32, sizeof(char));
+  sprintf(str, "%12.6f", x);
+
+  return str;
+}
+
 unsigned int is_special(char c)
 {
   const char* specials = "\"!#$%&'()*+,-./:;<=>?@[]^_`{|}~";

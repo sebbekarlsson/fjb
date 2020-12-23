@@ -9,7 +9,7 @@
 
 compiler_result_T* fjb(GEN_FLAGS flags, char *source)
 {
-  lexer_T* lexer = init_lexer(source);
+  lexer_T* lexer = init_lexer(source, flags[0]);
   parser_T* parser = init_parser(lexer, flags[0]);
   AST_T* root = parser_parse(parser);
   visitor_T* visitor = init_visitor(parser);

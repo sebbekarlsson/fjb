@@ -6,6 +6,7 @@
 typedef struct FJB_PARSER_STRUCT {
   lexer_T* lexer;
   token_T* token;
+  int tmp_ast_type;
   const char* filepath;
 } parser_T;
 
