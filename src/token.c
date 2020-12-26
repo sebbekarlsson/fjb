@@ -23,10 +23,11 @@ char* token_to_str(token_T* token)
   if (!token) return strdup("<token nil>");
 
   char* op = token->value ? token->value: strdup("(unknown)");
-  const char* template = "<token value='%s' type='%d'>";
-  char* value = calloc(strlen(template) + strlen(op) + 32, sizeof(char));
+  const char* template = "<token value='%s' type='%s'>";
+  char* typestr = token_type_to_str(token->type);
+  char* value = calloc(strlen(template) + strlen(op) + strlen(typestr) + 32, sizeof(char));
 
-  sprintf(value, template, op, token->type);
+  sprintf(value, template, op, typestr);
 
   return value;
 }
@@ -36,8 +37,8 @@ char* token_type_to_str(int type)
 {
   switch (type) {
     case TOKEN_ID: return strdup("TOKEN_ID");
-    case TOKEN_LBRACE: return strdup("TOKEN_ID");
-    case TOKEN_RBRACE: return strdup("TOKEN_ID");
+    case TOKEN_LBRACE: return strdup("TOKEN_LBRACE");
+    case TOKEN_RBRACE: return strdup("TOKEN_RBRACE");
     case TOKEN_LBRACKET: return strdup("TOKEN_LBRACKET");
     case TOKEN_RBRACKET: return strdup("TOKEN_RBRACKET");
     case TOKEN_SEMI: return strdup("TOKEN_SEMI");
@@ -115,4 +116,9 @@ char* token_type_to_str(int type)
     case TOKEN_DOLLAR: return strdup("TOKEN_DOLLAR");
     default: return strdup("TOKEN_UNSTRINGABLE");
   }
+}
+
+unsigned int token_is_statement_or_id(token_T* token)
+{
+  return token->type == TOKEN_ID || token->type == TOKEN_IMPORT || token->type == TOKEN_FOR || token->type == TOKEN_FROM;
 }

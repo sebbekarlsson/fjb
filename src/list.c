@@ -1,6 +1,8 @@
 #include "include/list.h"
 #include <string.h>
 
+#define MAX(a, b)\
+  a > b ? a : b
 
 list_T* init_list(size_t item_size)
 {
@@ -22,6 +24,26 @@ void list_push(list_T* list, void* item)
     list->items = realloc(list->items, (list->size * list->item_size));
 
   list->items[list->size-1] = item;
+}
+
+void list_prefix(list_T* list, void* item)
+{
+  if (!list) return;
+
+  list->size += 1;
+
+  if (!list->items)
+    list->items = calloc(1, list->item_size);
+  else
+    list->items = realloc(list->items, (list->size * list->item_size));
+
+  for (unsigned int i = 0; i < list->size-1; i++)
+  {
+    list->items[i+1] = list->items[i];
+    list->items[i] = 0;
+  }
+
+  list->items[0] = item;
 }
 
 int list_indexof_str(list_T* list, char* item)

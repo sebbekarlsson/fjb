@@ -10,6 +10,7 @@ typedef struct FJB_AST_STRUCT {
     AST_ARRAY,
     AST_STRING,
     AST_INT,
+    AST_HEX,
     AST_FLOAT,
     AST_ASSIGNMENT,
     AST_COLON_ASSIGNMENT,
@@ -23,6 +24,7 @@ typedef struct FJB_AST_STRUCT {
     AST_IMPORT,
     AST_IMPORT_PHONY,
     AST_OBJECT,
+    AST_SCOPE,
     AST_NAME,
     AST_STATE,
     AST_BINOP,
@@ -34,7 +36,8 @@ typedef struct FJB_AST_STRUCT {
     AST_SWITCH,
     AST_SIGNATURE,
     AST_LABEL,
-    AST_NOOP
+    AST_NOOP,
+    AST_TUPLE
   } type;
 
   struct FJB_AST_STRUCT* value;
@@ -55,8 +58,11 @@ typedef struct FJB_AST_STRUCT {
   char* string_value;
   char* name;
   char* compiled_value;
+  char* from_module;
 
   list_T* list_value;
+  list_T* list_value_left;
+  list_T* list_value_right;
   list_T* flags;
   list_T* keys;
   list_T* values;

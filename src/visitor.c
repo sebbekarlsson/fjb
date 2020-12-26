@@ -1,4 +1,5 @@
 #include "include/visitor.h"
+#include "include/node.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -33,14 +34,14 @@ static list_T* visit_semi_args(visitor_T* visitor, AST_T* ast, list_T* args) {
   return list_value;
 }
 
-static list_T* visit_array(visitor_T* visitor, AST_T* ast, list_T* args) {
+static list_T* visit_array(visitor_T* visitor, list_T* list, list_T* args) {
   list_T* list_value = init_list(sizeof(AST_T*));
 
-  if (ast && ast->list_value)
+  if (list)
   {
-    for (unsigned int i = 0; i < ast->list_value->size; i++)
+    for (unsigned int i = 0; i < list->size; i++)
     {
-      AST_T* child = (AST_T*) ast->list_value->items[i];
+      AST_T* child = (AST_T*) list->items[i];
 
       list_push(list_value, visitor_visit(visitor, child, args));
     }
@@ -133,7 +134,13 @@ AST_T* visitor_visit_assignment(visitor_T* visitor, AST_T* ast, list_T* args)
     new_ast->left = visitor_visit(visitor, ast->left, args);
 
   if (ast->list_value && ast->list_value->size)
-    new_ast->list_value = visit_array(visitor, ast, args);
+    new_ast->list_value = visit_array(visitor, ast->list_value, args);
+
+  if (ast->list_value_left && ast->list_value_left->size)
+    new_ast->list_value_left = visit_array(visitor, ast->list_value_left, args);
+
+  if (ast->list_value_right && ast->list_value_right->size)
+    new_ast->list_value_right = visit_array(visitor, ast->list_value_right, args);
 
   if (ast->value)
     new_ast->value = visitor_visit(visitor, ast->value, args);
@@ -174,7 +181,18 @@ AST_T* visitor_visit_try(visitor_T* visitor, AST_T* ast, list_T* args) {
 }
 
 AST_T* visitor_visit_condition(visitor_T* visitor, AST_T* ast, list_T* args) {
-  return ast;
+  AST_T* new_ast = init_ast(AST_CONDITION);
+
+  if (ast->expr)
+    new_ast->expr = visitor_visit(visitor, ast->expr, args);
+
+  if (ast->body)
+    new_ast->body = visitor_visit(visitor, ast->body, args);
+
+  if (ast->right)
+    new_ast->right = visitor_visit(visitor, ast->right, args);
+
+  return new_ast;
 }
 
 AST_T* visitor_visit_do(visitor_T* visitor, AST_T* ast, list_T* args) {
@@ -197,7 +215,7 @@ AST_T* visitor_visit_array(visitor_T* visitor, AST_T* ast, list_T* args)
 {
   AST_T* new_ast = init_ast(AST_ARRAY);
   new_ast->ptr = ast->ptr;
-  new_ast->list_value = visit_array(visitor, ast, args);
+  new_ast->list_value = visit_array(visitor, ast->list_value, args);
   return new_ast;
 }
 
@@ -214,7 +232,7 @@ AST_T* visitor_visit_object_item(visitor_T* visitor, AST_T* ast, list_T* args)
 AST_T* visitor_visit_object(visitor_T* visitor, AST_T* ast, list_T* args)
 {
   AST_T* new_ast = init_ast(AST_OBJECT);
-  new_ast->list_value = visit_array(visitor, ast, args);
+  new_ast->list_value = visit_array(visitor, ast->list_value, args);
   new_ast->ptr = ast->ptr;
 
   return new_ast;
@@ -223,7 +241,7 @@ AST_T* visitor_visit_object(visitor_T* visitor, AST_T* ast, list_T* args)
 AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* args)
 {
   AST_T* new_ast = init_ast(AST_FUNCTION);
-  new_ast->list_value = visit_array(visitor, ast, args);
+  new_ast->list_value = visit_array(visitor, ast->list_value, args);
   new_ast->ptr = ast->ptr;
 
   if (ast->body)
@@ -237,7 +255,7 @@ AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* args)
 AST_T* visitor_visit_signature(visitor_T* visitor, AST_T* ast, list_T* args)
 {
   AST_T* new_ast = init_ast(AST_COLON_ASSIGNMENT);
-  new_ast->list_value = visit_array(visitor, ast, args);
+  new_ast->list_value = visit_array(visitor, ast->list_value, args);
   new_ast->ptr = ast->ptr;
 
   if (ast->body)
@@ -251,7 +269,7 @@ AST_T* visitor_visit_signature(visitor_T* visitor, AST_T* ast, list_T* args)
 AST_T* visitor_visit_compound(visitor_T* visitor, AST_T* ast, list_T* args)
 {
   AST_T* compound = init_ast(AST_COMPOUND);
-  compound->list_value = visit_array(visitor, ast, args);
+  compound->list_value = visit_array(visitor, ast->list_value, args);
   compound->ptr = ast->ptr;
 
   return compound;
@@ -260,6 +278,7 @@ AST_T* visitor_visit_compound(visitor_T* visitor, AST_T* ast, list_T* args)
 AST_T* visitor_visit_ternary(visitor_T* visitor, AST_T* ast, list_T* args)
 {
   AST_T* ast_new = init_ast(AST_TERNARY);
+  ast_new->capsulated = ast->capsulated;
   if (ast->expr)
     ast_new->expr = visitor_visit(visitor, ast->expr, args);
   if (ast->value)
@@ -274,6 +293,7 @@ AST_T* visitor_visit_name(visitor_T* visitor, AST_T* ast, list_T* args)
 {
   AST_T* new_ast = init_ast(AST_NAME);
   new_ast->name = strdup(ast->name);
+  new_ast->flags = ast->flags;
   new_ast->string_value = new_ast->name;
   AST_T* value = find_in_args(AST_ASSIGNMENT, ast->name, args);
 
@@ -304,16 +324,25 @@ AST_T* visitor_visit_colon_assignment(visitor_T* visitor, AST_T* ast, list_T* ar
   new_ast->ptr = ast->ptr;
   new_ast->name = ast->name;
   new_ast->string_value = ast->string_value;
-  new_ast->expr = ast->expr;
 
   if (ast->left)
   {
     new_ast->left = visitor_visit(visitor, ast->left, args);
   }
 
+  if (ast->expr)
+  {
+    new_ast->expr = visitor_visit(visitor, ast->expr, args);
+  }
+
   if (ast->value)
   {
     new_ast->value = visitor_visit(visitor, ast->value, args);
+  }
+
+  if (ast->right)
+  {
+    new_ast->right = visitor_visit(visitor, ast->right, args);
   }
   return new_ast;
 }
@@ -333,7 +362,7 @@ AST_T* visitor_visit_label(visitor_T* visitor, AST_T* ast, list_T* args)
   AST_T* new_ast = init_ast(AST_LABEL);
   new_ast->left = visitor_visit(visitor, ast->left, args);
   new_ast->label_value = visitor_visit(visitor, ast->label_value, args);
-  new_ast->ptr = ast->ptr;
+  new_ast->ptr = visitor_visit(visitor, ast->ptr, args);
   return new_ast;
 }
 
@@ -343,13 +372,48 @@ AST_T* visitor_visit_call(visitor_T* visitor, AST_T* ast, list_T* args)
   new_ast->ptr = ast->ptr;
   new_ast->string_value = ast->string_value;
 
+  if (ast->left)
+    new_ast->left = visitor_visit(visitor, ast->left, args); 
+
+  if (ast->right)
+    new_ast->right = visitor_visit(visitor, ast->right, args);
+
   if (ast->phony_value)
     new_ast->phony_value = ast->phony_value;
 
   if (ast->list_value)
-    new_ast->list_value = visit_array(visitor, ast, args);
+    new_ast->list_value = visit_array(visitor, ast->list_value, args);
 
-  new_ast->compiled_value = ast->compiled_value;
+  if (new_ast->left->name && strcmp(new_ast->left->name, "require") == 0)
+    {
+      char* str = 0;
+      for (unsigned int i = 0; i < ast->list_value->size; i++)
+      {
+        AST_T* child_ast = (AST_T*)ast->list_value->items[i];
+
+        if (child_ast->type == AST_STRING)
+        {
+          if (!is_builtin_module(child_ast->string_value))
+          {
+            str = child_ast->string_value;
+          }
+        }
+      }
+
+      if (str != 0)
+      {
+        char* final_file_to_read = resolve_import((char*) visitor->parser->filepath, str);
+
+        if (final_file_to_read)
+        {
+          compiler_result_T* result = fjb((GEN_FLAGS){final_file_to_read, str}, fjb_read_file(final_file_to_read));
+          ast->compiled_value = result->stdout;
+          new_ast->compiled_value = ast->compiled_value;
+        }
+
+      }
+    }
+
 
   if (ast->left)
   {
@@ -363,6 +427,7 @@ AST_T* visitor_visit_binop(visitor_T* visitor, AST_T* ast, list_T* args)
 {
   AST_T* new_ast = init_ast(AST_BINOP);
   new_ast->token = ast->token;
+  new_ast->capsulated = ast->capsulated;
 
   if (ast->phony_value)
     new_ast->phony_value = ast->phony_value;
@@ -423,13 +488,42 @@ AST_T* visitor_visit_noop(visitor_T* visitor, AST_T* ast, list_T* args)
 
 AST_T* visitor_visit_unop(visitor_T* visitor, AST_T* ast, list_T* args)
 {
+  AST_T* new_ast = init_ast(AST_UNOP);
+  new_ast->token = ast->token;
+  
+  if (ast->left)
+  {
+    new_ast->left = visitor_visit(visitor, ast->left, args);
+  }
+
+  if (ast->right)
+  {
+    new_ast->right = visitor_visit(visitor, ast->right, args);
+  }
+
+  return new_ast;
+}
+
+AST_T* visitor_visit_hex(visitor_T* visitor, AST_T* ast, list_T* args)
+{
   return ast;
+}
+
+AST_T* visitor_visit_tuple(visitor_T* visitor, AST_T* ast, list_T* args)
+{
+  AST_T* new_ast = init_ast(AST_TUPLE);
+
+  if (ast->list_value)
+    new_ast->list_value = visit_array(visitor, ast->list_value, args);
+
+  return new_ast;
 }
 
 AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* args)
 {
   switch (ast->type) {
     case AST_ARRAY: return visitor_visit_array(visitor, ast, args); break;
+    case AST_HEX: return visitor_visit_hex(visitor, ast, args); break;
     case AST_INT: return visitor_visit_int(visitor, ast, args); break;
     case AST_FLOAT: return visitor_visit_float(visitor, ast, args); break;
     case AST_STRING: return visitor_visit_string(visitor, ast, args); break;
@@ -459,6 +553,7 @@ AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* args)
     case AST_TERNARY: return visitor_visit_ternary(visitor, ast, args); break;
     case AST_DO: return visitor_visit_do(visitor, ast, args); break;
     case AST_NOOP: return visitor_visit_noop(visitor, ast, args); break;
+    case AST_TUPLE: return visitor_visit_tuple(visitor, ast, args); break;
     default: return ast; break;
   }
 }

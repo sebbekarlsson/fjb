@@ -30,6 +30,8 @@ token_T* lexer_next(lexer_T* lexer);
 
 token_T* lexer_parse_id(lexer_T* lexer);
 
+token_T* lexer_parse_hex(lexer_T* lexer);
+
 token_T* lexer_parse_string(lexer_T* lexer);
 
 token_T* lexer_parse_regex(lexer_T* lexer);

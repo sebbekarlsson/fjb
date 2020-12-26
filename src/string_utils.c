@@ -116,7 +116,6 @@ char* resolve_import(char* basepath, char* filepath)
 
     char* package_json_main = package_get(dir, "main");
 
-    free(file_to_read);
     file_to_read = package_json_main ? package_json_main : strdup("index");
   }
 

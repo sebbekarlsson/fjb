@@ -1,4 +1,5 @@
 #include "include/node.h" 
+#include <string.h>
 
 const char* NODE_MODULES[] = {
 	"assert",
@@ -40,3 +41,14 @@ const char* NODE_MODULES[] = {
 	"vm",
 	"zlib"
 };
+
+unsigned int is_builtin_module(char* name)
+{
+  for (int i = 0; i < NODE_MODULES_LENGTH; i++)
+  {
+    if (strcmp(NODE_MODULES[i], name) == 0)
+      return 1;
+  }
+
+  return 0;
+}

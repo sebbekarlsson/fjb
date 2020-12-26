@@ -40,11 +40,13 @@ typedef struct FJB_TOKEN_STRUCT {
     TOKEN_COMMA,
     TOKEN_COLON,
     TOKEN_INSTANCEOF,
+    TOKEN_VOID,
     TOKEN_AND,
     TOKEN_AND_AND,
     TOKEN_NOT,
     TOKEN_WHILE,
     TOKEN_SWITCH,
+    TOKEN_CASE,
     TOKEN_BREAK,
     TOKEN_DO,
     TOKEN_IF,
@@ -53,6 +55,7 @@ typedef struct FJB_TOKEN_STRUCT {
     TOKEN_FUNCTION,
     TOKEN_TRY,
     TOKEN_CATCH,
+    TOKEN_FINALLY,
     TOKEN_THROW,
     TOKEN_RETURN,
     TOKEN_DELETE,
@@ -82,6 +85,7 @@ typedef struct FJB_TOKEN_STRUCT {
     TOKEN_SQUARED,
     TOKEN_DOLLAR,
     TOKEN_SPREAD,
+    TOKEN_HEX,
   } type;
 } token_T;
 
@@ -90,4 +94,6 @@ token_T* init_token(char* value, int type);
 char* token_to_str(token_T* token);
 
 char* token_type_to_str(int type);
+
+unsigned int token_is_statement_or_id(token_T* token);
 #endif

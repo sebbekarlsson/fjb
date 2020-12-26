@@ -123,11 +123,16 @@ token_T* lexer_next(lexer_T* lexer)
       return lexer_parse_regex(lexer);
     }
 
+    if (lexer->c == '0' && lexer_peek(lexer, 1) == 'x')
+    {
+      return lexer_parse_hex(lexer);
+    }
+
     if (isdigit(lexer->c)) {
       return lexer_parse_number(lexer);
     }
 
-    if (isalnum(lexer->c) || lexer->c == '_') {
+    if (isalnum(lexer->c) || lexer->c == '_' || lexer->c == '$') {
        return lexer_parse_id(lexer); 
     } 
     
@@ -297,7 +302,6 @@ token_T* lexer_next(lexer_T* lexer)
       case '\\': return lexer_advance_token(lexer, init_token(charstr(lexer->c), TOKEN_ESCAPE));
       case '#': return lexer_advance_token(lexer, init_token(charstr(lexer->c), TOKEN_HASH));
       case '^': return lexer_advance_token(lexer, init_token(charstr(lexer->c), TOKEN_SQUARED));
-      case '$': return lexer_advance_token(lexer, init_token(charstr(lexer->c), TOKEN_DOLLAR));
       case '~': return lexer_advance_token(lexer, init_token(charstr(lexer->c), TOKEN_TILDE));
       case '\0': break; 
     }
@@ -315,13 +319,26 @@ token_T* lexer_parse_id(lexer_T* lexer)
 {
   char* str = strdup("");
   
-  while (isalnum(lexer->c) || isdigit(lexer->c) || lexer->c == '_') {
+  while (isalnum(lexer->c) || isdigit(lexer->c) || lexer->c == '_' || lexer->c == '$') {
     char* piece = charstr(lexer->c);
     str = str_append(&str, piece);
     lexer_advance(lexer);
   }
 
   return lexer_switch_id(lexer, init_token(str, TOKEN_ID));
+}
+
+token_T* lexer_parse_hex(lexer_T* lexer)
+{
+  char* str = strdup("");
+  
+  while (isalnum(lexer->c) || isdigit(lexer->c)) {
+    char* piece = charstr(lexer->c);
+    str = str_append(&str, piece);
+    lexer_advance(lexer);
+  }
+
+  return lexer_switch_id(lexer, init_token(str, TOKEN_HEX));
 }
 
 token_T* lexer_parse_string(lexer_T* lexer)
@@ -460,6 +477,8 @@ token_T* lexer_switch_id(lexer_T* lexer, token_T* token)
     token->type = TOKEN_TRY;
   else if (strcmp(token->value, "catch") == 0)
     token->type = TOKEN_CATCH;
+  else if (strcmp(token->value, "finally") == 0)
+    token->type = TOKEN_CATCH;
   else if (strcmp(token->value, "throw") == 0)
     token->type = TOKEN_THROW;
   else if (strcmp(token->value, "typeof") == 0)
@@ -470,10 +489,14 @@ token_T* lexer_switch_id(lexer_T* lexer, token_T* token)
     token->type = TOKEN_DO;
   else if (strcmp(token->value, "switch") == 0)
     token->type = TOKEN_SWITCH;
+  else if (strcmp(token->value, "case") == 0)
+    token->type = TOKEN_CASE;
   else if (strcmp(token->value, "break") == 0)
     token->type = TOKEN_BREAK;
   else if (strcmp(token->value, "instanceof") == 0)
     token->type = TOKEN_INSTANCEOF;
+  else if (strcmp(token->value, "void") == 0)
+    token->type = TOKEN_VOID;
   else if (strcmp(token->value, "async") == 0)
     token->type = TOKEN_ASYNC;
   else if (strcmp(token->value, "await") == 0)
