@@ -4,6 +4,7 @@
 #include "include/visitor.h"
 #include "include/io.h"
 #include "include/gen.h"
+#include "include/string_utils.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -35,11 +36,16 @@ compiler_result_T* fjb(GEN_FLAGS flags, char *source)
   list_push(args, assignment);
 
   AST_T* transformed = visitor_visit(visitor, root, args);
-
+  
+  char* str = 0;
+  str = str_append(&str, "/* IMPORTED FROM `");
+  str = str_append(&str, flags[0]);
+  str = str_append(&str, "` */\n");
   char* out = gen(transformed, flags);
+  str = str_append(&str, out);
 
   compiler_result_T* result = calloc(1, sizeof(compiler_result_T));
-  result->stdout = out;
+  result->stdout = str;
   result->args = args;
 
   return result;

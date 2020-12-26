@@ -91,7 +91,7 @@ static char* gen_semi_tuple(list_T* list_value, GEN_FLAGS flags)
     str = str_append(&str, child_str);
 
     if (i < list_value->size - 1)
-      str = str_append(&str, ";\n");
+      str = str_append(&str, ";");
   }
   
   return str ? str : strdup("/* empty semi tuple */");
@@ -190,10 +190,10 @@ char* gen_arrow_definition(AST_T* ast, GEN_FLAGS flags){
   
   if (ast->body && ast->body->type == AST_COMPOUND)
   {
-    str = str_append(&str, "{\n");
+    str = str_append(&str, "{");
     char* bodystr = gen(ast->body, flags);
     str = str_append(&str, bodystr);
-    str = str_append(&str, "\n}");
+    str = str_append(&str, "}");
   }
   else
   if (ast->body)
@@ -296,10 +296,10 @@ char* gen_while(AST_T* ast, GEN_FLAGS flags)
 
   if (ast->body)
   {
-    str = str_append(&str, "{\n");
+    str = str_append(&str, "{");
     char* body_str = gen(ast->body, flags);
     str = str_append(&str, body_str);
-    str = str_append(&str, "\n}");
+    str = str_append(&str, "}");
   }
 
   return str;
@@ -311,13 +311,13 @@ char* gen_for(AST_T* ast, GEN_FLAGS flags)
   str = str_append(&str, "for ");
   char* args_str = gen_semi_args(ast->list_value, flags);
   str = str_append(&str, args_str);
-  str = str_append(&str, "{\n");
+  str = str_append(&str, "{");
   if (ast->body)
   {
     char* body_str = gen(ast->body, flags);
     str = str_append(&str, body_str);
   }
-  str = str_append(&str, "\n}");
+  str = str_append(&str, "}");
 
   return str;
 }
@@ -325,9 +325,6 @@ char* gen_for(AST_T* ast, GEN_FLAGS flags)
 char* gen_compound(AST_T* ast, GEN_FLAGS flags)
 {
   char* str = 0;
-  str = str_append(&str, "\n// FROM: ");
-  str = str_append(&str, flags[0]);
-  str = str_append(&str, "\n\n");
 
   for (unsigned int i = 0; i < ast->list_value->size; i++)
   {
@@ -338,7 +335,6 @@ char* gen_compound(AST_T* ast, GEN_FLAGS flags)
     if (child_ast->type != AST_IMPORT && child_ast->type != AST_UNDEFINED && child_ast->type != AST_NOOP && child_ast->type != AST_DO) {
       child_str = str_append(&child_str, ";");
     }
-    child_str = str_append(&child_str, "\n");
 
     str = str_append(&str, child_str);
   }
@@ -429,13 +425,13 @@ char* gen_function(AST_T* ast, GEN_FLAGS flags)
     str = str_append(&str, args_str);
   }
   
-  str = str_append(&str, "{\n");
+  str = str_append(&str, "{");
   if (ast->body)
   {
     char* body_str = gen(ast->body, flags);
     str = str_append(&str, body_str);
   }
-  str = str_append(&str, "\n}");
+  str = str_append(&str, "}");
 
   return str;
 }
@@ -444,7 +440,7 @@ char* gen_scope(AST_T* ast, GEN_FLAGS flags)
 {
   char* str = 0;
   
-  str = str_append(&str, "/*scope*/{\n");
+  str = str_append(&str, "/*scope*/{");
 
   if (ast->list_value)
   {
@@ -452,7 +448,7 @@ char* gen_scope(AST_T* ast, GEN_FLAGS flags)
     str = str_append(&str, args_str);
   }
   
-  str = str_append(&str, "\n}");
+  str = str_append(&str, "}");
 
   return str;
 }
@@ -472,10 +468,10 @@ char* gen_signature(AST_T* ast, GEN_FLAGS flags)
     str = str_append(&str, "=>");
     if (ast->body->type == AST_COMPOUND)
     {
-      str = str_append(&str, "{\n");
+      str = str_append(&str, "{");
       char* body_str = gen(ast->body, flags);
       str = str_append(&str, body_str);
-      str = str_append(&str, "\n}");
+      str = str_append(&str, "}");
     }
     else
     {
@@ -554,13 +550,13 @@ char* gen_binop(AST_T* ast, GEN_FLAGS flags)
   {
     if (ast->right->lazy)
     {
-      str = str_append(&str, "() => (\n");
+      str = str_append(&str, "() => (");
     }
     char* rightstr = gen(ast->right, flags);
     str = str_append(&str, rightstr);
     if (ast->right->lazy)
     {
-      str = str_append(&str, "\n)");
+      str = str_append(&str, ")");
     }
   }
 
@@ -603,9 +599,9 @@ char* gen_block_linked_list(AST_T* ast, GEN_FLAGS flags)
 
   if (ast->body)
   {
-    str = str_append(&str, "{\n");
+    str = str_append(&str, "{");
     str = str_append(&str, gen(ast->body, flags));
-    str = str_append(&str, "\n}");
+    str = str_append(&str, "}");
   }
 
   if (ast->right)
@@ -657,7 +653,7 @@ char* gen_regex(AST_T* ast, GEN_FLAGS flags)
 char* gen_object(AST_T* ast, GEN_FLAGS flags)
 {
   char* str = 0;
-  str = str_append(&str, "{\n");
+  str = str_append(&str, "{");
 
   if (ast->list_value)
   {
@@ -669,7 +665,7 @@ char* gen_object(AST_T* ast, GEN_FLAGS flags)
     }
   }
 
-  str = str_append(&str, "\n}");
+  str = str_append(&str, "}");
 
   return str;
 }
@@ -694,14 +690,14 @@ char* gen_condition(AST_T* ast, GEN_FLAGS flags)
     str = str_append(&str, exprstr);
     str = str_append(&str,  ")");
   }
-  str = str_append(&str,  "{\n");
+  str = str_append(&str,  "{");
 
   if (ast->body)
   {
     char* body_str = gen(ast->body, flags);
     str = str_append(&str, body_str);
   }
-  str = str_append(&str, "\n}");
+  str = str_append(&str, "}");
 
   if (ast->right)
   {
@@ -724,14 +720,14 @@ char* gen_switch(AST_T* ast, GEN_FLAGS flags)
     str = str_append(&str, expr_str);
   }
   str = str_append(&str, ")");
-  str = str_append(&str, "{\n");
+  str = str_append(&str, "{");
 
   if (ast->body)
   {
     char* body_str = gen(ast->body, flags);
     str = str_append(&str, body_str);
   }
-  str = str_append(&str, "\n}");
+  str = str_append(&str, "}");
 
   return str;
 }
@@ -772,12 +768,12 @@ char* gen_ternary(AST_T* ast, GEN_FLAGS flags)
 
 char* gen_do(AST_T* ast, GEN_FLAGS flags)
 {
-  char* str = strdup("do {\n");
+  char* str = strdup("do {");
   if (ast->body)
   {
     str = str_append(&str, gen(ast->body, flags));
   }
-  str = str_append(&str, "\n}");
+  str = str_append(&str, "}");
 
   return str;
 }

@@ -1,5 +1,5 @@
-import _ from 'lodash';
+import { partition } from 'lodash';
 
-const x = _.partition([1, 2, 3, 4], n => n % 2);
+const x = partition([1, 2, 3, 4], n => n % 2);
 
 console.log(x);
