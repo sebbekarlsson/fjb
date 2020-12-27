@@ -3,6 +3,7 @@
     "lodash": "^4.17.20",
     "randomstring": "^1.1.5",
     "react": "^17.0.1",
-    "secure-random-password": "^0.2.2"
+    "secure-random-password": "^0.2.2",
+    "vue": "^2.6.12"
   }
 }

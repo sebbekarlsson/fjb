@@ -95,6 +95,14 @@ unsigned int is_special(char c)
   return strchr(specials, c) != (void*) 0;
 }
 
+unsigned int first_char_is_special(char* str)
+{
+  unsigned int length = strlen(str);
+  if (!length) return 0;
+  
+  return is_special(str[0]);
+}
+
 char* resolve_import(char* basepath, char* filepath)
 {
   if (!filepath)

@@ -31,6 +31,7 @@ typedef struct FJB_TOKEN_STRUCT {
     TOKEN_GT,
     TOKEN_GT_EQUALS,
     TOKEN_ARROW_RIGHT,
+    TOKEN_SHIFT_RIGHT,
     TOKEN_SHIFT_RIGHT_UNSIGNED,
     TOKEN_SHIFT_RIGHT_UNSIGNED_EQUALS,
     TOKEN_PIPE_EQUALS,
@@ -94,6 +95,4 @@ token_T* init_token(char* value, int type);
 char* token_to_str(token_T* token);
 
 char* token_type_to_str(int type);
-
-unsigned int token_is_statement_or_id(token_T* token);
 #endif

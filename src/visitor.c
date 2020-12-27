@@ -104,6 +104,7 @@ AST_T* visitor_visit_assignment(visitor_T* visitor, AST_T* ast, list_T* args)
   new_ast->flags = ast->flags;
   new_ast->ptr = ast->ptr;
   new_ast->name = strdup(ast->name ? ast->name: "");
+  new_ast->capsulated = ast->capsulated;
   AST_T* phony = 0;
 
   if (ast->left && ast->left->name)
@@ -182,12 +183,16 @@ AST_T* visitor_visit_try(visitor_T* visitor, AST_T* ast, list_T* args) {
 
 AST_T* visitor_visit_condition(visitor_T* visitor, AST_T* ast, list_T* args) {
   AST_T* new_ast = init_ast(AST_CONDITION);
+  new_ast->token = ast->token;
 
   if (ast->expr)
     new_ast->expr = visitor_visit(visitor, ast->expr, args);
 
   if (ast->body)
     new_ast->body = visitor_visit(visitor, ast->body, args);
+
+  if (ast->left)
+    new_ast->left = ast->left;
 
   if (ast->right)
     new_ast->right = visitor_visit(visitor, ast->right, args);
@@ -234,6 +239,7 @@ AST_T* visitor_visit_object(visitor_T* visitor, AST_T* ast, list_T* args)
   AST_T* new_ast = init_ast(AST_OBJECT);
   new_ast->list_value = visit_array(visitor, ast->list_value, args);
   new_ast->ptr = ast->ptr;
+  new_ast->capsulated = ast->capsulated;
 
   return new_ast;
 }
@@ -241,6 +247,7 @@ AST_T* visitor_visit_object(visitor_T* visitor, AST_T* ast, list_T* args)
 AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* args)
 {
   AST_T* new_ast = init_ast(AST_FUNCTION);
+  new_ast->capsulated = ast->capsulated;
   new_ast->list_value = visit_array(visitor, ast->list_value, args);
   new_ast->ptr = ast->ptr;
 
@@ -257,6 +264,7 @@ AST_T* visitor_visit_signature(visitor_T* visitor, AST_T* ast, list_T* args)
   AST_T* new_ast = init_ast(AST_COLON_ASSIGNMENT);
   new_ast->list_value = visit_array(visitor, ast->list_value, args);
   new_ast->ptr = ast->ptr;
+  new_ast->capsulated = ast->capsulated;
 
   if (ast->body)
   {
@@ -271,6 +279,7 @@ AST_T* visitor_visit_compound(visitor_T* visitor, AST_T* ast, list_T* args)
   AST_T* compound = init_ast(AST_COMPOUND);
   compound->list_value = visit_array(visitor, ast->list_value, args);
   compound->ptr = ast->ptr;
+  compound->capsulated = ast->capsulated;
 
   return compound;
 }
@@ -295,6 +304,7 @@ AST_T* visitor_visit_name(visitor_T* visitor, AST_T* ast, list_T* args)
   new_ast->name = strdup(ast->name);
   new_ast->flags = ast->flags;
   new_ast->string_value = new_ast->name;
+  new_ast->capsulated = ast->capsulated;
   AST_T* value = find_in_args(AST_ASSIGNMENT, ast->name, args);
 
   if (ast->ptr)
@@ -324,6 +334,7 @@ AST_T* visitor_visit_colon_assignment(visitor_T* visitor, AST_T* ast, list_T* ar
   new_ast->ptr = ast->ptr;
   new_ast->name = ast->name;
   new_ast->string_value = ast->string_value;
+  new_ast->capsulated = ast->capsulated;
 
   if (ast->left)
   {
@@ -371,6 +382,7 @@ AST_T* visitor_visit_call(visitor_T* visitor, AST_T* ast, list_T* args)
   AST_T* new_ast = init_ast(AST_CALL);
   new_ast->ptr = ast->ptr;
   new_ast->string_value = ast->string_value;
+  new_ast->capsulated = ast->capsulated;
 
   if (ast->left)
     new_ast->left = visitor_visit(visitor, ast->left, args); 

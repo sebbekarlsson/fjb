@@ -215,6 +215,11 @@ token_T* lexer_next(lexer_T* lexer)
         lexer_advance(lexer);
         return lexer_advance_token(lexer, tok);
       }
+      if (lexer_peek(lexer, 1) == '>' && lexer_peek(lexer, 2) == '=') {
+        token_T* tok = lexer_advance_token(lexer, init_token(">>=", TOKEN_SHIFT_RIGHT));
+        lexer_advance(lexer);
+        return lexer_advance_token(lexer, tok);
+      }
       if (lexer_peek(lexer, 1) == '>' && lexer_peek(lexer, 2) == '>') {
         token_T* tok = lexer_advance_token(lexer, init_token(">>>", TOKEN_SHIFT_RIGHT_UNSIGNED));
         lexer_advance(lexer);
@@ -381,7 +386,7 @@ token_T* lexer_parse_regex(lexer_T* lexer)
   lexer_advance(lexer);
 
   while (lexer->c != 0) {
-    if (lexer->c == '/' && prevc != '\\')
+    if (lexer->c == '/' && prevc != '\\' && prevc != '^' && prevc != '[')
     {
       str = str_append(&str, charstr(lexer->c));
       prevc = lexer->c;

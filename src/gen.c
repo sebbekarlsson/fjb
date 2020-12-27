@@ -522,10 +522,10 @@ char* gen_state(AST_T* ast, GEN_FLAGS flags)
 {
   char* str = strcmp(ast->string_value, "export") == 0 ? 0 : strdup(ast->string_value);
 
-  if (ast->value)
+  if (ast->value || ast->right)
   {
     str = str_append(&str, " ");
-    char* valuestr = gen(ast->value, flags);
+    char* valuestr = gen(ast->value ? ast->value : ast->right, flags);
     str = str_append(&str, valuestr);
   }
 
