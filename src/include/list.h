@@ -15,6 +15,8 @@ void list_push(list_T* list, void* item);
 
 void list_prefix(list_T* list, void* item);
 
+unsigned int ptr_in_list(list_T* list, void* ptr);
+
 int list_indexof_str(list_T* list, char* item);
 #endif
 

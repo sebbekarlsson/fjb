@@ -1,4 +1,1 @@
-const apa = () => console.log('apa apansson');
-
-
-module.exports = apa;
+export const apa = (x) => console.log('apa apansson');

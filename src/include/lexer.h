@@ -6,6 +6,7 @@ typedef struct FJB_LEXER_STRUCT {
   char* source;
   unsigned int source_size;
   char c;
+  char cstr[2];
   unsigned int i;
   int line;
   const char* filepath;
@@ -41,5 +42,7 @@ token_T* lexer_parse_number(lexer_T* lexer);
 token_T* lexer_switch_id(lexer_T* lexer, token_T* token);
 
 token_T* ret_tok(lexer_T* lexer, token_T* token);
+
+void lexer_free(lexer_T* lexer);
 
 #endif

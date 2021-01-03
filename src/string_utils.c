@@ -110,7 +110,7 @@ char* resolve_import(char* basepath, char* filepath)
     return 0;
   }
   const char* ext = extension(basepath);
-  char* file_to_read = filepath;
+  char* file_to_read = strdup(filepath);
 
   char* dir = 0;
   
@@ -124,6 +124,11 @@ char* resolve_import(char* basepath, char* filepath)
 
     char* package_json_main = package_get(dir, "main");
 
+    if (file_to_read)
+    {
+      free(file_to_read);
+    }
+
     file_to_read = package_json_main ? package_json_main : strdup("index");
   }
 
@@ -134,6 +139,9 @@ char* resolve_import(char* basepath, char* filepath)
   dir = str_append(&dir, "/");
 
   char* final_file_to_read = str_prefix(file_to_read, dir);
+
+  free(file_to_read);
+  free(dir);
 
   return final_file_to_read;
 }

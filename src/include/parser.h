@@ -44,4 +44,6 @@ void parser_eat_any(parser_T* parser);
 AST_T* parser_parse_term(parser_T* parser, parser_options_T options);
 
 AST_T* parser_parse_factor(parser_T* parser, parser_options_T options);
+
+void parser_free(parser_T* parser);
 #endif

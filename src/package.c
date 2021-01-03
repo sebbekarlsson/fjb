@@ -12,6 +12,9 @@ char* package_get(const char* path, const char* key)
   full_path = str_append(&full_path, PACKAGE_NAME);
   // load the parser with the file
   char* contents = fjb_read_file(full_path);
+  char* v = 0;
+
+  free(full_path);
   
   if (!contents) return 0;
 
@@ -27,7 +30,7 @@ char* package_get(const char* path, const char* key)
 
     if (strcmp(key_value->key_value_key, key) == 0)
     {
-      return key_value->key_value_value->string_value;
+      v = strdup(key_value->key_value_value->string_value);
       break;
     }
   }
@@ -36,5 +39,5 @@ char* package_get(const char* path, const char* key)
   json_parser_free(parser);
   json_ast_free(ast);
 
-  return 0;
+  return v;
 }

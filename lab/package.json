@@ -4,6 +4,7 @@
     "randomstring": "^1.1.5",
     "react": "^17.0.1",
     "secure-random-password": "^0.2.2",
+    "validate.js": "^0.13.1",
     "vue": "^2.6.12"
   }
 }

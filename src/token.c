@@ -7,12 +7,7 @@
 token_T* init_token(char* value, int type)
 {
   token_T* token = calloc(1, sizeof(struct FJB_TOKEN_STRUCT));
-  if (value) {
-    token->value =  calloc(strlen(value) + 1, sizeof(char));
-    strcpy(token->value, value);
-  } else {
-    token->value = 0;
-  }
+  token->value = value;
   token->type = type;
 
   return token;
@@ -121,4 +116,20 @@ char* token_type_to_str(int type)
 unsigned int token_is_statement_or_id(token_T* token)
 {
   return token->type == TOKEN_ID || token->type == TOKEN_IMPORT || token->type == TOKEN_FOR || token->type == TOKEN_FROM;
+}
+
+void token_free(token_T* token)
+{
+  if (token->value)
+    free(token->value);
+
+  free(token);
+}
+
+token_T* token_clone(token_T* token)
+{
+  if (!token) return 0;
+
+  token_T* new_token = init_token(strdup(token->value), token->type);
+  return new_token;
 }

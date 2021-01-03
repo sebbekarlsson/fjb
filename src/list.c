@@ -40,9 +40,7 @@ void list_prefix(list_T* list, void* item)
   for (unsigned int i = 0; i < list->size-1; i++)
   {
     list->items[i+1] = list->items[i];
-    list->items[i] = 0;
   }
-
   list->items[0] = item;
 }
 
@@ -58,4 +56,15 @@ int list_indexof_str(list_T* list, char* item)
   }
 
   return -1; 
+}
+
+unsigned int ptr_in_list(list_T* list, void* ptr)
+{
+  for (unsigned int i = 0; i < list->size; i++)
+  {
+    if(ptr == list->items[i])
+      return 1;
+  }
+
+  return 0;
 }

@@ -9,5 +9,7 @@ typedef struct FJB_COMPILER_RESULT
   list_T* args;
 } compiler_result_T;
 
+void compiler_result_free(compiler_result_T* result);
+
 compiler_result_T* fjb(GEN_FLAGS flags, char *source);
 #endif

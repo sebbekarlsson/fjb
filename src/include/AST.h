@@ -2,6 +2,7 @@
 #define FJB_AST_H
 #include "token.h"
 #include "list.h"
+#include "gc.h"
 typedef struct FJB_AST_STRUCT {
   enum {
     AST_ARROW_DEFINITION,
@@ -47,7 +48,6 @@ typedef struct FJB_AST_STRUCT {
   struct FJB_AST_STRUCT* right;
   struct FJB_AST_STRUCT* expr;
   struct FJB_AST_STRUCT* ref;
-  struct FJB_AST_STRUCT* access;
   struct FJB_AST_STRUCT* label_value;
   struct FJB_AST_STRUCT* phony_value;
   struct FJB_AST_STRUCT* ptr;
@@ -61,17 +61,13 @@ typedef struct FJB_AST_STRUCT {
   char* from_module;
 
   list_T* list_value;
-  list_T* list_value_left;
-  list_T* list_value_right;
   list_T* flags;
-  list_T* keys;
-  list_T* values;
-  list_T* exports;
 
   unsigned int capsulated;
   unsigned int label;
   unsigned int lazy;
   unsigned int loose;
+  unsigned int marked;
 
 } AST_T;
 
@@ -81,4 +77,8 @@ AST_T* init_ast(int type);
 char* ast_to_str(AST_T* ast);
 
 char* ast_binop_to_str(AST_T* ast);
+
+void list_free(gc_T* gc, list_T* list);
+
+void ast_free(AST_T* ast);
 #endif

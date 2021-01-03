@@ -2,15 +2,18 @@
 #define FJB_VISITOR_H
 #include "AST.h"
 #include "parser.h"
+#include "gc.h"
 
 typedef struct FJB_VISITOR_STRUCT {
   parser_T* parser;
+  const char* filepath;
 } visitor_T;
 
-visitor_T* init_visitor(parser_T* parser);
+visitor_T* init_visitor(parser_T* parser, const char* filepath);
 
 AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* args);
 
 AST_T* visitor_visit_compound(visitor_T* visitor, AST_T* ast, list_T* args);
 
+void visitor_free(visitor_T* visitor);
 #endif
