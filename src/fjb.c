@@ -12,8 +12,12 @@
 extern gc_T* GC;
 AST_T* NOOP;
 
-compiler_result_T* fjb(GEN_FLAGS flags, char *source)
+list_T* defs;
+
+compiler_result_T* fjb(GEN_FLAGS flags, char *source, list_T* refs, list_T* imports, unsigned int all)
 {
+  if (!defs) defs = init_list(sizeof(AST_T*));
+
   NOOP = init_ast(AST_NOOP);
   gc_mark(GC, NOOP);
 
@@ -22,13 +26,19 @@ compiler_result_T* fjb(GEN_FLAGS flags, char *source)
   
   parser_options_T options = EMPTY_PARSER_OPTIONS;
 
+  AST_T* module = init_ast(AST_OBJECT);
+  AST_T* exports = init_ast(AST_OBJECT);
+
+  exports->name = strdup("exports");
+
   AST_T* root = parser_parse(parser, options);
-  visitor_T* visitor = init_visitor(parser, flags[0]);
+  root->alive = 1;
+
+  visitor_T* visitor = init_visitor(parser, flags[0], refs, imports, module, exports, all);
 
   AST_T* assignment = init_ast(AST_ASSIGNMENT);
   assignment->name = strdup("module");
 
-  AST_T* exports = init_ast(AST_OBJECT);
   exports->list_value = init_list(sizeof(AST_T*));
   
   gc_mark(GC, exports);
@@ -39,7 +49,6 @@ compiler_result_T* fjb(GEN_FLAGS flags, char *source)
   
   gc_mark(GC, exports_assignment);
 
-  AST_T* module = init_ast(AST_OBJECT);
 
   gc_mark(GC, module);
 
@@ -52,8 +61,16 @@ compiler_result_T* fjb(GEN_FLAGS flags, char *source)
   list_push(args, assignment);
 
   gc_mark(GC, assignment);
+
+  list_T* imported_symbols = init_list(sizeof(AST_T*));
   
-  root = visitor_visit(visitor, root, args); 
+  list_T* stack = NEW_STACK;
+  root = visitor_visit(visitor, root, args, stack);
+  root->alive = 1;
+
+  printf("/*\n");
+  printf("\n=======================\n%s\n", ast_to_str(exports));
+  printf("*/\n");
 
   char* str = 0;
   str = str_append(&str, "/* IMPORTED FROM `");
@@ -66,6 +83,7 @@ compiler_result_T* fjb(GEN_FLAGS flags, char *source)
   compiler_result_T* result = calloc(1, sizeof(compiler_result_T));
   result->stdout = str;
   result->args = args;
+  result->es_exports = visitor->es_exports;
 
   lexer_free(lexer);
   parser_free(parser);

@@ -10,15 +10,20 @@ int main(int argc, char* argv[]) {
   GC = init_gc();
 
   char* contents = fjb_read_file(argv[1]);
-  compiler_result_T* result = fjb((GEN_FLAGS){argv[1], 0, 0}, contents);
+  compiler_result_T* result = fjb((GEN_FLAGS){argv[1], 0, 0}, contents, init_list(sizeof(AST_T*)), init_list(sizeof(AST_T*)), 0);
 
   printf("%s\n", result->stdout);
   
   gc_sweep(GC);
   gc_free(GC);
 
-  //compiler_result_free(result);
-  //free(contents);
-  
+  if (result->es_exports)
+  {
+    free(result->es_exports);
+  }
+
+  compiler_result_free(result);
+  free(contents);
+
   return 0;
 }

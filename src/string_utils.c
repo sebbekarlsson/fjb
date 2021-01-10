@@ -6,7 +6,11 @@
 
 char* str_append(char** source, const char* piece)
 {
+
   char* src = *source;
+  
+  if (!piece) return src;
+
   if (!src) {
     src = calloc((strlen(piece) + 1) * sizeof(char), sizeof(char));
   } else {
@@ -19,6 +23,8 @@ char* str_append(char** source, const char* piece)
 
 char* str_prefix(char* source, const char* piece)
 {
+  if (!piece) return source;
+
   char* str = calloc(strlen(source) + strlen(piece) + 1, sizeof(char));
   sprintf(str, "%s%s", piece, source);
 
@@ -97,6 +103,8 @@ unsigned int is_special(char c)
 
 unsigned int first_char_is_special(char* str)
 {
+  if (!str) return 0;
+
   unsigned int length = strlen(str);
   if (!length) return 0;
   

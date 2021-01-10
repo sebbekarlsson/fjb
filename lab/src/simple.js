@@ -1,3 +1,6 @@
-import validate from 'validate.js';
-import _ from 'lodash';
-import React from 'react';
+//const all = require('./helpers');
+import { z, v } from './helpers';
+//import { z } from './es_helpers';
+//z();
+//
+z();

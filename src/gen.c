@@ -14,7 +14,9 @@ static char* gen_args(list_T* list_value, GEN_FLAGS flags)
 
   for (unsigned int i = 0; i < list_value->size; i++)
   {
-    char* child_str = gen((AST_T*)list_value->items[i], flags);
+    AST_T* child = (AST_T*)list_value->items[i];
+
+    char* child_str = gen(child, flags);
     str = str_append(&str, child_str);
 
     free(child_str);
@@ -35,12 +37,14 @@ static char* gen_semi_args(list_T* list_value, GEN_FLAGS flags)
 
   for (unsigned int i = 0; i < list_value->size; i++)
   {
-    char* child_str = gen((AST_T*)list_value->items[i], flags);
+    AST_T* child = (AST_T*)list_value->items[i];
+
+    char* child_str = gen(child, flags);
     str = str_append(&str, child_str);
 
     free(child_str);
 
-    if (i < list_value->size-1)
+    if (i < list_value->size-1 && child->type != AST_NOOP)
       str = str_append(&str, ";");
   }
   
@@ -73,10 +77,11 @@ static char* gen_list(list_T* list_value, GEN_FLAGS flags)
 static char* gen_tuple(list_T* list_value, GEN_FLAGS flags)
 {
   char* str = 0;
-  
+
   for (unsigned int i = 0; i < list_value->size; i++)
   {
     AST_T* child = (AST_T*)list_value->items[i];
+
     char* child_str = gen(child, flags);
     str = str_append(&str, child_str);
 
@@ -89,18 +94,43 @@ static char* gen_tuple(list_T* list_value, GEN_FLAGS flags)
   return str;
 }
 
+static char* gen_es_exports(list_T* list_value, GEN_FLAGS flags)
+{
+  char* str = 0;
+  
+  for (unsigned int i = 0; i < list_value->size; i++)
+  {
+    AST_T* child = (AST_T*)list_value->items[i];
+    if (!child) continue;
+    if (!child->name) continue;
+
+    char* name = child->name;
+
+    str = str_append(&str, "module.exports.");
+    str = str_append(&str, name);
+    str = str_append(&str, " = ");
+    str = str_append(&str, name);
+    str = str_append(&str, ";\n");
+
+  }
+  
+  return str;
+}
+
 static char* gen_semi_tuple(list_T* list_value, GEN_FLAGS flags)
 {
   char* str = 0;
 
   for (unsigned int i = 0; i < list_value->size; i++)
   {
-    char* child_str = gen((AST_T*)list_value->items[i], flags);
+    AST_T* child = (AST_T*)list_value->items[i];
+
+    char* child_str = gen(child, flags);
     str = str_append(&str, child_str);
 
     free(child_str);
 
-    if (i < list_value->size - 1)
+    if (i < list_value->size - 1 && child->type != AST_NOOP)
       str = str_append(&str, ";");
   }
   
@@ -108,6 +138,8 @@ static char* gen_semi_tuple(list_T* list_value, GEN_FLAGS flags)
 }
 
 char* gen(AST_T* ast, GEN_FLAGS flags){
+  if (!ast->alive) return strdup("");
+  
   char* body = 0;
   char* str = 0;
 
@@ -120,6 +152,7 @@ char* gen(AST_T* ast, GEN_FLAGS flags){
     case AST_STRING: body = gen_string(ast, flags); break;
     case AST_ARROW_DEFINITION: body = gen_arrow_definition(ast, flags); break;
     case AST_ASSIGNMENT: body = gen_assignment(ast, flags); break;
+    case AST_DEFINITION: body = gen_definition(ast, flags); break;
     case AST_COLON_ASSIGNMENT: body = gen_colon_assignment(ast, flags); break;
     case AST_WHILE: body = gen_while(ast, flags); break;
     case AST_FOR: body = gen_for(ast, flags); break;
@@ -293,6 +326,29 @@ char* gen_assignment(AST_T* ast, GEN_FLAGS flags)
   return str;
 }
 
+char* gen_definition(AST_T* ast, GEN_FLAGS flags)
+{
+  char* str = 0;
+
+  if (ast->flags)
+  {
+    for (unsigned int i = 0; i < ast->flags->size; i++)
+    {
+      AST_T* ast_flag = (AST_T*) ast->flags->items[i];
+      char* ast_flag_str = gen(ast_flag, flags);
+      str = str_append(&str, ast_flag_str);
+      free(ast_flag_str);
+      str = str_append(&str, " ");
+    }
+  }
+
+  char* tuplestr = gen_tuple(ast->list_value, flags);
+  str = str_append(&str, tuplestr);
+  free(tuplestr);
+
+  return str;
+}
+
 char* gen_colon_assignment(AST_T* ast, GEN_FLAGS flags)
 {
   char* str = 0;
@@ -369,6 +425,9 @@ char* gen_compound(AST_T* ast, GEN_FLAGS flags)
   {
     AST_T* child_ast = (AST_T*)ast->list_value->items[i];
 
+    if (!child_ast->alive)
+      continue;
+
     char* child_str = gen(child_ast, flags);
 
     if (child_ast->type != AST_IMPORT && child_ast->type != AST_UNDEFINED && child_ast->type != AST_NOOP && child_ast->type != AST_DO) {
@@ -390,11 +449,7 @@ char* gen_import(AST_T* ast, GEN_FLAGS flags)
 
   if (ast->type == AST_IMPORT && ast->list_value)
   {
-    const char* head_template = "let %s = (function(){\n let exports = {}; let module = { 'exports': exports };\n";
-    char* head_elements_str = gen_tuple(ast->list_value, flags);
-    head_str = calloc(strlen(head_template) + strlen(head_elements_str) + 1, sizeof(char));
-    sprintf(head_str, head_template, head_elements_str);
-    free(head_elements_str);
+    head_str = str_append(&head_str, "var tmp = (function(){\n let exports = {}; let module = { 'exports': exports };\n"); 
   }
   else if (ast->type == AST_CALL)
   {
@@ -408,9 +463,39 @@ char* gen_import(AST_T* ast, GEN_FLAGS flags)
     str = str_append(&str, head_str);
     str = str_append(&str, ast->compiled_value);
     str = str_append(&str, "\n");
+    
+    if (ast->es_exports)
+    {
+      char* exportsstr = gen_es_exports(ast->es_exports, flags);
+
+      if (exportsstr)
+      {
+        str = str_append(&str, exportsstr);
+        free(exportsstr);
+      }
+    }
+
     str = str_append(&str, "return module && module.exports ? module.exports : exports;\n");
     str = str_append(&str, "})()\n");
     free(head_str);
+
+    if (ast->type == AST_IMPORT && ast->list_value)
+    {
+      str = str_append(&str, ";");
+
+      for (unsigned int i = 0; i < ast->list_value->size; i++)
+      {
+        AST_T* child = (AST_T*) ast->list_value->items[i];
+        if (!child->name) continue;
+
+        const char* template = "let %s = tmp.%s\n";
+        char* defstr = calloc(strlen(template) + (strlen(child->name)*2) + 1, sizeof(char));
+        sprintf(defstr, template, child->name, child->name);
+
+        str = str_append(&str, defstr);
+        free(defstr);
+      }
+    }
   }
   else
   {
@@ -548,14 +633,6 @@ char* gen_name(AST_T* ast, GEN_FLAGS flags)
     }
   }
 
-  if (ast->phony_value)
-  {
-    char* phony = gen(ast->phony_value, flags);
-    str = str_append(&str, phony);
-    str = str_append(&str, ".");
-    free(phony);
-  }
-    
   char* namestr = strdup(ast->name ? ast->name : ast->string_value);
   str = str_append(&str, namestr);
 

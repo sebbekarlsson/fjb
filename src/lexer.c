@@ -430,6 +430,7 @@ token_T* lexer_parse_number(lexer_T* lexer)
   if (lexer->c == '.') {
     type = TOKEN_FLOAT;
 
+    str = str_append(&str, lexer->cstr);
     lexer_advance(lexer);
 
     while (isdigit(lexer->c) || lexer->c == 'e') {

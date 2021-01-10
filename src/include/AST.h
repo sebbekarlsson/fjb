@@ -14,6 +14,7 @@ typedef struct FJB_AST_STRUCT {
     AST_HEX,
     AST_FLOAT,
     AST_ASSIGNMENT,
+    AST_DEFINITION,
     AST_COLON_ASSIGNMENT,
     AST_WHILE,
     AST_DO,
@@ -51,6 +52,9 @@ typedef struct FJB_AST_STRUCT {
   struct FJB_AST_STRUCT* label_value;
   struct FJB_AST_STRUCT* phony_value;
   struct FJB_AST_STRUCT* ptr;
+  struct FJB_AST_STRUCT* prev;
+  struct FJB_AST_STRUCT* source_ast;
+  struct FJB_AST_STRUCT* def;
   token_T* token;
 
   int int_value;
@@ -62,17 +66,27 @@ typedef struct FJB_AST_STRUCT {
 
   list_T* list_value;
   list_T* flags;
+  list_T* es_exports;
 
   unsigned int capsulated;
   unsigned int label;
   unsigned int lazy;
   unsigned int loose;
-  unsigned int marked;
+  unsigned int is_ref;
+  unsigned int alive;
+  unsigned int exported;
+  unsigned int from_obj;
+  unsigned int visited;
+  int line;
 
 } AST_T;
 
 
 AST_T* init_ast(int type);
+
+AST_T* init_ast_line(int type, int line);
+
+AST_T* init_assignment(char* name, AST_T* value);
 
 char* ast_to_str(AST_T* ast);
 
