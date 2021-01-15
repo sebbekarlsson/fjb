@@ -30,7 +30,7 @@ AST_T* parser_parse_id(parser_T* parser, parser_options_T options, unsigned int 
 
 AST_T* parser_parse_expr(parser_T* parser, parser_options_T options);
 
-AST_T* parser_parse_assignment(parser_T* parser, parser_options_T options);
+AST_T* parser_parse_assignment(parser_T* parser, parser_options_T options, AST_T* left);
 
 AST_T* parser_parse_compound(parser_T* parser, parser_options_T options);
 

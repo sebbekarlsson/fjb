@@ -15,7 +15,7 @@ typedef struct FJB_VISITOR_STRUCT {
   list_T* refs;
   list_T* imports;
   list_T* es_exports;
-  list_T* local_refs;
+  list_T* log;
   AST_T* module;
   AST_T* exports;
   unsigned int all;

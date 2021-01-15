@@ -29,6 +29,8 @@ compiler_result_T* fjb(GEN_FLAGS flags, char *source, list_T* refs, list_T* impo
   AST_T* module = init_ast(AST_OBJECT);
   AST_T* exports = init_ast(AST_OBJECT);
 
+  exports->alive = 1;
+
   exports->name = strdup("exports");
 
   AST_T* root = parser_parse(parser, options);
@@ -53,12 +55,15 @@ compiler_result_T* fjb(GEN_FLAGS flags, char *source, list_T* refs, list_T* impo
   gc_mark(GC, module);
 
   assignment->value = module;
+  module->alive = 1;
 
   module->list_value = init_list(sizeof(AST_T*));
   list_push(module->list_value, exports_assignment);
   
   list_T* args = init_list(sizeof(AST_T*));
   list_push(args, assignment);
+
+  assignment->alive = 1;
 
   gc_mark(GC, assignment);
 

@@ -5,12 +5,87 @@
 #include "include/io.h"
 #include "include/node.h"
 #include "include/string_utils.h"
+#include "include/mkalive.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 extern gc_T* GC;
 extern list_T* defs;
+
+#define IN_IMPORTS(ast)\
+  (in_symbols(ast, visitor->imports) || ptr_in_list(visitor->imports, ast))
+
+static AST_T* find_in_args(int type, char* name, list_T* args)
+{
+  if (!name)
+    return 0;
+
+  for (unsigned int i = 0; i < args->size; i++) {
+    AST_T* child = (AST_T*)args->items[i];
+
+    if (!child)
+      continue;
+
+    if (type != -1) {
+      if (child->type != type)
+        continue;
+    }
+
+    if (!child->name)
+      continue;
+
+    if (child->name) {
+      if (strcmp(child->name, name) == 0)
+        return child;
+    }
+  }
+
+  return 0;
+}
+
+static list_T* get_deps(visitor_T* visitor)
+{
+  list_T* deps = NEW_STACK;
+
+  for (unsigned int i = 0; i < visitor->exports->list_value->size; i++)
+  {
+    AST_T* child = (AST_T*) visitor->exports->list_value->items[i];
+
+    if (!ptr_in_list(deps, child))
+      list_push(deps, child);
+
+    list_T* pointers = ast_get_pointers(child);
+
+    for (unsigned int j = 0; j < pointers->size; j++)
+    {
+      AST_T* ptr = (AST_T*) pointers->items[i];
+
+      if (!ptr_in_list(deps, ptr))
+        list_push(deps, ptr);
+    }
+
+    if (pointers)
+    {
+      if (pointers->items)
+        free(pointers->items);
+
+      free(pointers);
+    }
+  }
+
+  return deps;
+}
+
+unsigned int alive_in_list(list_T* list)
+{
+  for (unsigned int i = 0; i < list->size; i++) {
+    AST_T* child = list->items[i];
+    if (child->alive) return 1;
+  }
+
+  return 0;
+}
 
 static unsigned int in_symbols(AST_T* ast, list_T* symbols)
 {
@@ -56,71 +131,44 @@ static AST_T* find_symbol(AST_T* ast, list_T* symbols)
   return 0;
 }
 
-static unsigned int is_alive(AST_T* ast)
+unsigned int is_called(AST_T* ast, list_T* stack)
 {
-  if (ast->list_value)
-  {
-    for (unsigned int i = 0; i < ast->list_value->size; i++)
-    {
-      AST_T* child = ast->list_value->items[i];
-      if (is_alive(child)) return 1;
-    }
-  }
+  if (!ast) return 0;
+  if (!ast->name) return 0;
 
-  return ast->alive;
+  AST_T* sym = find_in_args(AST_CALL, ast->name, stack);
+
+  return sym ? 1 : 0;
 }
 
-list_T* alives;
-static void make_alive(AST_T* ast)
+static unsigned int is_dead(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  if(!alives) alives = NEW_STACK;
+ if (!ast) return 0;
 
-  if (alives && ptr_in_list(alives, ast)) return;
-
-  if (ast->list_value)
+ if (ast->name && (ast->type == AST_FUNCTION || ast->type == AST_DEFINITION))
   {
-    for (unsigned int i = 0; i < ast->list_value->size; i++)
+    if ((ast->type == AST_FUNCTION && is_called(ast, stack)) || IN_IMPORTS(ast))
     {
-      AST_T* child = ast->list_value->items[i];
-      make_alive(child);
+      return 0; 
+    }
+    else
+    {
+      return 1;
     }
   }
-  
-  if (ast->ptr && !ast->ptr->alive) make_alive(ast->ptr);
 
-  if (ast->value)
-  {
-    make_alive(ast->value);
-  }
+ return 0;
+}
 
-  if (ast->left)
-  {
-    make_alive(ast->left);
-  }
+static unsigned int is_completely_dead(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
+{
+  unsigned int dead = 0;
 
-  if (ast->right)
-  {
-    make_alive(ast->right);
-  }
+  if (in_symbols(ast, stack)) return 0;
 
-  if (ast->body)
-  {
-    make_alive(ast->body);
-  }
-
-  if (ast->expr)
-  {
-    make_alive(ast->expr);
-  }
-
-  if (ast->def)
-  {
-    ast->def->alive = 1;
-  }
-
-  list_push(alives, ast);
-
-  ast->alive = 1;
+  return is_dead(visitor, ast, args, stack) || 
+         ast->ptr ? is_dead(visitor, ast->ptr, args, stack) : 0 ||
+         ast->value ? is_dead(visitor, ast->value, args, stack) : 0;
 }
 
 visitor_T* init_visitor(parser_T* parser, const char* filepath, list_T* refs, list_T* imports,
@@ -132,7 +180,7 @@ visitor_T* init_visitor(parser_T* parser, const char* filepath, list_T* refs, li
   visitor->imports = imports;
   visitor->refs = refs;
   visitor->es_exports = init_list(sizeof(AST_T*));
-  visitor->local_refs = init_list(sizeof(AST_T*));
+  visitor->log = init_list(sizeof(AST_T*));
   visitor->module = module;
   visitor->exports = exports;
   visitor->all = all;
@@ -145,7 +193,7 @@ static list_T* visit_array(visitor_T* visitor, list_T* list, list_T* args, list_
   if (list) {
     for (unsigned int i = 0; i < list->size; i++) {
       AST_T* child = (AST_T*)list->items[i];
-      child->alive = 1;
+      if (!child) continue;
 
       list->items[i] = visitor_visit(visitor, child, args, stack);
     }
@@ -154,46 +202,20 @@ static list_T* visit_array(visitor_T* visitor, list_T* list, list_T* args, list_
   return list;
 }
 
-static AST_T* find_in_args(int type, char* name, list_T* args)
-{
-  if (!name)
-    return 0;
-
-  for (unsigned int i = 0; i < args->size; i++) {
-    AST_T* child = (AST_T*)args->items[i];
-
-    if (!child)
-      continue;
-
-    if (type != -1) {
-      if (child->type != type)
-        continue;
-    }
-
-    if (!child->name)
-      continue;
-
-    if (child->name) {
-      if (strcmp(child->name, name) == 0)
-        return child;
-    }
-  }
-
-  return 0;
-}
-
 AST_T* get_pointer(AST_T* ptr, unsigned int body)
 {
   if (!ptr)
     return 0;
 
-  if (ptr->list_value && ptr->list_value->size == 1 && ptr->type != AST_COMPOUND) {
+  if (ptr->list_value && ptr->list_value->size == 1 && ptr->type != AST_ARRAY) {
     AST_T* child = (AST_T*)ptr->list_value->items[0];
     if (child->type == AST_TUPLE)
       return child;
   }
   
-  if (body && ptr->body) return get_pointer(ptr->body, body); 
+  if (ptr->type == AST_FUNCTION) return ptr;
+  if (ptr->type == AST_BINOP && ptr->right) return get_pointer(ptr->right, body);
+  if (ptr->type == AST_FUNCTION && body && ptr->body) return get_pointer(ptr->body, body); 
   if (ptr->value) return get_pointer(ptr->value, body);
   if (ptr->ptr && ptr->ptr != ptr) return get_pointer(ptr->ptr, body);
 
@@ -206,7 +228,7 @@ AST_T* resolve_array_pointer(AST_T* left, AST_T* right)
 
   AST_T* rightvalue = get_pointer((AST_T*)right->list_value->items[0], 0);
 
-  if (rightvalue->type == AST_INT) {
+  if (rightvalue && rightvalue->type == AST_INT) {
     index = rightvalue->int_value;
   }
 
@@ -218,30 +240,32 @@ AST_T* resolve_array_pointer(AST_T* left, AST_T* right)
 
 AST_T* visitor_visit_id(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  ast->alive = 1;
+  ALIVE(ast);
   return ast;
 }
 
 AST_T* visitor_visit_int(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  ast->alive = 1;
+  ALIVE(ast);
   return ast;
 }
 
 AST_T* visitor_visit_float(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  ast->alive = 1;
+  ALIVE(ast);
   return ast;
 }
 
 AST_T* visitor_visit_string(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  ast->alive = 1;
+  ALIVE(ast);
   return ast;
 }
 
 AST_T* visitor_visit_import(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
+  ALIVE(ast);
+
   char* final_file_to_read = resolve_import((char*)visitor->filepath, ast->string_value);
 
   for (unsigned int i = 0; i < ast->list_value->size; i++) {
@@ -253,7 +277,6 @@ AST_T* visitor_visit_import(visitor_T* visitor, AST_T* ast, list_T* args, list_T
                                   visitor->refs, visitor->imports, 0);
   ast->compiled_value = strdup(result->stdout);
   ast->es_exports = result->es_exports;
-  ast->alive = 1;
 
   free(final_file_to_read);
   free(contents);
@@ -263,24 +286,52 @@ AST_T* visitor_visit_import(visitor_T* visitor, AST_T* ast, list_T* args, list_T
   return ast;
 }
 
-static void assign(AST_T* left, AST_T* value)
+static void assign(visitor_T* visitor, AST_T* left, AST_T* value, list_T* args, list_T* stack)
 {
-  if (left) {
-    AST_T* ptr = get_pointer(left->ptr, 1);
-    AST_T* val = get_pointer(value, 0);
+  if (left && left->name) {
+    AST_T* ptr = get_pointer(left, 0);
+    AST_T* val = value;
+    AST_T* assignment = init_assignment(left->name, val);
+    assignment->ptr = val;
 
-    if (ptr && !ptr->name) return;
-    if (ptr && ptr->name && !(strcmp(ptr->name, "exports") == 0)) return;
+    if (ptr)
+      ALIVE(ptr);
 
-    if (val && ptr && ptr->type == AST_OBJECT && ptr->list_value && left->name && val != ptr && val != left) {
-      AST_T* assignment = init_assignment(left->name, val);
-      list_push(ptr->list_value, assignment);
+    AST_T* sym = left;
+
+    if (ptr && ptr->type == AST_OBJECT)
+    {
+      if (!ptr->list_value) ptr->list_value = NEW_STACK;
+
+      sym = find_in_args(AST_ASSIGNMENT, left->name, ptr->list_value);
+
+      if (!sym && ptr->name && strcmp(ptr->name, "exports") == 0)
+      {
+        if (val)
+        {
+          visitor_visit(visitor, val, args, stack);
+        }
+
+        if (val)
+        {
+          val->alive = 0;
+          ALIVE(val);
+        }
+
+        list_push(ptr->list_value, assignment);
+      }
     }
-    else 
-    if (val && left) {
-      left->ptr = val;
+    else
+    {
+      list_push_safe(stack, assignment);
     }
-  } 
+    
+    if (sym)
+    {
+      left->ptr = value;
+      sym->ptr = value;
+    }
+  }
 }
 
 AST_T* visitor_visit_assignment(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
@@ -290,22 +341,34 @@ AST_T* visitor_visit_assignment(visitor_T* visitor, AST_T* ast, list_T* args, li
   if (ast->right)
     ast->right = visitor_visit(visitor, ast->right, args, stack);
   if (ast->value)
-    ast->value = visitor_visit(visitor, ast->value, args, stack); 
+    ast->value = visitor_visit(visitor, ast->value, args, stack);  
 
-  if (ast->left && (in_symbols(ast->left, visitor->imports) || ast->left->alive))
-    make_alive(ast);
-  
-  if (ast->left)
+  if (ast->left && ast->value)
   {
-    assign(ast->left, get_pointer(ast->value, 0));
+    assign(visitor, ast->left, most_right_value(ast->value), args, stack);
     
-    if (ast->left->ptr)
-      ast->ptr = ast->left->ptr;
+    if (ast->value)
+      ast->ptr = ast->value;
   }
 
-  if (!ptr_in_list(stack, ast))
+  if (ast->left && ast->left->alive) ast->alive = 1; 
+  if (ast->right && ast->right->alive) ast->alive = 1; 
+  if (ast->value && ast->value->alive) ast->alive = 1; 
+  if (ast->expr && ast->expr->alive) ast->alive = 1; 
+
+  if (ast->left) ALIVE(ast->left);
+  if (ast->right) ALIVE(ast->right);
+  
+  list_push_safe(stack, ast);
+
+  if (ast->value && ast->value->alive)
+  {  
+    ast->alive = 0;
+    ALIVE(ast);
+  }
+  else
   {
-    list_push(stack, ast);
+    ast->alive = 0;
   }
 
   return ast;
@@ -325,8 +388,11 @@ AST_T* visitor_visit_definition(visitor_T* visitor, AST_T* ast, list_T* args, li
     ast->flags = visit_array(visitor, ast->flags, args, stack);
   if (ast->list_value)
     ast->list_value = visit_array(visitor, ast->list_value, args, stack);
-
-  make_alive(ast);
+  
+  if (ast->left && ast->left->alive) ast->alive = 1;
+  else if (ast->right && ast->right->alive) ast->alive = 1;
+  else if (ast->value && ast->value->alive) ast->alive = 1;
+  else if (ast->expr && ast->expr->alive) ast->alive = 1;
 
   return ast;
 }
@@ -334,16 +400,11 @@ AST_T* visitor_visit_definition(visitor_T* visitor, AST_T* ast, list_T* args, li
 AST_T* visitor_visit_state(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
   ast->alive = 1;
+
   if (ast->value)
     ast->value = visitor_visit(visitor, ast->value, args, stack);
   if (ast->value)
-    ast->ptr = get_pointer(ast->value, 1);
-
-  if (strcmp(ast->name, "export") == 0) {
-    if (ast->value && ast->value->alive) {
-      list_push(visitor->es_exports, ast->value);
-    }
-  }
+    ast->ptr = ast->value; 
 
   if (ast->value)
     ast->value->source_ast = ast;
@@ -352,8 +413,20 @@ AST_T* visitor_visit_state(visitor_T* visitor, AST_T* ast, list_T* args, list_T*
     ast->value->value->source_ast = ast;
   }
 
-  if (ast->value && ast->value->alive == 0) {
-    ast->alive = visitor->all;
+  if (strcmp(ast->name, "export") == 0 && ast->value) {
+    if (ast->value->alive)
+      list_push_safe(visitor->es_exports, ast->value);
+
+    if (ast->value && ast->ptr && ast->ptr != ast->value)
+    {
+      if (!ast->ptr->alive)
+        visitor_visit(visitor, ast->ptr, args, stack);
+    }
+  }
+
+  if (ast->parent && ast->parent->type == AST_FUNCTION && !ast->parent->ptr)
+  {
+    ast->parent->ptr = ast->ptr;
   }
 
   return ast;
@@ -361,7 +434,6 @@ AST_T* visitor_visit_state(visitor_T* visitor, AST_T* ast, list_T* args, list_T*
 
 AST_T* visitor_visit_try(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  ast->alive = 1;
   if (ast->left)
     ast->left = visitor_visit(visitor, ast->left, args, stack);
   if (ast->right)
@@ -373,14 +445,13 @@ AST_T* visitor_visit_try(visitor_T* visitor, AST_T* ast, list_T* args, list_T* s
   if (ast->list_value)
     ast->list_value = visit_array(visitor, ast->list_value, args, stack);
 
-  make_alive(ast);
+  ALIVE(ast);
 
   return ast;
 }
 
 AST_T* visitor_visit_condition(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  ast->alive = 1;
   if (ast->left)
     ast->left = visitor_visit(visitor, ast->left, args, stack);
   if (ast->right)
@@ -392,14 +463,13 @@ AST_T* visitor_visit_condition(visitor_T* visitor, AST_T* ast, list_T* args, lis
   if (ast->list_value)
     ast->list_value = visit_array(visitor, ast->list_value, args, stack);
 
-  make_alive(ast);
+  ALIVE(ast);
 
   return ast;
 }
 
 AST_T* visitor_visit_do(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  ast->alive = 1;
   if (ast->left)
     ast->left = visitor_visit(visitor, ast->left, args, stack);
   if (ast->right)
@@ -411,14 +481,13 @@ AST_T* visitor_visit_do(visitor_T* visitor, AST_T* ast, list_T* args, list_T* st
   if (ast->list_value)
     ast->list_value = visit_array(visitor, ast->list_value, args, stack);
 
-  make_alive(ast);
+  ALIVE(ast);
 
   return ast;
 }
 
 AST_T* visitor_visit_while(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  ast->alive = 1;
   if (ast->left)
     ast->left = visitor_visit(visitor, ast->left, args, stack);
   if (ast->right)
@@ -430,15 +499,13 @@ AST_T* visitor_visit_while(visitor_T* visitor, AST_T* ast, list_T* args, list_T*
   if (ast->list_value)
     ast->list_value = visit_array(visitor, ast->list_value, args, stack);
 
-  make_alive(ast);
+  ALIVE(ast);
 
   return ast;
 }
 
 AST_T* visitor_visit_for(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  ast->alive = 1;
-
   if (ast->left)
     ast->left = visitor_visit(visitor, ast->left, args, stack);
   if (ast->right)
@@ -450,14 +517,13 @@ AST_T* visitor_visit_for(visitor_T* visitor, AST_T* ast, list_T* args, list_T* s
   if (ast->list_value)
     ast->list_value = visit_array(visitor, ast->list_value, args, stack);
 
-  make_alive(ast);
+  ALIVE(ast);
 
   return ast;
 }
 
 AST_T* visitor_visit_switch(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  ast->alive = 1;
   if (ast->left)
     ast->left = visitor_visit(visitor, ast->left, args, stack);
   if (ast->right)
@@ -469,42 +535,45 @@ AST_T* visitor_visit_switch(visitor_T* visitor, AST_T* ast, list_T* args, list_T
   if (ast->list_value)
     ast->list_value = visit_array(visitor, ast->list_value, args, stack);
 
-  make_alive(ast);
+  ALIVE(ast);
+  
   return ast;
 }
 
 AST_T* visitor_visit_array(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  ast->alive = 1;
   if (ast->left)
     ast->left = visitor_visit(visitor, ast->left, args, stack);
+  if (ast->right)
+    ast->right = visitor_visit(visitor, ast->right, args, stack);
   if (ast->list_value)
     ast->list_value = visit_array(visitor, ast->list_value, args, stack);
+
+  ALIVE(ast);
 
   return ast;
 }
 
 AST_T* visitor_visit_regex(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  ast->alive = 1;
+  ALIVE(ast);
+
   return ast;
 }
 
 AST_T* visitor_visit_object(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  ast->alive = 1;
   if (ast->list_value)
     ast->list_value = visit_array(visitor, ast->list_value, args, stack);
 
-  make_alive(ast);
+  ALIVE(ast);
+
   return ast;
 }
 
 AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  if ((in_symbols(ast, visitor->imports) || in_symbols(ast, visitor->local_refs) || !ast->name) ||
-      visitor->all)
-    ast->alive = 1;
+  visit_array(visitor, ast->list_value, args, stack);  
 
   if (!ptr_in_list(stack, ast))
   {
@@ -512,21 +581,17 @@ AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* args, list
       list_push(stack, ast);
     }
   }
+  
+  if (ast->body)
+    visitor_visit(visitor, ast->body, args, stack);
 
-  if ((ast->alive && ast->source_ast) || (ast->source_ast && visitor->all))
-    ast->source_ast->alive = 1;
-
-  if ((ast->alive || ast->exported || visitor->all) && ast->body)
-  {
-    visitor_visit(visitor, ast->body, args, NEW_STACK);
-  }
+  if (IN_IMPORTS(ast)) ALIVE(ast);
 
   return ast;
 }
 
 AST_T* visitor_visit_signature(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  ast->alive = 1;
   if (ast->left)
     ast->left = visitor_visit(visitor, ast->left, args, stack);
   if (ast->right)
@@ -535,12 +600,60 @@ AST_T* visitor_visit_signature(visitor_T* visitor, AST_T* ast, list_T* args, lis
     ast->body = visitor_visit(visitor, ast->body, args, stack);
   if (ast->list_value)
     ast->list_value = visit_array(visitor, ast->list_value, args, stack);
+
+  ALIVE(ast);
+
   return ast;
 }
 
 AST_T* visitor_visit_compound(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
   ast->alive = 1;
+
+  unsigned int stack_before = stack->size;
+  list_T* ignored = NEW_STACK;
+
+  if (ast->list_value) {
+    for (unsigned int i = 0; i < ast->list_value->size; i++) {
+      AST_T* child = (AST_T*)ast->list_value->items[i];
+      if (!child) continue;
+
+      if ((child->parent && child->parent->type == AST_FUNCTION && is_completely_dead(visitor, child, args, stack)))
+      {
+        child->alive = 0;
+        list_push_safe(stack, child);
+        list_push_safe(ignored, child);
+      }
+      else if (((child->type == AST_FUNCTION && !child->name) || in_symbols(child, stack)) && child->type != AST_DEFINITION)
+      {
+        child->alive = 0;
+
+        if (child->type == AST_FUNCTION)
+          ALIVE(child);
+      }
+      
+      ast->list_value->items[i] = visitor_visit(visitor, child, args, stack);
+    }
+  }
+  
+  unsigned int new_size = stack->size;
+
+  if (ast->type == AST_COMPOUND && ast->name && new_size > stack_before && ast->name)
+  {
+    for (unsigned int i = new_size-1; i > stack_before; i--)
+    {
+      AST_T* child = (AST_T*) stack->items[i];
+      if (ptr_in_list(ignored, child)) continue;
+
+      list_remove(stack, child, 0);
+    }
+  }
+
+  if (ignored)
+  {
+    if (ignored->items) free(ignored->items);
+    free(ignored);
+  }
 
   return ast;
 }
@@ -551,8 +664,15 @@ AST_T* visitor_visit_ternary(visitor_T* visitor, AST_T* ast, list_T* args, list_
     ast->left = visitor_visit(visitor, ast->left, args, stack);
   if (ast->right)
     ast->right = visitor_visit(visitor, ast->right, args, stack);
+  
+  if (!ast->left->alive)
+    ALIVE(ast->left);
 
-  make_alive(ast);
+  if (!ast->right->alive)
+    ALIVE(ast->right);
+
+  if (!ast->alive)
+    ALIVE(ast);
 
   return ast;
 }
@@ -561,51 +681,58 @@ AST_T* visitor_visit_name(visitor_T* visitor, AST_T* ast, list_T* args, list_T* 
 {
   ast->alive = 1;
 
+  if (ast->def && ast->def->alive) return ast;
+  if (ast->def && !ast->def->alive) ALIVE(ast->def);
+
   if (ast->left)
+  {
     ast->left = visitor_visit(visitor, ast->left, args, stack);
+  }
   if (ast->right)
+  {
     ast->right = visitor_visit(visitor, ast->right, args, stack);
+  }
+
   if (ast->flags)
     ast->flags = visit_array(visitor, ast->flags, args, stack);
+  if (ast->list_value)
+    ast->list_value = visit_array(visitor, ast->list_value, args, stack);
 
-  if (!ast->ptr) {
-    AST_T* value = find_in_args(AST_ASSIGNMENT, ast->name, args);
+  AST_T* value = find_in_args(AST_ASSIGNMENT, ast->name, args);
 
-    if (value)
-      ast->ptr = value;
+  if (!ast->ptr && value) {
+    ast->ptr = value;
   }
 
   if (ast->from_obj == 0) {
     AST_T* value = find_in_args(-1, ast->name, stack);
 
-    if (value)
+    if (value && value != ast && value != ast->ptr)
     {
-      ast->ptr = get_pointer(value, 0);
+      if (value && value->alive == 0)
+        ALIVE(value);
+
+      ast->ptr = value;
+      
+      visitor_visit(visitor, ast->ptr, args, stack);
     }
-    
-    list_push(visitor->local_refs, ast);
   }
   else if (ast->from_obj && ast->ptr && ast->name)
   {
     ast->ptr = resolve_pointer(ast->ptr, ast->name, stack);
   }
 
-  if (ast->ptr)
-    make_alive(ast->ptr);
-
-  /*if (ast->name && strcmp(ast->name, "e") == 0)
+  if (IN_IMPORTS(ast)) 
   {
-    printf("--------------%s-------------\n", ast->name);
-    printf("%d %s\n", ast->from_obj, ast_to_str(ast->ptr));
-    printf("----------------------------\n");
-  }*/
+    ast->alive = 0;
+    ALIVE(ast);
+  }
 
   return ast;
 }
 
 AST_T* visitor_visit_arrow_definition(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  ast->alive = 1;
   if (ast->left)
     ast->left = visitor_visit(visitor, ast->left, args, stack);
   if (ast->right)
@@ -617,12 +744,13 @@ AST_T* visitor_visit_arrow_definition(visitor_T* visitor, AST_T* ast, list_T* ar
   if (ast->list_value)
     ast->list_value = visit_array(visitor, ast->list_value, args, stack);
 
+  ALIVE(ast);
+
   return ast;
 }
 
 AST_T* visitor_visit_colon_assignment(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  ast->alive = 1;
   if (ast->left)
     ast->left = visitor_visit(visitor, ast->left, args, stack);
   if (ast->right)
@@ -634,59 +762,69 @@ AST_T* visitor_visit_colon_assignment(visitor_T* visitor, AST_T* ast, list_T* ar
   if (ast->expr)
     ast->expr = visitor_visit(visitor, ast->expr, args, stack);
 
-  make_alive(ast);
+  ALIVE(ast);
+
   return ast;
 }
 
 AST_T* visitor_visit_increment(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  ast->alive = 1;
   if (ast->left)
     ast->left = visitor_visit(visitor, ast->left, args, stack);
   if (ast->right)
     ast->right = visitor_visit(visitor, ast->right, args, stack);
 
-  make_alive(ast);
+  ALIVE(ast);
+
   return ast;
 }
 
 AST_T* visitor_visit_decrement(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  ast->alive = 1;
   if (ast->left)
     ast->left = visitor_visit(visitor, ast->left, args, stack);
   if (ast->right)
     ast->right = visitor_visit(visitor, ast->right, args, stack);
+  
+  ALIVE(ast);
 
-  make_alive(ast);
   return ast;
 }
 
 AST_T* visitor_visit_call(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 { 
   if (ast->left) ast->left = visitor_visit(visitor, ast->left, args, stack);
+  if (ast->right) ast->right = visitor_visit(visitor, ast->right, args, stack);
 
   if (ast->list_value)
     ast->list_value = visit_array(visitor, ast->list_value, args, stack);
   
-  if (ast->left)
-    list_push(visitor->local_refs, ast->left);
+  AST_T* ptr = ast->left ? ast_search_pointer(ast->left, AST_FUNCTION) : 0;
 
-  ast->alive = 1;
-
-  if (ast->left) {
-    AST_T* tmp = ast->left->ptr;
+  if (ptr)
+  {
+    ast->ptr = ptr;
     
-    AST_T* ptr = get_pointer(ast->left, 0);
+    ast->ptr->alive = 0;
+    ALIVE(ptr);
 
-    if (ptr) {
+    visitor_visit(visitor, ptr, args, stack);
+  }
 
-      if (ptr->body)
-      {
-        visitor_visit(visitor, ptr, args, stack);
-      }
+  if (ast->left && ast->left->name)
+  {
+    AST_T* def = find_in_args(-1, ast->left->name, stack);
+    if (!ast->def) ast->def = def;
 
-      ast->ptr = ptr;
+    if (def)
+    {
+      visitor_visit(visitor, def, args, stack);
+    }
+
+    if (def)
+    {
+      def->alive = 0;
+      ALIVE(def);
     }
   }
 
@@ -722,7 +860,12 @@ AST_T* visitor_visit_call(visitor_T* visitor, AST_T* ast, list_T* args, list_T* 
       free(str);
     }
   }
+  
+  ast->alive = 0;
+  ALIVE(ast);
 
+  list_push_safe(stack, ast);
+  
   return ast;
 }
 
@@ -753,55 +896,90 @@ AST_T* visitor_visit_binop(visitor_T* visitor, AST_T* ast, list_T* args, list_T*
 
   if (ast->left)
   {
-    ast->left = visitor_visit(visitor, ast->left, args, stack);
-  
-    if (ast->left->ptr)
-      ast->ptr = get_pointer(ast->left, 1);
+    if (!ast->left->visited)
+    {
+      ast->left = visitor_visit(visitor, ast->left, args, stack);
+    }
 
-    //if (ast->left->name)
-    //  ast->name = strdup(ast->left->name);
+    ast->left->alive = 1;
+  
+    if (ast->left->ptr && !ast->ptr)
+      ast->ptr = ast->left->ptr;
+  }
+  
+  if (!ast->right->visited)
+  {
+    ast->right = visitor_visit(visitor, ast->right, args, stack);
+    ast->right->visited = 1;
   }
 
   if (ast->right && ast->right->name)
   {
-    ast->right->ptr = resolve_pointer(ast->ptr, ast->right->name, stack);
+    ast->ptr = resolve_pointer(ast->ptr, ast->right->name, stack);
+  } 
+   
+  if (ast->right && ast->token && ast->token->type == TOKEN_AND_AND && !ast->ptr)
+  {
     ast->ptr = ast->right->ptr;
   }
-   
-  ast->right = visitor_visit(visitor, ast->right, args, stack);
+
+  if (ast->right->name)
+  {
+    ast->name = strdup(ast->right->name);
+  }
+
+  if (ast->token && ast->token->type == TOKEN_DOT && ast->ptr)
+  {
+    if (ast->right && !ast->right->ptr)
+    {
+      ast->right->ptr = ast->ptr;
+    }
+  }
+
+  if (ast->ptr)
+  {
+    ALIVE(ast->ptr);
+  }
+  
+  ast->right->alive = 0; 
+  ALIVE(ast->right);
+
+  if (ast->left->alive)
+    ast->right->alive = 1;
+  else if (ast->right->alive)
+    ast->left->alive = 1;
 
   return ast;
 }
 
 AST_T* visitor_visit_undefined(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  ast->alive = 1;
+  ALIVE(ast);
   return ast;
 }
 
 AST_T* visitor_visit_noop(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  ast->alive = 1;
+  ALIVE(ast);
   return ast;
 }
 
 AST_T* visitor_visit_unop(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  ast->alive = 1;
-
   if (ast->left)
     ast->left = visitor_visit(visitor, ast->left, args, stack);
   if (ast->right)
     ast->right = visitor_visit(visitor, ast->right, args, stack);
-
-  make_alive(ast);
+  
+  if (!ast->alive) 
+    ALIVE(ast);
 
   return ast;
 }
 
 AST_T* visitor_visit_hex(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  ast->alive = 1;
+  ALIVE(ast);
   return ast;
 }
 
@@ -809,9 +987,9 @@ AST_T* visitor_visit_tuple(visitor_T* visitor, AST_T* ast, list_T* args, list_T*
 {
   ast->alive = 1;
 
-  if (!in_symbols(ast, ast->list_value))
+  if (ast->list_value && !ptr_in_list(ast->list_value, ast))
     ast->list_value = visit_array(visitor, ast->list_value, args, stack);
-
+  
   return ast;
 }
 
@@ -821,38 +999,18 @@ AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack
     printf("[Visitor]: Encountered %p AST.\n", ast);
     exit(1);
   }
-
-  ast->visited = 1;
-
+  
   if (visitor->all)
     ast->alive = 1;
+
+  if (ast->visited || ptr_in_list(visitor->log, ast)) return ast;
+
+  list_push(visitor->log, ast);
   
   //if (ast->from_module)
   //  printf("%s\n", ast->from_module);
   //if (ast->line)
-  //  printf("%d\n", ast->line);
-
-  if (ast->list_value && ast->type == AST_COMPOUND) {
-    for (unsigned int i = 0; i < ast->list_value->size; i++) {
-      AST_T* child = (AST_T*)ast->list_value->items[i];
-
-      if (child->type == AST_STATE) {
-        if (ast != child)
-          visitor_visit(visitor, child, args, stack);
-
-        if (strcmp(child->name, "return") == 0) {
-          if (child->value)
-          {
-            ast->ptr = get_pointer(child, 1);
-            if (child == ast->ptr)
-              ast->ptr = 0;
-          }
-        }
-      }
-      
-      ast->list_value->items[i] = visitor_visit(visitor, child, args, stack);
-    }
-  }
+  //  printf("%d\n", ast->line); 
 
   if (ast->type == AST_ARRAY && ast->list_value->size == 1 && ast->left &&
       ast->left->type == AST_NAME) {
@@ -861,10 +1019,7 @@ AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack
     if (ptr && (ptr->type == AST_ARRAY || ptr->type == AST_TUPLE)) {
       ast->ptr = resolve_array_pointer(ptr, ast);
     }
-  }
-
-  if (ast->ptr)
-    ast->ptr->alive = 1;
+  } 
 
   switch (ast->type) {
     case AST_ARRAY: ast = visitor_visit_array(visitor, ast, args, stack); break;
@@ -900,11 +1055,14 @@ AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack
     case AST_NOOP: ast = visitor_visit_noop(visitor, ast, args, stack); break;
     case AST_TUPLE: ast = visitor_visit_tuple(visitor, ast, args, stack); break;
     default: {
+      ALIVE(ast);
       /* noop */
     } break;
   }
 
   ast->visited = 1;
+
+  return ast;
 }
 
 void visitor_free(visitor_T* visitor)

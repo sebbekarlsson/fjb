@@ -24,6 +24,8 @@ AST_T* init_ast_line(int type, int line)
 {
   AST_T* ast = init_ast(type);
   ast->line = line;
+
+  return ast;
 }
 
 char* ast_binop_to_str(AST_T* ast)
@@ -329,18 +331,30 @@ char* unstringable(AST_T* ast)
   return value;
 }
 
+char* ast_noop_to_str(AST_T* ast)
+{
+  return strdup("NOOP()");
+}
+
+char* ast_undefined_to_str(AST_T* ast)
+{
+  return strdup("UNDEFINED()");
+}
+
 char* ast_to_str(AST_T* ast)
 {
   if (!ast)
     return strdup("AST(nil)");
 
-  //if (ast->ptr)
-  //  return ast_to_str(ast->ptr);
+  if (ast->ptr)
+    return ast_to_str(ast->ptr);
 
   switch (ast->type) {
     case AST_BINOP: return ast_binop_to_str(ast); break;
     case AST_UNOP: return ast_unop_to_str(ast); break;
     case AST_NAME: return ast_name_to_str(ast); break;
+    case AST_NOOP: return ast_noop_to_str(ast); break;
+    case AST_UNDEFINED: return ast_undefined_to_str(ast); break;
     case AST_STATE: return ast_state_to_str(ast); break;
     case AST_INT: return ast_int_to_str(ast); break;
     case AST_ARROW_DEFINITION: return ast_arrow_definition_to_str(ast); break;
@@ -492,4 +506,119 @@ AST_T* init_assignment(char* name, AST_T* value)
   ast->value = value;
 
   return ast;
+}
+
+list_T* ast_get_pointers(AST_T* ast)
+{
+  list_T* list = init_list(sizeof(AST_T*));
+
+  if (!ast) return list;
+  
+  AST_T* ptr = ast->ptr;
+
+  while (ptr && !ptr_in_list(list, ptr))
+  {
+    if (ptr)
+    {
+      list_push(list, ptr);
+
+      if (ptr)
+        ptr = ptr->ptr;
+    }
+  }
+
+  return list;
+}
+
+AST_T* ast_get_final_ptr(AST_T* ast)
+{
+  AST_T* ptr = 0;
+  list_T* pointers = ast_get_pointers(ast);
+
+  if (pointers && pointers->size)
+    ptr = (AST_T*) pointers->items[pointers->size-1];
+
+  if (pointers)
+  {
+    if (pointers->items)
+      free(pointers->items);
+
+    free(pointers);
+  }
+
+  return ptr;
+}
+
+AST_T* ast_search_pointer(AST_T* ast, int type)
+{
+  if (ast->type == type) return ast;
+  list_T* pointers = ast_get_pointers(ast);
+
+  AST_T* ptr = 0;
+
+  for (unsigned int i = 0; i < pointers->size; i++) {
+    AST_T* child = pointers->items[i];
+    if (!child) continue;
+
+    if (child->type == type)
+    {
+      ptr = child;
+      break;
+    }
+  }
+
+  if (pointers)
+  {
+    if (pointers->items) free(pointers->items);
+    free(pointers);
+  }
+
+  return ptr;
+}
+
+unsigned int count_living_nodes(list_T* list)
+{
+  unsigned int count = 0;
+
+  for (unsigned int i = 0; i < list->size; i++)
+  {
+    AST_T* child = (AST_T*) list->items[i];
+
+    if (child->alive)
+    {
+      count += 1;
+    }
+  }
+
+  return count;
+}
+
+unsigned int ast_is_alive(AST_T* ast)
+{
+  return ast->alive != 0;
+}
+
+unsigned int ast_is_alive_filter(void* item)
+{
+  return ast_is_alive((AST_T*) item);
+}
+
+list_T* get_living_nodes(list_T* list)
+{
+  return list_filter(list, ast_is_alive_filter);
+}
+
+AST_T* most_right_value(AST_T* ast)
+{
+  AST_T* value = ast->value;
+  
+  if (value && value->value)
+  {
+    while (value->value)
+    {
+      value = value->value;
+    }
+  }
+
+  return value;
 }

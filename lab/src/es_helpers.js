@@ -15,6 +15,10 @@ export function noop() {
   console.log("hello from noop");
 }
 
+export function JohnDoe() {
+  console.log("hello from John");
+}
+
 export const apa = function() {
   console.log(1);
 }

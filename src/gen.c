@@ -11,18 +11,21 @@ static char* gen_args(list_T* list_value, GEN_FLAGS flags)
 {
   char* str = 0;
   str = str_append(&str, "(");
+  
+  list_T* living = get_living_nodes(list_value); 
 
-  for (unsigned int i = 0; i < list_value->size; i++)
+  for (unsigned int i = 0; i < living->size; i++)
   {
-    AST_T* child = (AST_T*)list_value->items[i];
+    AST_T* child = (AST_T*)living->items[i];
 
     char* child_str = gen(child, flags);
     str = str_append(&str, child_str);
 
-    free(child_str);
 
-    if (i < list_value->size-1)
+    if (i < living->size-1 && child->alive && child_str)
       str = str_append(&str, ",");
+    
+    free(child_str);
   }
   
   str = str_append(&str, ")");
@@ -34,18 +37,21 @@ static char* gen_semi_args(list_T* list_value, GEN_FLAGS flags)
 {
   char* str = 0;
   str = str_append(&str, "(");
+  
 
-  for (unsigned int i = 0; i < list_value->size; i++)
+  list_T* living = get_living_nodes(list_value);  
+
+  for (unsigned int i = 0; i < living->size; i++)
   {
-    AST_T* child = (AST_T*)list_value->items[i];
+    AST_T* child = (AST_T*)living->items[i];
 
     char* child_str = gen(child, flags);
     str = str_append(&str, child_str);
 
-    free(child_str);
-
-    if (i < list_value->size-1 && child->type != AST_NOOP)
+    if (i < living->size-1 && child->type != AST_NOOP && child->alive && child_str)
       str = str_append(&str, ";");
+    
+    free(child_str);
   }
   
   str = str_append(&str, ")");
@@ -57,16 +63,20 @@ static char* gen_list(list_T* list_value, GEN_FLAGS flags)
 {
   char* str = 0;
   str = str_append(&str, "[");
+  
+  list_T* living = get_living_nodes(list_value); 
 
-  for (unsigned int i = 0; i < list_value->size; i++)
+  for (unsigned int i = 0; i < living->size; i++)
   {
-    char* child_str = gen((AST_T*)list_value->items[i], flags);
+    AST_T* child = (AST_T*)living->items[i];
+
+    char* child_str = gen(child, flags);
     str = str_append(&str, child_str);
 
-    free(child_str);
-
-    if (i < list_value->size-1)
+    if (i < living->size-1 && child->alive && child_str)
       str = str_append(&str, ",");
+    
+    free(child_str);
   }
   
   str = str_append(&str, "]");
@@ -78,17 +88,20 @@ static char* gen_tuple(list_T* list_value, GEN_FLAGS flags)
 {
   char* str = 0;
 
-  for (unsigned int i = 0; i < list_value->size; i++)
+  list_T* living = get_living_nodes(list_value); 
+
+  for (unsigned int i = 0; i < living->size; i++)
   {
-    AST_T* child = (AST_T*)list_value->items[i];
+    AST_T* child = (AST_T*)living->items[i];
 
     char* child_str = gen(child, flags);
     str = str_append(&str, child_str);
 
-    free(child_str);
 
-    if (i < list_value->size - 1 && child->type != AST_NOOP)
+    if (i < living->size - 1 && child->type != AST_NOOP && child->type != AST_UNDEFINED && child->alive && child_str)
       str = str_append(&str, ", ");
+    
+    free(child_str);
   }
   
   return str;
@@ -120,26 +133,32 @@ static char* gen_es_exports(list_T* list_value, GEN_FLAGS flags)
 static char* gen_semi_tuple(list_T* list_value, GEN_FLAGS flags)
 {
   char* str = 0;
+  
+  list_T* living = get_living_nodes(list_value);
 
-  for (unsigned int i = 0; i < list_value->size; i++)
+  for (unsigned int i = 0; i < living->size; i++)
   {
-    AST_T* child = (AST_T*)list_value->items[i];
+    AST_T* child = (AST_T*)living->items[i];
 
     char* child_str = gen(child, flags);
     str = str_append(&str, child_str);
 
-    free(child_str);
 
-    if (i < list_value->size - 1 && child->type != AST_NOOP)
+    if (i < living->size - 1 && child->type != AST_NOOP && child->alive && child_str)
       str = str_append(&str, ";");
+    
+    free(child_str);
   }
   
   return str ? str : strdup("/* empty semi tuple */");
 }
 
 char* gen(AST_T* ast, GEN_FLAGS flags){
-  if (!ast->alive) return strdup("");
-  
+  if (!ast)
+  {
+    printf("[Gen]: Received nil AST.\n");
+    exit(1);
+  }
   char* body = 0;
   char* str = 0;
 
@@ -233,9 +252,19 @@ char* gen(AST_T* ast, GEN_FLAGS flags){
     }
 
     free(body);
-  } 
+  }
 
-  return str ? str : strdup("/* nothing */");
+  AST_T* next = ast->next;
+  while (next)
+  {
+    str = str_append(&str, ",");
+    char* nextstr = gen(next, flags);
+    str = str_append(&str, nextstr);
+    free(nextstr);
+    next = next->next;
+  }
+
+  return str;
 }
 char* gen_array(AST_T* ast, GEN_FLAGS flags){
   return gen_list(ast->list_value, flags);
@@ -329,7 +358,6 @@ char* gen_assignment(AST_T* ast, GEN_FLAGS flags)
 char* gen_definition(AST_T* ast, GEN_FLAGS flags)
 {
   char* str = 0;
-
   if (ast->flags)
   {
     for (unsigned int i = 0; i < ast->flags->size; i++)
@@ -342,9 +370,12 @@ char* gen_definition(AST_T* ast, GEN_FLAGS flags)
     }
   }
 
-  char* tuplestr = gen_tuple(ast->list_value, flags);
-  str = str_append(&str, tuplestr);
-  free(tuplestr);
+  if (ast->value)
+  {
+    char* valuestr = gen(ast->value, flags);
+    str = str_append(&str, valuestr);
+    free(valuestr);
+  }
 
   return str;
 }
@@ -421,16 +452,15 @@ char* gen_compound(AST_T* ast, GEN_FLAGS flags)
 {
   char* str = 0;
 
-  for (unsigned int i = 0; i < ast->list_value->size; i++)
-  {
-    AST_T* child_ast = (AST_T*)ast->list_value->items[i];
+  list_T* living = get_living_nodes(ast->list_value);
 
-    if (!child_ast->alive)
-      continue;
+  for (unsigned int i = 0; i < living->size; i++)
+  {
+    AST_T* child_ast = (AST_T*)living->items[i];
 
     char* child_str = gen(child_ast, flags);
 
-    if (child_ast->type != AST_IMPORT && child_ast->type != AST_UNDEFINED && child_ast->type != AST_NOOP && child_ast->type != AST_DO) {
+    if (child_ast->type != AST_IMPORT && child_ast->type != AST_UNDEFINED && child_ast->type != AST_NOOP && child_ast->type != AST_DO && child_ast->alive && child_str && i < living->size - 1) {
       child_str = str_append(&child_str, ";");
     }
 
@@ -675,7 +705,7 @@ char* gen_binop(AST_T* ast, GEN_FLAGS flags)
     str = str_append(&str, " "); 
   }
 
-  return str ? str : strdup("");
+  return str;
 }
 
 char* gen_unop(AST_T* ast, GEN_FLAGS flags)

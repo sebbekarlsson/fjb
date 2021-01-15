@@ -55,6 +55,8 @@ typedef struct FJB_AST_STRUCT {
   struct FJB_AST_STRUCT* prev;
   struct FJB_AST_STRUCT* source_ast;
   struct FJB_AST_STRUCT* def;
+  struct FJB_AST_STRUCT* parent;
+  struct FJB_AST_STRUCT* next;
   token_T* token;
 
   int int_value;
@@ -75,6 +77,7 @@ typedef struct FJB_AST_STRUCT {
   unsigned int is_ref;
   unsigned int alive;
   unsigned int exported;
+  unsigned int from_call;
   unsigned int from_obj;
   unsigned int visited;
   int line;
@@ -92,7 +95,23 @@ char* ast_to_str(AST_T* ast);
 
 char* ast_binop_to_str(AST_T* ast);
 
+list_T* ast_get_pointers(AST_T* ast);
+
+AST_T* ast_search_pointer(AST_T* ast, int type);
+
 void list_free(gc_T* gc, list_T* list);
 
 void ast_free(AST_T* ast);
+
+AST_T* ast_get_final_ptr(AST_T* ast);
+
+unsigned int count_living_nodes(list_T* list);
+
+unsigned int ast_is_alive(AST_T* ast);
+
+unsigned int ast_is_alive_filter(void* item);
+
+list_T* get_living_nodes(list_T* list);
+
+AST_T* most_right_value(AST_T* ast);
 #endif
