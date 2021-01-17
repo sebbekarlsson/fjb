@@ -26,5 +26,9 @@ unsigned int ptr_in_list(list_T* list, void* ptr);
 int list_indexof_str(list_T* list, char* item);
 
 list_T* list_filter(list_T* list, unsigned int (*filter_method)(void* item));
+
+list_T* list_merge(list_T* a, list_T* b);
+
+list_T* list_copy(list_T* a);
 #endif
 

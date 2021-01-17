@@ -38,13 +38,35 @@ char* ast_binop_to_str(AST_T* ast)
   tok = tok ? tok : strdup("");
   right = right ? right : strdup("");
 
-  const char* template = "BINOP(\n%s ->\n%s ->\n%s\n)";
+  const char* template = "BINOP(%s -> %s -> %s)";
   char* value =
     calloc(strlen(template) + strlen(left) + strlen(tok) + strlen(right) + 1, sizeof(char));
   sprintf(value, template, left, tok, right);
 
   free(left);
   free(tok);
+  free(right);
+
+  return value;
+}
+
+char* ast_ternary_to_str(AST_T* ast)
+{
+  char* left = ast_to_str(ast->left);
+  char* val = ast_to_str(ast->value); 
+  char* right = ast_to_str(ast->right);
+
+  left = left ? left : strdup("");
+  val = val ? val : strdup("");
+  right = right ? right : strdup("");
+
+  const char* template = "TERNARY(%s ? %s : %s)";
+  char* value =
+    calloc(strlen(template) + strlen(left) + strlen(val) + strlen(right) + 1, sizeof(char));
+  sprintf(value, template, left, val, right);
+
+  free(left);
+  free(val);
   free(right);
 
   return value;
@@ -137,7 +159,7 @@ char* ast_call_to_str(AST_T* ast)
     str = str_append(&str, childstr);
 
     if (i < ast->list_value->size - 1)
-      str = str_append(&str, ",\n");
+      str = str_append(&str, ",");
   }
 
   str = str ? str : "";
@@ -160,30 +182,6 @@ char* ast_assignment_to_str(AST_T* ast)
   sprintf(value, template, name, val ? val : "");
 
   return value;
-}
-
-char* ast_definition_to_str(AST_T* ast)
-{
-  char* val = 0;
-
-  if (ast->expr)
-  {
-    char* exprstr = ast_to_str(ast->expr);
-    val = str_append(&val, exprstr);
-  }
-  
-  if (ast->list_value)
-  {
-    for (unsigned int i = 0; i < ast->list_value->size; i++)
-    {
-      AST_T* child = ast->list_value->items[i];
-
-      char* childstr = ast_to_str(child);
-      val = str_append(&val, childstr);
-    }
-  }
-
-  return val ? val : strdup("(nil)");
 }
 
 char* ast_object_to_str(AST_T* ast)
@@ -346,11 +344,12 @@ char* ast_to_str(AST_T* ast)
   if (!ast)
     return strdup("AST(nil)");
 
-  if (ast->ptr)
-    return ast_to_str(ast->ptr);
+  //if (ast->ptr)
+  //  return ast_to_str(ast->ptr);
 
   switch (ast->type) {
     case AST_BINOP: return ast_binop_to_str(ast); break;
+    case AST_TERNARY: return ast_ternary_to_str(ast); break;
     case AST_UNOP: return ast_unop_to_str(ast); break;
     case AST_NAME: return ast_name_to_str(ast); break;
     case AST_NOOP: return ast_noop_to_str(ast); break;
@@ -361,7 +360,6 @@ char* ast_to_str(AST_T* ast)
     case AST_CALL: return ast_call_to_str(ast); break;
     case AST_OBJECT: return ast_object_to_str(ast); break;
     case AST_ASSIGNMENT: return ast_assignment_to_str(ast); break;
-    case AST_DEFINITION: return ast_definition_to_str(ast); break;
     case AST_TUPLE: return ast_tuple_to_str(ast); break;
     case AST_ARRAY: return ast_array_to_str(ast); break;
     case AST_STRING: return ast_string_to_str(ast); break;
@@ -483,16 +481,6 @@ if (ast->flags)
    free(ast->flags);
  }
 
-if (ast->es_exports)
- {
-   if (ast->es_exports->items)
-   {
-     free(ast->es_exports->items);
-   }
-
-   free(ast->es_exports);
- }
-  
   free(ast);
   ast = 0;
 }
@@ -532,21 +520,10 @@ list_T* ast_get_pointers(AST_T* ast)
 
 AST_T* ast_get_final_ptr(AST_T* ast)
 {
-  AST_T* ptr = 0;
-  list_T* pointers = ast_get_pointers(ast);
-
-  if (pointers && pointers->size)
-    ptr = (AST_T*) pointers->items[pointers->size-1];
-
-  if (pointers)
-  {
-    if (pointers->items)
-      free(pointers->items);
-
-    free(pointers);
-  }
-
-  return ptr;
+  if (!ast) return 0;
+  if (ast->value) return ast_get_final_ptr(ast->value);
+  if (ast->ptr) return ast_get_final_ptr(ast->ptr);
+  return ast;
 }
 
 AST_T* ast_search_pointer(AST_T* ast, int type)
@@ -584,7 +561,7 @@ unsigned int count_living_nodes(list_T* list)
   {
     AST_T* child = (AST_T*) list->items[i];
 
-    if (child->alive)
+    if (child->visited)
     {
       count += 1;
     }
@@ -595,7 +572,7 @@ unsigned int count_living_nodes(list_T* list)
 
 unsigned int ast_is_alive(AST_T* ast)
 {
-  return ast->alive != 0;
+  return ast->visited >= 1;
 }
 
 unsigned int ast_is_alive_filter(void* item)
@@ -607,6 +584,38 @@ list_T* get_living_nodes(list_T* list)
 {
   return list_filter(list, ast_is_alive_filter);
 }
+
+list_T* get_nodes_by_type(list_T* list, int type)
+{
+  list_T* new_list = init_list(sizeof(AST_T*));
+
+  for (unsigned int i = 0; i < list->size; i++)
+  {
+    AST_T* child = (AST_T*) list->items[i];
+    if (child->type == type)
+      list_push(new_list, child);
+  }
+
+  return new_list;
+}
+
+list_T* get_nodes_by_name(list_T* list, char* name)
+{
+  list_T* new_list = init_list(sizeof(AST_T*));
+  if (!name) return new_list;
+
+  for (unsigned int i = 0; i < list->size; i++)
+  {
+    AST_T* child = (AST_T*) list->items[i];
+    if (!child->name) continue;
+
+    if (strcmp(child->name, name) == 0)
+      list_push(new_list, child);
+  }
+
+  return new_list;
+}
+
 
 AST_T* most_right_value(AST_T* ast)
 {
@@ -621,4 +630,35 @@ AST_T* most_right_value(AST_T* ast)
   }
 
   return value;
+}
+
+unsigned int ast_chain_has_living(AST_T* ast)
+{
+  if (!ast) return 0;
+  if (ast->visited) return 1;
+  if (ast->next) return ast_chain_has_living(ast->next);
+
+  return 0;
+}
+
+list_T* ast_get_nexts(AST_T* ast)
+{
+  list_T* list = init_list(sizeof(AST_T*));
+
+  if (!ast) return list;
+  
+  AST_T* next = ast;
+
+  while (next && !ptr_in_list(list, next))
+  {
+    list_push_safe(list, next);
+
+    if (!next->next) break;
+
+    next = next->next;
+
+    if (!next) break;
+  }
+
+  return list;
 }

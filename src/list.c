@@ -128,3 +128,21 @@ list_T* list_filter(list_T* list, unsigned int (*filter_method)(void* item))
 
   return new_list;
 }
+
+list_T* list_merge(list_T* a, list_T* b)
+{
+  list_T* new_list = init_list(b->item_size ? b->item_size : a->item_size);
+
+  for (unsigned int i = 0; i < a->size; i++)
+    list_push(new_list, a->items[i]);
+
+  for (unsigned int i = 0; i < b->size; i++)
+    list_push(new_list, b->items[i]);
+
+  return new_list;
+}
+
+list_T* list_copy(list_T* a)
+{
+  return list_merge(init_list(a->item_size), a);
+}

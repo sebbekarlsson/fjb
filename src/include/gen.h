@@ -12,7 +12,6 @@ char* gen_float(AST_T* ast, GEN_FLAGS flags);
 char* gen_string(AST_T* ast, GEN_FLAGS flags);
 char* gen_arrow_definition(AST_T* ast, GEN_FLAGS flags);
 char* gen_assignment(AST_T* ast, GEN_FLAGS flags);
-char* gen_definition(AST_T* ast, GEN_FLAGS flags);
 char* gen_colon_assignment(AST_T* ast, GEN_FLAGS flags);
 char* gen_while(AST_T* ast, GEN_FLAGS flags);
 char* gen_for(AST_T* ast, GEN_FLAGS flags);

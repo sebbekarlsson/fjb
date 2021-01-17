@@ -13,6 +13,7 @@ extern gc_T* GC;
 AST_T* NOOP;
 
 list_T* defs;
+list_T* stack;
 
 compiler_result_T* fjb(GEN_FLAGS flags, char *source, list_T* refs, list_T* imports, unsigned int all)
 {
@@ -29,12 +30,10 @@ compiler_result_T* fjb(GEN_FLAGS flags, char *source, list_T* refs, list_T* impo
   AST_T* module = init_ast(AST_OBJECT);
   AST_T* exports = init_ast(AST_OBJECT);
 
-  exports->alive = 1;
-
   exports->name = strdup("exports");
-
+  
+  printf("/* Parsing...*/\n");
   AST_T* root = parser_parse(parser, options);
-  root->alive = 1;
 
   visitor_T* visitor = init_visitor(parser, flags[0], refs, imports, module, exports, all);
 
@@ -55,24 +54,26 @@ compiler_result_T* fjb(GEN_FLAGS flags, char *source, list_T* refs, list_T* impo
   gc_mark(GC, module);
 
   assignment->value = module;
-  module->alive = 1;
-
   module->list_value = init_list(sizeof(AST_T*));
   list_push(module->list_value, exports_assignment);
   
   list_T* args = init_list(sizeof(AST_T*));
   list_push(args, assignment);
 
-  assignment->alive = 1;
-
   gc_mark(GC, assignment);
 
   list_T* imported_symbols = init_list(sizeof(AST_T*));
   
-  list_T* stack = NEW_STACK;
-  root = visitor_visit(visitor, root, args, stack);
-  root->alive = 1;
+  if (!stack)
+    stack = NEW_STACK;
+  
+  list_push(stack, assignment);
 
+  printf("/* Visiting...*/\n");
+  root = visitor_visit(visitor, root, args, stack);
+
+  
+  printf("/* Generating...*/\n");
   printf("/*\n");
   printf("\n=======================\n%s\n", ast_to_str(exports));
   printf("*/\n");

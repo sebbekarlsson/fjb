@@ -26,17 +26,19 @@ AST_T* parser_parse_any(parser_T* parser, parser_options_T options);
 
 AST_T* parser_parse_call(parser_T* parser, parser_options_T options);
 
-AST_T* parser_parse_id(parser_T* parser, parser_options_T options, unsigned int with_assignment);
+AST_T* parser_parse_id(parser_T* parser, parser_options_T options);
 
 AST_T* parser_parse_expr(parser_T* parser, parser_options_T options);
 
-AST_T* parser_parse_assignment(parser_T* parser, parser_options_T options, AST_T* left);
+AST_T* parser_parse_assignment(parser_T* parser, parser_options_T options, AST_T* id);
 
 AST_T* parser_parse_compound(parser_T* parser, parser_options_T options);
 
 AST_T* parser_parse_statement(parser_T* parser, parser_options_T options);
 
 AST_T* parser_parse_statement_or_expr(parser_T* parser, parser_options_T options);
+
+AST_T* parser_parse_array(parser_T* parser, parser_options_T options);
 
 void parser_eat(parser_T* parser, int token_type);
 

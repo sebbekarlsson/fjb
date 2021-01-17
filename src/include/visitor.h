@@ -29,6 +29,8 @@ AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack
 
 AST_T* visitor_visit_compound(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack);
 
+AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack);
+
 void visitor_free(visitor_T* visitor);
 
 AST_T* get_pointer(AST_T* ptr, unsigned int body);

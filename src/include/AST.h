@@ -14,7 +14,7 @@ typedef struct FJB_AST_STRUCT {
     AST_HEX,
     AST_FLOAT,
     AST_ASSIGNMENT,
-    AST_DEFINITION,
+    //AST_DEFINITION,
     AST_COLON_ASSIGNMENT,
     AST_WHILE,
     AST_DO,
@@ -69,17 +69,18 @@ typedef struct FJB_AST_STRUCT {
   list_T* list_value;
   list_T* flags;
   list_T* es_exports;
+  list_T* stack_frame;
 
   unsigned int capsulated;
   unsigned int label;
   unsigned int lazy;
   unsigned int loose;
   unsigned int is_ref;
-  unsigned int alive;
   unsigned int exported;
   unsigned int from_call;
   unsigned int from_obj;
   unsigned int visited;
+  unsigned int generated;
   int line;
 
 } AST_T;
@@ -114,4 +115,12 @@ unsigned int ast_is_alive_filter(void* item);
 list_T* get_living_nodes(list_T* list);
 
 AST_T* most_right_value(AST_T* ast);
+
+unsigned int ast_chain_has_living(AST_T* ast);
+
+list_T* ast_get_nexts(AST_T* ast);
+
+list_T* get_nodes_by_type(list_T* list, int type);
+
+list_T* get_nodes_by_name(list_T* list, char* name);
 #endif

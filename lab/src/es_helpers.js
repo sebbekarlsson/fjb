@@ -1,5 +1,9 @@
 //const dot = 44;
 
+function shouldNotBeHere() {
+
+}
+
 export function bepa() {
  // console.log(dot);
   apa();
@@ -17,6 +21,10 @@ export function noop() {
 
 export function JohnDoe() {
   console.log("hello from John");
+}
+
+export const dotnet = function() {
+  bepa();
 }
 
 export const apa = function() {
