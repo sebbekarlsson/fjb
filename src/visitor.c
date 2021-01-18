@@ -205,6 +205,7 @@ static void assign(visitor_T* visitor, AST_T* left, AST_T* value, list_T* args, 
 
 AST_T* visitor_visit_assignment(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
+  //printf("%s\n", ast_to_str(ast));
   if (ast->left && ast->left->name) {
     AST_T* pending = find_in_args(ast->left->name, args);
 
@@ -375,8 +376,20 @@ AST_T* visitor_visit_object(visitor_T* visitor, AST_T* ast, list_T* args, list_T
 
 AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
+  unsigned int stack_before = stack->size;
+
   if (ast->list_value)
     ast->list_value = visit_array(visitor, ast->list_value, args, stack);
+
+  if (ast->list_value)
+  {
+    for (unsigned int i = 0; i < ast->list_value->size; i++)
+    {
+      AST_T* child = (AST_T*) ast->list_value->items[i];
+      list_push_safe(stack, child);
+    }
+  }
+
   if (ast->body)
     ast->body = visitor_visit(visitor, ast->body, args, stack);
 
@@ -412,6 +425,15 @@ AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* args, list
   else
   {
     ast->visited = 1;
+  }
+
+  unsigned int new_size = stack->size;
+
+  if (ast->name && new_size > stack_before) {
+    for (unsigned int i = new_size; i > stack_before; i--) {
+      AST_T* child = (AST_T*)stack->items[i];
+      list_remove(stack, child, 0);
+    }
   }
 
   return ast;
@@ -450,18 +472,18 @@ AST_T* visitor_visit_compound(visitor_T* visitor, AST_T* ast, list_T* args, list
 
   if (ast->parent) {
     ast->parent->visited = 1;
-  }
+  } 
+
+  ast->visited = 1;
 
   unsigned int new_size = stack->size;
 
-  if (ast->name && ast->parent && new_size > stack_before) {
+  if ((ast->name || (ast->parent && ast->parent->name)) && ast->parent && new_size > stack_before) {
     for (unsigned int i = new_size - 1; i > stack_before; i--) {
       AST_T* child = (AST_T*)stack->items[i];
       list_remove(stack, child, 0);
     }
   }
-
-  ast->visited = 1;
 
   return ast;
 }
@@ -480,18 +502,11 @@ AST_T* visitor_visit_ternary(visitor_T* visitor, AST_T* ast, list_T* args, list_
 
 AST_T* visitor_visit_name(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
-  if (!ast->ptr)
-    list_push_safe(args, ast);
-
   if (ast->left) {
     ast->left = visitor_visit(visitor, ast->left, args, stack);
   }
   if (ast->right) {
     ast->right = visitor_visit(visitor, ast->right, args, stack);
-  }
-
-  if (ast->next) {
-    ast->next = visitor_visit(visitor, ast->next, args, stack);
   }
 
   if (ast->flags)
@@ -515,16 +530,8 @@ AST_T* visitor_visit_name(visitor_T* visitor, AST_T* ast, list_T* args, list_T* 
     if (ast->ptr->type != AST_FUNCTION) {
       visitor_visit(visitor, ast->ptr, args, stack);
       ast->ptr->visited = 1;
-
-      if (ast->ptr->source_ast)
-        ast->ptr->source_ast->visited = 1;
     }
   } 
-
-  if (ast->ptr && ptr_in_list(args, ast))
-  {
-    list_remove(args, ast, 0);
-  }
 
   return ast;
 }
@@ -791,13 +798,7 @@ AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack
     } break;
   }
 
-//  if ((ast->type != AST_FUNCTION && ast->type != AST_ASSIGNMENT))
-    ast->visited = 1;
-
- /* if (ast->type == AST_BINOP && ast->right && !ast->right->visited)
-  {
-    ast->visited = 0;
-  }*/
+  ast->visited = 1;
 
   return ast;
 }

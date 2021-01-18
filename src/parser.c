@@ -199,7 +199,7 @@ AST_T* parser_parse_dot_notation(parser_T* parser, parser_options_T options, AST
     binop->token = token_clone(parser->token);
     parser_eat(parser, parser->token->type);
 
-    binop->right = parser_parse_expr(parser, options);
+    binop->right = parser_parse_term(parser, options);
 
     if (binop->right->name)
       binop->name = strdup(binop->right->name);
@@ -210,9 +210,6 @@ AST_T* parser_parse_dot_notation(parser_T* parser, parser_options_T options, AST
     left = binop;
   }
 
-  if (parser->token->type == TOKEN_EQUALS) {
-    return parser_parse_assignment(parser, options, left);
-  }
   return binop;
 }
 
@@ -669,7 +666,6 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
     expr->capsulated = 1;
     parser_eat(parser, TOKEN_RPAREN);
     left = expr;
-
     return left;
   }
 
@@ -685,7 +681,7 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
     gc_mark(GC, unop);
     left = unop;
     return left;
-  } 
+  }
 
   switch (parser->token->type) {
     case TOKEN_ID:
@@ -745,11 +741,6 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
     left = ast_arrow_def;
   } 
 
-  /*if (parser->token->type == TOKEN_QUESTION)
-  {
-    left = parser_parse_ternary(parser, options, left);
-  }*/
-
   while (parser->token->type == TOKEN_LPAREN) {
     AST_T* ast_call = parser_parse_call(parser, options);
     if (left && left->name) {
@@ -774,20 +765,9 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
     left->from_call = 1;
     ast_call->left = left;
     left = ast_call;
-  }
+  } 
 
-  if (parser->token->type == TOKEN_DECREMENT || parser->token->type == TOKEN_INCREMENT) {
-    AST_T* unop = init_ast_line(AST_UNOP, parser->lexer->line);
-    unop->left = left;
-    unop->token = token_clone(parser->token);
-    parser_eat(parser, parser->token->type);
-    gc_mark(GC, unop);
-    return unop;
-  }
-
-  if (parser->token->type == TOKEN_EQUALS) {
-    return parser_parse_assignment(parser, options, left);
-  }
+  
 
   return left;
 }
@@ -795,7 +775,7 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
 AST_T* parser_parse_term(parser_T* parser, parser_options_T options)
 {
   AST_T* left = parser_parse_factor(parser, options);
-  AST_T* binop = 0; 
+  AST_T* binop = 0;
 
   if (parser->token->type == TOKEN_INSTANCEOF) {
     binop = init_ast_line(AST_BINOP, parser->lexer->line);
@@ -821,19 +801,26 @@ AST_T* parser_parse_term(parser_T* parser, parser_options_T options)
     left = binop;
   } 
 
+  if (parser->token->type == TOKEN_DECREMENT || parser->token->type == TOKEN_INCREMENT) {
+    AST_T* unop = init_ast_line(AST_UNOP, parser->lexer->line);
+    unop->left = left;
+    unop->token = token_clone(parser->token);
+    parser_eat(parser, parser->token->type);
+    gc_mark(GC, unop);
+    left = unop;
+  }
+
   return left;
 }
 
 AST_T* parser_parse_expr(parser_T* parser, parser_options_T options)
 {
   AST_T* left = parser_parse_term(parser, options);
-  AST_T* binop = 0; 
+  AST_T* binop = 0;
 
-  AST_T* val = left;
-  while (val && parser->token->type == TOKEN_COMMA)
+  if(parser->token->type == TOKEN_DOT)
   {
-    parser_eat(parser, TOKEN_COMMA);
-    val->next = parser_parse_expr(parser, options);
+    left = parser_parse_dot_notation(parser, options, left);
   }
 
   while (parser->token->type == TOKEN_PLUS || parser->token->type == TOKEN_PLUS_EQUALS ||
@@ -869,12 +856,24 @@ AST_T* parser_parse_expr(parser_T* parser, parser_options_T options)
 
   if (parser->token->type == TOKEN_QUESTION)
   {
-    return parser_parse_ternary(parser, options, left);
-  }
+    left = parser_parse_ternary(parser, options, left);
+  } 
 
-   if(parser->token->type == TOKEN_DOT)
+  if (parser->token->type == TOKEN_COMMA)
   {
-    return parser_parse_dot_notation(parser, options, left);
+    AST_T* tuple = init_ast_line(AST_TUPLE, parser->lexer->line);
+    tuple->list_value = parse_tuple(parser, options);
+
+    if (tuple->list_value->size)
+      list_prefix(tuple->list_value, left);
+    else
+      list_push(tuple->list_value, left);
+
+    left = tuple;
+  } 
+
+  if (parser->token->type == TOKEN_EQUALS) {
+    return parser_parse_assignment(parser, options, left);
   }
 
   return left;

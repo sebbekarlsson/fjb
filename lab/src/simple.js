@@ -10,9 +10,10 @@
 //
 //
 //
+//
+const x = [ dot.call() + 4 ];
+obj.apa = 3;
+console.log(obj);
 
-var bepa;
-module.exports.x = 5;
-console.log(module.exports.x);
 
-//var x, y, z = 3;
+return obj.index - other.index;

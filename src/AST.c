@@ -522,7 +522,7 @@ AST_T* ast_get_final_ptr(AST_T* ast)
 {
   if (!ast) return 0;
   if (ast->value) return ast_get_final_ptr(ast->value);
-  if (ast->ptr) return ast_get_final_ptr(ast->ptr);
+  if (ast->ptr) return ast->ptr;
   return ast;
 }
 

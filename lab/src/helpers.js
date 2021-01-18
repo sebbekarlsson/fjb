@@ -21,6 +21,10 @@
 
 
   function z() {
+    if (3 >= 3)
+    {
+      console.log(x);
+    }
     return doit();
   }
 
