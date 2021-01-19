@@ -26,16 +26,57 @@ void list_push(list_T* list, void* item)
   list->items[list->size-1] = item;
 }
 
+void list_push_at(list_T* list, void* item, void* ptr)
+{
+  if (!list || !item || !ptr) return; 
+
+  list->size += 1;
+
+  if (!list->items)
+    list->items = calloc(1, list->item_size);
+  else
+    list->items = realloc(list->items, (list->size * list->item_size));
+
+
+  unsigned int c = 0;
+  for (unsigned int i = 0; i < list->size; i++)
+  {
+    if (list->items[i] == ptr)
+    {
+      c = i;
+      break;
+    }
+  }
+
+  list_shift_right(list, c-1);
+  list->items[c] = item;
+}
+
 void list_push_safe(list_T* list, void* item)
 {
   if (!ptr_in_list(list, item))
     list_push(list, item);
 }
 
+void list_push_safe_at(list_T* list, void* item, void* ptr)
+{
+  if (!list || !item || !ptr) return;
+
+  if (!ptr_in_list(list, item))
+    list_push_at(list, item, ptr);
+}
+
 void list_shift_left(list_T* list, int index)
 {
    for (int i = index; i < list->size - 1; i++)
        list->items[i] = list->items[i + 1];
+}
+void list_shift_right(list_T* list, int index)
+{
+  for (int i = list->size - 2; i > index; i--)
+  {
+    list->items[i + 1] = list->items[i];
+  }
 }
 
 void list_remove(list_T* list, void* element, void (*free_method)(void* item))
@@ -145,4 +186,14 @@ list_T* list_merge(list_T* a, list_T* b)
 list_T* list_copy(list_T* a)
 {
   return list_merge(init_list(a->item_size), a);
+}
+
+void list_clear(list_T* list)
+{
+  if (list->size && list->items)
+  {
+    free(list->items);
+    list->size = 0;
+    list->items = 0;
+  }
 }

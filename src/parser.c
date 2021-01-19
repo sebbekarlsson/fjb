@@ -204,8 +204,6 @@ AST_T* parser_parse_dot_notation(parser_T* parser, parser_options_T options, AST
     if (binop->right->name)
       binop->name = strdup(binop->right->name);
 
-    binop->right->from_obj = 1;
-
     gc_mark(GC, binop);
     left = binop;
   }
@@ -243,7 +241,6 @@ AST_T* parser_parse_id(parser_T* parser, parser_options_T options)
 {
   AST_T* ast = init_ast_line(AST_NAME, parser->lexer->line);
   ast->parent = options.parent;
-  ast->is_ref = 1;
   ast->string_value = strdup(parser->token->value);
   ast->name = strdup(ast->string_value);
   ast->from_module = strdup(parser->filepath);
@@ -363,7 +360,13 @@ AST_T* parser_parse_definition(parser_T* parser, parser_options_T options)
 AST_T* parser_parse_assignment(parser_T* parser, parser_options_T options, AST_T* id)
 {
   AST_T* ast = init_ast_line(AST_ASSIGNMENT, parser->lexer->line);
+  ast->parent = options.parent;
   ast->left = id;
+
+  if (ast->left && ast->left->name)
+  {
+    ast->name = strdup(ast->left->name);
+  }
 
   AST_T* val = ast->left;
   while (val && parser->token->type == TOKEN_COMMA)
@@ -394,10 +397,6 @@ AST_T* parser_parse_state(parser_T* parser, parser_options_T options)
 
   if (parser->token->type != TOKEN_SEMI)
     ast->value = parser_parse_expr(parser, options);
-
-  if (strcmp(ast->name, "export") == 0 && ast->value) {
-    ast->value->exported = 1;
-  }
 
   gc_mark(GC, ast);
 
@@ -746,7 +745,6 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
     if (left && left->name) {
       ast_call->name = strdup(left->name);
     }
-    left->from_call = 1;
     ast_call->left = left;
     left = ast_call;
   }
@@ -762,7 +760,6 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
     if (left && left->name) {
       ast_call->name = strdup(left->name);
     }
-    left->from_call = 1;
     ast_call->left = left;
     left = ast_call;
   } 
@@ -981,7 +978,6 @@ AST_T* parser_parse_compound(parser_T* parser, parser_options_T options)
 AST_T* parser_parse_call(parser_T* parser, parser_options_T options)
 {
   AST_T* ast_call = init_ast_line(AST_CALL, parser->lexer->line);
-  ast_call->is_ref = 1;
 
   ast_call->list_value = parse_args(parser, options);
   ast_call->from_module = strdup(parser->filepath);

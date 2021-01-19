@@ -72,15 +72,8 @@ typedef struct FJB_AST_STRUCT {
   list_T* stack_frame;
 
   unsigned int capsulated;
-  unsigned int label;
   unsigned int lazy;
-  unsigned int loose;
-  unsigned int is_ref;
-  unsigned int exported;
-  unsigned int from_call;
-  unsigned int from_obj;
-  unsigned int visited;
-  unsigned int generated;
+  unsigned int saved;
   int line;
 
 } AST_T;
@@ -98,29 +91,18 @@ char* ast_binop_to_str(AST_T* ast);
 
 list_T* ast_get_pointers(AST_T* ast);
 
+AST_T* get_node_by_name(list_T* list, char* name);
+
 AST_T* ast_search_pointer(AST_T* ast, int type);
 
 void list_free(gc_T* gc, list_T* list);
 
 void ast_free(AST_T* ast);
 
-AST_T* ast_get_final_ptr(AST_T* ast);
+#define LOOP_NODES(list, C, NAME, WHAT)\
+  for (unsigned int C = 0; C < list->size; C++) {\
+    AST_T* NAME = (AST_T*) list->items[C];\
+    WHAT;\
+  }\
 
-unsigned int count_living_nodes(list_T* list);
-
-unsigned int ast_is_alive(AST_T* ast);
-
-unsigned int ast_is_alive_filter(void* item);
-
-list_T* get_living_nodes(list_T* list);
-
-AST_T* most_right_value(AST_T* ast);
-
-unsigned int ast_chain_has_living(AST_T* ast);
-
-list_T* ast_get_nexts(AST_T* ast);
-
-list_T* get_nodes_by_type(list_T* list, int type);
-
-list_T* get_nodes_by_name(list_T* list, char* name);
 #endif

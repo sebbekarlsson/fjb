@@ -12,5 +12,5 @@ typedef struct FJB_COMPILER_RESULT
 
 void compiler_result_free(compiler_result_T* result);
 
-compiler_result_T* fjb(GEN_FLAGS flags, char *source, list_T* refs, list_T* imports, unsigned int all);
+compiler_result_T* fjb(GEN_FLAGS flags, char *source, list_T* imports);
 #endif

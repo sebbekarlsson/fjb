@@ -13,9 +13,15 @@ list_T* init_list(size_t item_size);
 
 void list_push(list_T* list, void* item);
 
+void list_push_at(list_T* list, void* item, void* ptr);
+
 void list_push_safe(list_T* list, void* item);
 
+void list_push_safe_at(list_T* list, void* item, void* ptr);
+
 void list_shift_left(list_T* list, int index);
+
+void list_shift_right(list_T* list, int index);
 
 void list_remove(list_T* list, void* element, void (*free_method)(void* item));
 
@@ -30,5 +36,7 @@ list_T* list_filter(list_T* list, unsigned int (*filter_method)(void* item));
 list_T* list_merge(list_T* a, list_T* b);
 
 list_T* list_copy(list_T* a);
+
+void list_clear(list_T* list);
 #endif
 

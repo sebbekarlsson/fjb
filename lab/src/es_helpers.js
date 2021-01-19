@@ -1,32 +1,32 @@
-//const dot = 44;
+const bepa = 33;
+const iShoudlNotBeeSeen = {};
 
-function shouldNotBeHere() {
+function dontShowMe() {
 
 }
 
-export function bepa() {
- // console.log(dot);
-  apa();
-  console.log("hello from bepa");
+export function interestingFunction(x, y) {
+  return x * aDependencyFunction(y);
 }
 
-export function z() {
-  console.log("hello from z");
-  bepa();
+export function notSoInterestingFunction(x, y) {
+  return x - y;
 }
 
-export function noop() {
-  console.log("hello from noop");
+export function thisShouldNotBeHere() {
+
 }
 
-export function JohnDoe() {
-  console.log("hello from John");
+export function aDependencyFunction(x) {
+  return anotherDependency(x) * 2;
 }
 
-export const dotnet = function() {
-  bepa();
+export function anotherDependency(y)
+{
+  return y + nonExportedDependency(1);
 }
 
-export const apa = function() {
-  console.log(1);
+function nonExportedDependency(k)
+{
+  return k * bepa;
 }

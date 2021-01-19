@@ -12,18 +12,17 @@
 typedef struct FJB_VISITOR_STRUCT {
   parser_T* parser;
   const char* filepath;
-  list_T* refs;
   list_T* imports;
   list_T* es_exports;
-  list_T* log;
   AST_T* module;
   AST_T* exports;
-  unsigned int all;
+  AST_T* new_compound;
+  list_T* pre_loaded_symbols;
 } visitor_T;
 
 #define NEW_STACK init_list(sizeof(AST_T*))
 
-visitor_T* init_visitor(parser_T* parser, const char* filepath, list_T* refs, list_T* imports, AST_T* module, AST_T* exports, unsigned int all);
+visitor_T* init_visitor(parser_T* parser, const char* filepath, list_T* imports, AST_T* module, AST_T* exports);
 
 AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack);
 

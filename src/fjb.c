@@ -5,6 +5,7 @@
 #include "include/io.h"
 #include "include/gen.h"
 #include "include/gc.h"
+#include "include/resolve.h"
 #include "include/string_utils.h"
 #include <string.h>
 #include <stdio.h>
@@ -15,7 +16,7 @@ AST_T* NOOP;
 list_T* defs;
 list_T* stack;
 
-compiler_result_T* fjb(GEN_FLAGS flags, char *source, list_T* refs, list_T* imports, unsigned int all)
+compiler_result_T* fjb(GEN_FLAGS flags, char *source, list_T* imports)
 {
   if (!defs) defs = init_list(sizeof(AST_T*));
 
@@ -35,7 +36,16 @@ compiler_result_T* fjb(GEN_FLAGS flags, char *source, list_T* refs, list_T* impo
   printf("/* Parsing...*/\n");
   AST_T* root = parser_parse(parser, options);
 
-  visitor_T* visitor = init_visitor(parser, flags[0], refs, imports, module, exports, all);
+  visitor_T* visitor = init_visitor(parser, flags[0], imports, module, exports);
+  visitor->pre_loaded_symbols = NEW_STACK;
+
+  for (unsigned int i = 0; i < imports->size; i++)
+  {
+    AST_T* child = (AST_T*) imports->items[i];
+    AST_T* symbol = resolve(root, child->name ? child->name : child->string_value);
+
+    if (symbol) list_push_safe(visitor->pre_loaded_symbols, symbol);
+  }
 
   AST_T* assignment = init_ast(AST_ASSIGNMENT);
   assignment->name = strdup("module");
@@ -72,17 +82,18 @@ compiler_result_T* fjb(GEN_FLAGS flags, char *source, list_T* refs, list_T* impo
   printf("/* Visiting...*/\n");
   root = visitor_visit(visitor, root, args, stack);
 
-  
   printf("/* Generating...*/\n");
   printf("/*\n");
   printf("\n=======================\n%s\n", ast_to_str(exports));
   printf("*/\n");
+  
+  AST_T* root_to_generate = visitor->imports->size ? visitor->new_compound : root;
 
   char* str = 0;
   str = str_append(&str, "/* IMPORTED FROM `");
   str = str_append(&str, flags[0]);
   str = str_append(&str, "` */\n");
-  char* out = gen(root, flags);
+  char* out = gen(root_to_generate, flags);
   str = str_append(&str, out);
   free(out);
 

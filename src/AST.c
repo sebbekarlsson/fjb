@@ -553,112 +553,20 @@ AST_T* ast_search_pointer(AST_T* ast, int type)
   return ptr;
 }
 
-unsigned int count_living_nodes(list_T* list)
+AST_T* get_node_by_name(list_T* list, char* name)
 {
-  unsigned int count = 0;
-
-  for (unsigned int i = 0; i < list->size; i++)
-  {
-    AST_T* child = (AST_T*) list->items[i];
-
-    if (child->visited)
+  LOOP_NODES(
+    list,
+    i,
+    child,
     {
-      count += 1;
+      if (!child->name)
+        continue;
+
+      if (strcmp(child->name, name) == 0)
+        return child; 
     }
-  }
-
-  return count;
-}
-
-unsigned int ast_is_alive(AST_T* ast)
-{
-  return ast->visited >= 1;
-}
-
-unsigned int ast_is_alive_filter(void* item)
-{
-  return ast_is_alive((AST_T*) item);
-}
-
-list_T* get_living_nodes(list_T* list)
-{
-  return list_filter(list, ast_is_alive_filter);
-}
-
-list_T* get_nodes_by_type(list_T* list, int type)
-{
-  list_T* new_list = init_list(sizeof(AST_T*));
-
-  for (unsigned int i = 0; i < list->size; i++)
-  {
-    AST_T* child = (AST_T*) list->items[i];
-    if (child->type == type)
-      list_push(new_list, child);
-  }
-
-  return new_list;
-}
-
-list_T* get_nodes_by_name(list_T* list, char* name)
-{
-  list_T* new_list = init_list(sizeof(AST_T*));
-  if (!name) return new_list;
-
-  for (unsigned int i = 0; i < list->size; i++)
-  {
-    AST_T* child = (AST_T*) list->items[i];
-    if (!child->name) continue;
-
-    if (strcmp(child->name, name) == 0)
-      list_push(new_list, child);
-  }
-
-  return new_list;
-}
-
-
-AST_T* most_right_value(AST_T* ast)
-{
-  AST_T* value = ast->value;
-  
-  if (value && value->value)
-  {
-    while (value->value)
-    {
-      value = value->value;
-    }
-  }
-
-  return value;
-}
-
-unsigned int ast_chain_has_living(AST_T* ast)
-{
-  if (!ast) return 0;
-  if (ast->visited) return 1;
-  if (ast->next) return ast_chain_has_living(ast->next);
+ );
 
   return 0;
-}
-
-list_T* ast_get_nexts(AST_T* ast)
-{
-  list_T* list = init_list(sizeof(AST_T*));
-
-  if (!ast) return list;
-  
-  AST_T* next = ast;
-
-  while (next && !ptr_in_list(list, next))
-  {
-    list_push_safe(list, next);
-
-    if (!next->next) break;
-
-    next = next->next;
-
-    if (!next) break;
-  }
-
-  return list;
 }
