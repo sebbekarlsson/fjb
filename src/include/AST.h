@@ -74,7 +74,10 @@ typedef struct FJB_AST_STRUCT {
   unsigned int capsulated;
   unsigned int lazy;
   unsigned int saved;
+  unsigned int from_obj;
   int line;
+
+  list_T* parent_lists;
 
 } AST_T;
 
@@ -84,6 +87,10 @@ AST_T* init_ast(int type);
 AST_T* init_ast_line(int type, int line);
 
 AST_T* init_assignment(char* name, AST_T* value);
+
+void ast_init_parent_lists(AST_T* ast);
+
+unsigned int ast_is_in_list(AST_T* ast, list_T* list);
 
 char* ast_to_str(AST_T* ast);
 
@@ -99,10 +106,12 @@ void list_free(gc_T* gc, list_T* list);
 
 void ast_free(AST_T* ast);
 
+#define NEW_STACK init_list(sizeof(AST_T*))
+
 #define LOOP_NODES(list, C, NAME, WHAT)\
   for (unsigned int C = 0; C < list->size; C++) {\
     AST_T* NAME = (AST_T*) list->items[C];\
     WHAT;\
-  }\
+  }
 
 #endif

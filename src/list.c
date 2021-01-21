@@ -4,6 +4,9 @@
 #define MAX(a, b)\
   a > b ? a : b
 
+#define MIN(a, b)\
+  a < b ? a : b
+
 list_T* init_list(size_t item_size)
 {
   list_T* list = calloc(1, sizeof(struct LIST_STRUCT));
@@ -28,7 +31,9 @@ void list_push(list_T* list, void* item)
 
 void list_push_at(list_T* list, void* item, void* ptr)
 {
-  if (!list || !item || !ptr) return; 
+  if (!list || !item) return;
+
+  if (!ptr_in_list(list, ptr)) return list_prefix(list, item);
 
   list->size += 1;
 
@@ -48,7 +53,7 @@ void list_push_at(list_T* list, void* item, void* ptr)
     }
   }
 
-  list_shift_right(list, c-1);
+  list_shift_right(list, c);
   list->items[c] = item;
 }
 
@@ -60,8 +65,8 @@ void list_push_safe(list_T* list, void* item)
 
 void list_push_safe_at(list_T* list, void* item, void* ptr)
 {
-  if (!list || !item || !ptr) return;
-
+  if (!list || !item) return;
+  
   if (!ptr_in_list(list, item))
     list_push_at(list, item, ptr);
 }
@@ -71,11 +76,13 @@ void list_shift_left(list_T* list, int index)
    for (int i = index; i < list->size - 1; i++)
        list->items[i] = list->items[i + 1];
 }
+
 void list_shift_right(list_T* list, int index)
 {
-  for (int i = list->size - 2; i > index; i--)
+  for (int i = list->size-1; i >= index; i--)
   {
-    list->items[i + 1] = list->items[i];
+    list->items[MIN(list->size - 1, i + 1)] = list->items[i];
+    list->items[i] = 0;
   }
 }
 
@@ -113,6 +120,7 @@ void list_remove(list_T* list, void* element, void (*free_method)(void* item))
 void list_prefix(list_T* list, void* item)
 {
   if (!list) return;
+  if (!list->size) return list_push(list, item);
 
   list->size += 1;
 
@@ -121,10 +129,7 @@ void list_prefix(list_T* list, void* item)
   else
     list->items = realloc(list->items, (list->size * list->item_size));
 
-  for (unsigned int i = 0; i < list->size-1; i++)
-  {
-    list->items[i+1] = list->items[i];
-  }
+  list_shift_right(list, 0);
   list->items[0] = item;
 }
 
@@ -144,6 +149,8 @@ int list_indexof_str(list_T* list, char* item)
 
 unsigned int ptr_in_list(list_T* list, void* ptr)
 {
+  if (!list) return 0;
+
   for (unsigned int i = 0; i < list->size; i++)
   {
     if(ptr == list->items[i])

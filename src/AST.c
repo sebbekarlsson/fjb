@@ -28,6 +28,18 @@ AST_T* init_ast_line(int type, int line)
   return ast;
 }
 
+void ast_init_parent_lists(AST_T* ast)
+{
+  if (!ast->parent_lists) ast->parent_lists = NEW_STACK;
+}
+
+unsigned int ast_is_in_list(AST_T* ast, list_T* list)
+{
+  if (!ast->parent_lists) return ptr_in_list(list, ast);
+
+  return ptr_in_list(ast->parent_lists, list);
+}
+
 char* ast_binop_to_str(AST_T* ast)
 {
   char* left = ast_to_str(ast->left);

@@ -13,108 +13,6 @@
 extern gc_T* GC;
 extern list_T* defs;
 
-#define IN_IMPORTS(ast)                                                                            \
-  (visitor->imports->size == 0 ? 1 : ((ast->name && find_in_args(ast->name, visitor->imports)) || ptr_in_list(visitor->imports, ast)))
-
-
-#define SAVE(ast){\
-    ast->saved = 1;\
-    list_push_safe(visitor->new_compound->list_value, ast);\
-  }
-
-
-#define SAVE_BEFORE(ast, ptr){\
-    ast->saved = 1;\
-    list_push_safe_at(visitor->new_compound->list_value, ast, ptr);\
-  }
-
-
-#define TRY_SAVE(ast){\
-  if (ast->name && ast->parent && (ast->parent->saved || (ast->parent->parent && ast->parent->parent->saved)))\
-  {\
-    AST_T* ptr = find_in_args(ast->name, stack);\
-    if (ptr)\
-    {\
-      SAVE_BEFORE(ptr, ast->parent);\
-    }\
-  }\
-  }
-
-static void add_to_stack(AST_T* ast, list_T* stack)
-{
-  if (stack && ast)
-  {
-    list_push_safe(stack, ast);
-    ast->stack_frame = list_copy(stack);
-  }
-}
-
-static AST_T* find_in_args(char* name, list_T* args)
-{
-  if (!name) {
-    return 0;
-  }
-
-  for (unsigned int i = 0; i < args->size; i++) {
-    AST_T* child = (AST_T*)args->items[i];
-
-    if (!child)
-      continue;
-
-    if (!child->name) {
-      continue;
-    }
-
-    if (child->name) {
-      if (strcmp(child->name, name) == 0)
-        return child;
-    }
-  }
-
-  return 0;
-}
-
-static unsigned int is_a_dependency(visitor_T* visitor, AST_T* ast)
-{
-  if (!ast->name) return 0;
-
-  LOOP_NODES(visitor->pre_loaded_symbols, i, child,
-    if (resolve(child, ast->name)) return 1;    
-  );
-
-  //AST_T* resolved = resolve(visitor->new_compound, ast->name);
-  return 0;
-  //return resolved != 0;
-}
-
-static AST_T* find_in_args_by_type(char* name, int type, list_T* args)
-{
-  if (!name) {
-    return 0;
-  }
-
-  for (unsigned int i = 0; i < args->size; i++) {
-    AST_T* child = (AST_T*)args->items[i];
-
-    if (!child)
-      continue;
-
-    if (child->type != type)
-      continue;
-
-    if (!child->name) {
-      continue;
-    }
-
-    if (child->name) {
-      if (strcmp(child->name, name) == 0)
-        return child;
-    }
-  }
-
-  return 0;
-}
-
 visitor_T* init_visitor(parser_T* parser, const char* filepath, list_T* imports,
                         AST_T* module, AST_T* exports)
 {
@@ -125,8 +23,6 @@ visitor_T* init_visitor(parser_T* parser, const char* filepath, list_T* imports,
   visitor->es_exports = init_list(sizeof(AST_T*));
   visitor->module = module;
   visitor->exports = exports;
-  visitor->new_compound = init_ast(AST_COMPOUND);
-  visitor->new_compound->list_value = NEW_STACK;
 
   return visitor;
 }
@@ -190,7 +86,7 @@ AST_T* visitor_visit_import(visitor_T* visitor, AST_T* ast, list_T* args, list_T
 }
 
 AST_T* visitor_visit_assignment(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
-{
+{ 
   if (ast->flags)
     ast->flags = visit_array(visitor, ast->flags, args, stack);
   if (ast->left)
@@ -203,24 +99,13 @@ AST_T* visitor_visit_assignment(visitor_T* visitor, AST_T* ast, list_T* args, li
   if (!ast->name && ast->left && ast->left->name)
     ast->name = strdup(ast->left->name);
 
-  add_to_stack(ast, stack);
-
-  if (ast->name && (IN_IMPORTS(ast) || is_a_dependency(visitor, ast)) && ast->flags)
-  {
-    SAVE(ast);
-  }
-
   return ast;
 }
 
 AST_T* visitor_visit_state(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack)
 {
   if (strcmp(ast->name, "export") == 0 && ast->value) {
-
-    if (ast->value->name && (IN_IMPORTS(ast->value) || is_a_dependency(visitor, ast->value)))
-    {
       list_push_safe(visitor->es_exports, ast->value);
-    }
   }
 
   if (ast->value)
@@ -259,7 +144,7 @@ AST_T* visitor_visit_condition(visitor_T* visitor, AST_T* ast, list_T* args, lis
     ast->expr = visitor_visit(visitor, ast->expr, args, stack);
   if (ast->list_value)
     ast->list_value = visit_array(visitor, ast->list_value, args, stack);
-
+   
   return ast;
 }
 
@@ -275,7 +160,7 @@ AST_T* visitor_visit_do(visitor_T* visitor, AST_T* ast, list_T* args, list_T* st
     ast->expr = visitor_visit(visitor, ast->expr, args, stack);
   if (ast->list_value)
     ast->list_value = visit_array(visitor, ast->list_value, args, stack);
-
+  
   return ast;
 }
 
@@ -291,7 +176,7 @@ AST_T* visitor_visit_while(visitor_T* visitor, AST_T* ast, list_T* args, list_T*
     ast->expr = visitor_visit(visitor, ast->expr, args, stack);
   if (ast->list_value)
     ast->list_value = visit_array(visitor, ast->list_value, args, stack);
-
+  
   return ast;
 }
 
@@ -307,7 +192,7 @@ AST_T* visitor_visit_for(visitor_T* visitor, AST_T* ast, list_T* args, list_T* s
     ast->expr = visitor_visit(visitor, ast->expr, args, stack);
   if (ast->list_value)
     ast->list_value = visit_array(visitor, ast->list_value, args, stack);
-
+  
   return ast;
 }
 
@@ -323,7 +208,7 @@ AST_T* visitor_visit_switch(visitor_T* visitor, AST_T* ast, list_T* args, list_T
     ast->expr = visitor_visit(visitor, ast->expr, args, stack);
   if (ast->list_value)
     ast->list_value = visit_array(visitor, ast->list_value, args, stack);
-
+  
   return ast;
 }
 
@@ -335,7 +220,7 @@ AST_T* visitor_visit_array(visitor_T* visitor, AST_T* ast, list_T* args, list_T*
     ast->right = visitor_visit(visitor, ast->right, args, stack);
   if (ast->list_value)
     ast->list_value = visit_array(visitor, ast->list_value, args, stack);
-
+  
   return ast;
 }
 
@@ -364,13 +249,7 @@ AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* args, list
     for (unsigned int i = 0; i < ast->list_value->size; i++)
     {
       AST_T* child = (AST_T*) ast->list_value->items[i];
-      add_to_stack(child, stack);
     }
-  }
-
-  if (ast->name && (IN_IMPORTS(ast) || is_a_dependency(visitor, ast)))
-  {
-    SAVE(ast);
   }
 
   if (ast->body)
@@ -379,15 +258,13 @@ AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* args, list
   unsigned int new_size = stack->size;
 
   if (ast->name && new_size > stack_before) {
-    for (unsigned int i = new_size; i > stack_before; i--) {
+    for (unsigned int i = new_size-1; i > stack_before; i--) {
       AST_T* child = (AST_T*)stack->items[i];
+      if (!child) continue;
+
       list_remove(stack, child, 0);
     }
   }
-
-  if (ast->name) {
-    add_to_stack(ast, stack);
-  } 
 
   return ast;
 }
@@ -429,7 +306,7 @@ AST_T* visitor_visit_ternary(visitor_T* visitor, AST_T* ast, list_T* args, list_
     ast->right = visitor_visit(visitor, ast->right, args, stack);
   if (ast->value)
     ast->value = visitor_visit(visitor, ast->value, args, stack);
-
+  
   return ast;
 }
 
@@ -447,15 +324,6 @@ AST_T* visitor_visit_name(visitor_T* visitor, AST_T* ast, list_T* args, list_T* 
   if (ast->list_value)
     ast->list_value = visit_array(visitor, ast->list_value, args, stack);
 
-  if (ast->name && ast->parent && (ast->parent->saved || !ast->parent->name))
-  {
-    AST_T* ptr = find_in_args(ast->name, stack);
-    if (ptr && (ptr->type == AST_ASSIGNMENT))
-    {
-      SAVE(ptr);
-    }
-  }
-  
   return ast;
 }
 
@@ -487,7 +355,7 @@ AST_T* visitor_visit_colon_assignment(visitor_T* visitor, AST_T* ast, list_T* ar
     ast->label_value = visitor_visit(visitor, ast->label_value, args, stack);
   if (ast->expr)
     ast->expr = visitor_visit(visitor, ast->expr, args, stack);
-
+  
   return ast;
 }
 
@@ -497,7 +365,7 @@ AST_T* visitor_visit_increment(visitor_T* visitor, AST_T* ast, list_T* args, lis
     ast->left = visitor_visit(visitor, ast->left, args, stack);
   if (ast->right)
     ast->right = visitor_visit(visitor, ast->right, args, stack);
-
+  
   return ast;
 }
 
@@ -507,7 +375,7 @@ AST_T* visitor_visit_decrement(visitor_T* visitor, AST_T* ast, list_T* args, lis
     ast->left = visitor_visit(visitor, ast->left, args, stack);
   if (ast->right)
     ast->right = visitor_visit(visitor, ast->right, args, stack);
-
+  
   return ast;
 }
 
@@ -553,6 +421,7 @@ AST_T* visitor_visit_call(visitor_T* visitor, AST_T* ast, list_T* args, list_T* 
     }
   }
 
+
   list_push_safe(stack, ast);
   
   return ast;
@@ -565,11 +434,6 @@ AST_T* visitor_visit_binop(visitor_T* visitor, AST_T* ast, list_T* args, list_T*
 
   if (ast->right)
     ast->right = visitor_visit(visitor, ast->right, args, stack);
-
-  if (!ast->name && ast->right && ast->right->name)
-  {
-    ast->name = strdup(ast->right->name);
-  }
 
   return ast;
 }
@@ -613,22 +477,6 @@ AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack
     exit(1);
   }
 
-  AST_T* parent = ast->parent;
-  while (ast->name && parent)
-  {
-    if (parent->type == AST_COMPOUND || parent->type == AST_FUNCTION)
-    {
-      AST_T* symbol = resolve(parent, ast->name);
-
-      if (symbol && symbol->name && !resolve(ast->parent, symbol->name))
-      {
-        SAVE_BEFORE(symbol, ast->parent);
-        break;
-      }
-    }
-
-    parent = parent->parent;
-  } 
 
   switch (ast->type) {
     case AST_ARRAY: ast = visitor_visit_array(visitor, ast, args, stack); break;
@@ -668,8 +516,8 @@ AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack
     case AST_TUPLE: ast = visitor_visit_tuple(visitor, ast, args, stack); break;
     default: {
     } break;
-  }
-  
+  } 
+
   if (ast->next) visitor_visit(visitor, ast->next, args, stack);
 
   return ast;

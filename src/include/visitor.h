@@ -16,11 +16,8 @@ typedef struct FJB_VISITOR_STRUCT {
   list_T* es_exports;
   AST_T* module;
   AST_T* exports;
-  AST_T* new_compound;
   list_T* pre_loaded_symbols;
 } visitor_T;
-
-#define NEW_STACK init_list(sizeof(AST_T*))
 
 visitor_T* init_visitor(parser_T* parser, const char* filepath, list_T* imports, AST_T* module, AST_T* exports);
 

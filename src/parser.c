@@ -147,6 +147,7 @@ static AST_T* parse_block_linked_list(parser_T* parser,
   for (unsigned int i = 0; i < length; i++) {
     if (parser->token->type == types[i]) {
       left = init_ast_line(AST_TRY, parser->lexer->line);
+      left->parent = options.parent;
       left->token = token_clone(parser->token);
       parser_eat(parser, parser->token->type);
 
@@ -176,6 +177,7 @@ AST_T* parser_parse_gate(parser_T* parser, parser_options_T options, AST_T* left
 
   while (parser->token->type == TOKEN_AND_AND) {
     binop = init_ast_line(AST_BINOP, parser->lexer->line);
+    binop->parent = options.parent;
     binop->left = left;
     binop->token = token_clone(parser->token);
     parser_eat(parser, parser->token->type);
@@ -195,14 +197,18 @@ AST_T* parser_parse_dot_notation(parser_T* parser, parser_options_T options, AST
 
   while (parser->token->type == TOKEN_DOT) {
     binop = init_ast_line(AST_BINOP, parser->lexer->line);
+    binop->parent = options.parent;
     binop->left = left;
     binop->token = token_clone(parser->token);
     parser_eat(parser, parser->token->type);
 
     binop->right = parser_parse_term(parser, options);
 
-    if (binop->right->name)
-      binop->name = strdup(binop->right->name);
+    if (binop->left->name)
+      binop->name = strdup(binop->left->name);
+
+    if (left) left->from_obj = 1;
+    if (binop->right) binop->right->from_obj = 1;
 
     gc_mark(GC, binop);
     left = binop;
@@ -216,6 +222,7 @@ AST_T* parser_parse_ternary(parser_T* parser, parser_options_T options, AST_T* l
   while (parser->token->type == TOKEN_QUESTION) {
     parser_eat(parser, TOKEN_QUESTION);
     AST_T* ast_tern = init_ast_line(AST_TERNARY, parser->lexer->line);
+    ast_tern->parent = options.parent;
     ast_tern->left = left;
 
     ast_tern->value = parser_parse_expr(parser, options);
@@ -545,6 +552,7 @@ AST_T* parser_parse_switch(parser_T* parser, parser_options_T options)
 AST_T* parser_parse_array(parser_T* parser, parser_options_T options)
 {
   AST_T* ast = init_ast_line(AST_ARRAY, parser->lexer->line);
+  ast->parent = options.parent; 
   ast->list_value = parse_array(parser, options);
   ast->from_module = strdup(parser->filepath);
 
@@ -568,6 +576,7 @@ AST_T* parser_parse_object(parser_T* parser, parser_options_T options)
 {
   AST_T* ast = init_ast_line(AST_OBJECT, parser->lexer->line);
   ast->list_value = init_list(sizeof(token_T*));
+  options.parent = ast;
 
   unsigned int is_object = 0;
   parser_eat(parser, TOKEN_LBRACE);
@@ -665,6 +674,17 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
     expr->capsulated = 1;
     parser_eat(parser, TOKEN_RPAREN);
     left = expr;
+    
+    while (parser->token->type == TOKEN_LPAREN) {
+      AST_T* ast_call = parser_parse_call(parser, options);
+      ast_call->parent = options.parent;
+      if (left && left->name) {
+        ast_call->name = strdup(left->name);
+      }
+      ast_call->left = left;
+      left = ast_call;
+    }
+
     return left;
   }
 
@@ -742,6 +762,7 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
 
   while (parser->token->type == TOKEN_LPAREN) {
     AST_T* ast_call = parser_parse_call(parser, options);
+    ast_call->parent = options.parent;
     if (left && left->name) {
       ast_call->name = strdup(left->name);
     }
@@ -751,12 +772,14 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
 
    while (parser->token->type == TOKEN_LBRACKET) {
     AST_T* ast_arr = parser_parse_array(parser, options);
+    ast_arr->parent = options.parent;
     ast_arr->left = left;
     left = ast_arr;
   }
 
    while (parser->token->type == TOKEN_LPAREN) {
     AST_T* ast_call = parser_parse_call(parser, options);
+    ast_call->parent = options.parent;
     if (left && left->name) {
       ast_call->name = strdup(left->name);
     }
@@ -776,6 +799,7 @@ AST_T* parser_parse_term(parser_T* parser, parser_options_T options)
 
   if (parser->token->type == TOKEN_INSTANCEOF) {
     binop = init_ast_line(AST_BINOP, parser->lexer->line);
+    binop->parent = options.parent;
     binop->left = left;
     binop->token = token_clone(parser->token);
     parser_eat(parser, parser->token->type);
@@ -787,6 +811,7 @@ AST_T* parser_parse_term(parser_T* parser, parser_options_T options)
 
   while (parser->token->type == TOKEN_DIV || parser->token->type == TOKEN_STAR || parser->token->type == TOKEN_MINUS) {
     binop = init_ast_line(AST_BINOP, parser->lexer->line);
+    binop->parent = options.parent;
     binop->left = left;
 
     binop->token = token_clone(parser->token);
@@ -800,6 +825,7 @@ AST_T* parser_parse_term(parser_T* parser, parser_options_T options)
 
   if (parser->token->type == TOKEN_DECREMENT || parser->token->type == TOKEN_INCREMENT) {
     AST_T* unop = init_ast_line(AST_UNOP, parser->lexer->line);
+    unop->parent = options.parent;
     unop->left = left;
     unop->token = token_clone(parser->token);
     parser_eat(parser, parser->token->type);
@@ -815,9 +841,15 @@ AST_T* parser_parse_expr(parser_T* parser, parser_options_T options)
   AST_T* left = parser_parse_term(parser, options);
   AST_T* binop = 0;
 
+  if (!left->parent)
+      left->parent = options.parent;
+
   if(parser->token->type == TOKEN_DOT)
   {
     left = parser_parse_dot_notation(parser, options, left);
+
+    if (!left->parent)
+      left->parent = options.parent;
   }
 
   while (parser->token->type == TOKEN_PLUS || parser->token->type == TOKEN_PLUS_EQUALS ||
@@ -829,6 +861,7 @@ AST_T* parser_parse_expr(parser_T* parser, parser_options_T options)
          parser->token->type == TOKEN_AND || parser->token->type == TOKEN_PIPE ||
          parser->token->type == TOKEN_PIPE_PIPE || parser->token->type == TOKEN_MINUS || parser->token->type == TOKEN_AND_AND) {
     binop = init_ast_line(AST_BINOP, parser->lexer->line);
+    binop->parent = options.parent;
     binop->left = left;
     binop->token = token_clone(parser->token);
     parser_eat(parser, parser->token->type);
@@ -842,6 +875,7 @@ AST_T* parser_parse_expr(parser_T* parser, parser_options_T options)
          parser->token->type == TOKEN_GT || parser->token->type == TOKEN_GT_EQUALS ||
          parser->token->type == TOKEN_PIPE_PIPE || parser->token->type == TOKEN_IN || parser->token->type == TOKEN_EQUALS_EQUALS || parser->token->type == TOKEN_EQUALS_EQUALS_EQUALS || parser->token->type == TOKEN_NOT_EQUALS || parser->token->type == TOKEN_NOT_EQUALS_EQUALS) {
     binop = init_ast_line(AST_BINOP, parser->lexer->line);
+    binop->parent = options.parent;
     binop->left = left;
     binop->token = token_clone(parser->token);
     parser_eat(parser, parser->token->type);
@@ -859,6 +893,7 @@ AST_T* parser_parse_expr(parser_T* parser, parser_options_T options)
   if (parser->token->type == TOKEN_COMMA)
   {
     AST_T* tuple = init_ast_line(AST_TUPLE, parser->lexer->line);
+    tuple->parent = options.parent;
     tuple->list_value = parse_tuple(parser, options);
 
     if (tuple->list_value->size)
@@ -879,6 +914,7 @@ AST_T* parser_parse_expr(parser_T* parser, parser_options_T options)
 AST_T* parser_parse_case(parser_T* parser, parser_options_T options)
 {
   AST_T* ast = init_ast_line(AST_COLON_ASSIGNMENT, parser->lexer->line);
+  ast->parent = options.parent;
   ast->name = strdup(parser->token->value);
   parser_eat(parser, TOKEN_CASE);
   ast->expr = parser_parse_expr(parser, options);
@@ -934,8 +970,12 @@ AST_T* parser_parse_statement_or_expr(parser_T* parser, parser_options_T options
     exit(1);
   }
 
+  if (!left->parent)
+    left->parent = options.parent;
+
   if (left && parser->token->type == TOKEN_COLON) {
     AST_T* colon_ass = init_ast_line(AST_COLON_ASSIGNMENT, parser->lexer->line);
+    colon_ass->parent = options.parent;
     colon_ass->left = left;
     parser_eat(parser, TOKEN_COLON);
     colon_ass->right = parser_parse_statement_or_expr(parser, options);
@@ -978,7 +1018,7 @@ AST_T* parser_parse_compound(parser_T* parser, parser_options_T options)
 AST_T* parser_parse_call(parser_T* parser, parser_options_T options)
 {
   AST_T* ast_call = init_ast_line(AST_CALL, parser->lexer->line);
-
+  ast_call->parent = options.parent;
   ast_call->list_value = parse_args(parser, options);
   ast_call->from_module = strdup(parser->filepath);
 

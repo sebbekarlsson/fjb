@@ -1,4 +1,7 @@
 (function () {
+  function dontShowMe() {
+
+  }
   const DONT_BE_HERE = 33;
   const thisShouldNotBeHere = function() {
     console.log(1);
@@ -23,7 +26,7 @@
   function z() {
     if (3 >= 3)
     {
-      console.log(x);
+      console.log("it works");
     }
     return doit();
   }

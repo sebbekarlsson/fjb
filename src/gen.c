@@ -121,7 +121,7 @@ static char* gen_es_exports(list_T* list_value, GEN_FLAGS flags)
 
     char* name = child->name;
 
-    str = str_append(&str, "module.exports.");
+    str = str_append(&str, ";module.exports.");
     str = str_append(&str, name);
     str = str_append(&str, " = ");
     str = str_append(&str, name);

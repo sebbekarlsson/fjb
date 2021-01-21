@@ -5,8 +5,8 @@
 #include "include/io.h"
 #include "include/gen.h"
 #include "include/gc.h"
-#include "include/resolve.h"
 #include "include/string_utils.h"
+#include "include/compound.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -39,14 +39,6 @@ compiler_result_T* fjb(GEN_FLAGS flags, char *source, list_T* imports)
   visitor_T* visitor = init_visitor(parser, flags[0], imports, module, exports);
   visitor->pre_loaded_symbols = NEW_STACK;
 
-  for (unsigned int i = 0; i < imports->size; i++)
-  {
-    AST_T* child = (AST_T*) imports->items[i];
-    AST_T* symbol = resolve(root, child->name ? child->name : child->string_value);
-
-    if (symbol) list_push_safe(visitor->pre_loaded_symbols, symbol);
-  }
-
   AST_T* assignment = init_ast(AST_ASSIGNMENT);
   assignment->name = strdup("module");
 
@@ -68,7 +60,7 @@ compiler_result_T* fjb(GEN_FLAGS flags, char *source, list_T* imports)
   list_push(module->list_value, exports_assignment);
   
   list_T* args = init_list(sizeof(AST_T*));
-  list_push(args, assignment);
+  //list_push(args, assignment);
 
   gc_mark(GC, assignment);
 
@@ -77,7 +69,7 @@ compiler_result_T* fjb(GEN_FLAGS flags, char *source, list_T* imports)
   if (!stack)
     stack = NEW_STACK;
   
-  list_push(stack, assignment);
+  //list_push(stack, assignment);
 
   printf("/* Visiting...*/\n");
   root = visitor_visit(visitor, root, args, stack);
@@ -86,8 +78,10 @@ compiler_result_T* fjb(GEN_FLAGS flags, char *source, list_T* imports)
   printf("/*\n");
   printf("\n=======================\n%s\n", ast_to_str(exports));
   printf("*/\n");
+
+  list_T* es_exports = NEW_STACK;
   
-  AST_T* root_to_generate = visitor->imports->size ? visitor->new_compound : root;
+  AST_T* root_to_generate = new_compound(root, visitor->imports, es_exports);
 
   char* str = 0;
   str = str_append(&str, "/* IMPORTED FROM `");
@@ -100,7 +94,7 @@ compiler_result_T* fjb(GEN_FLAGS flags, char *source, list_T* imports)
   compiler_result_T* result = calloc(1, sizeof(compiler_result_T));
   result->stdout = str;
   result->args = args;
-  result->es_exports = visitor->es_exports;
+  result->es_exports = es_exports;
 
   lexer_free(lexer);
   parser_free(parser);

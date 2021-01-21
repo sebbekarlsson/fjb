@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
 
   char* contents = fjb_read_file(argv[1]);
   compiler_result_T* result = fjb((GEN_FLAGS){argv[1], 0, 0}, contents, init_list(sizeof(AST_T*)));
-
+  
   printf("%s\n", result->stdout);
   
   gc_sweep(GC);
