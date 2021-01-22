@@ -798,6 +798,13 @@ AST_T* parser_parse_term(parser_T* parser, parser_options_T options)
   AST_T* left = parser_parse_factor(parser, options);
   AST_T* binop = 0;
 
+  while (parser->token->type == TOKEN_LBRACKET) {
+    AST_T* ast_arr = parser_parse_array(parser, options);
+    ast_arr->parent = options.parent;
+    ast_arr->left = left;
+    left = ast_arr;
+  }
+
   if (parser->token->type == TOKEN_INSTANCEOF) {
     binop = init_ast_line(AST_BINOP, parser->lexer->line);
     binop->parent = options.parent;
