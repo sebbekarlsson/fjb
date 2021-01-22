@@ -20,7 +20,8 @@ fjb index.js
 - [x] Being fast
 - [x] ES6 module imports / exports
 - [x] Removing dead code (Tree shaking)
-- [x] Supports package.json 
+- [x] Supports package.json
+- [x] Importing _anything_ even when it's not imported, no matter how deeply nested it is
 
 ### Planned Features
 - [ ] JSX support
@@ -28,6 +29,7 @@ fjb index.js
 - [ ] TypeScript support
 - [ ] Loading CSS
 - [ ] Loading JSON
+- [ ] `class` support. (yeah it doesn't support classes right now)
 
 ## Installing
 ### Dependencies
