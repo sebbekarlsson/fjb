@@ -6,6 +6,8 @@ flags = -I./external/libjson/src/include -g -Wall -lm -ldl -fPIC -rdynamic -L./ 
 jsfiles = $(wildcard src/js/*.js)
 jsheaders = $(jsfiles:.js=.js.h)
 
+GPP_PATH=./gpp.out
+
 $(exec): $(objects) libjson.a $(jsheaders)
 	gcc $(objects) $(flags) -o $(exec)
 
@@ -19,12 +21,9 @@ tmp:
 	mkdir -p .tmp
 
 %.js.h: %.js
-	gpp $^ > .tmp/$(notdir $^)
+	$(GPP_PATH) $^ > .tmp/$(notdir $^)
 	xxd -i .tmp/$(notdir $^) > src/include/js/$(notdir $^.h)
  
-# > src/include/js/$(notdir $^).h
-
-
 libjson.a:
 	cd external/libjson ; make ; mv ./libjson.a ../../.
 
