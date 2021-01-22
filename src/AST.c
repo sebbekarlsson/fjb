@@ -593,3 +593,21 @@ AST_T* ast_query(list_T* list, AST_query_T query)
 
   return 0;
 }
+
+char* ast_encode_strings(list_T* strings)
+{
+  char* str = 0;
+
+  LOOP_NODES(strings, i, ast, {
+    if (!ast->string_value && !ast->name)
+      continue;
+
+    char* v = ast->string_value ? ast->string_value : ast->name;
+
+    char* enc = str_encode(v);
+    str = str_append(&str, enc);
+    free(enc);
+  });
+
+  return str;
+}

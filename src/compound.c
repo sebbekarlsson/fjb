@@ -42,7 +42,6 @@ static unsigned int resolve_deps_query(AST_T* ast, query_T data)
     return 0;
   if (ast->from_obj)
     return 0;
-  // if (data.ignore && ptr_in_list(data.ignore, ast)) return 0;
   return resolve_basic_query(ast, data);
 }
 
@@ -112,8 +111,10 @@ unsigned int get_deps(AST_T* ast, options_T args)
       query.type = types[i];
       AST_T* ptr = resolve(args.lookup, resolve_deps_query, query);
 
-      if (ptr)
+      if (ptr) {
         list_push(pointers, ptr);
+        break;
+      }
     }
   }
 
@@ -156,18 +157,21 @@ AST_T* new_compound(AST_T* lookup, list_T* imports, list_T* es_exports)
 
   options_T args;
   args.lookup = lookup;
-  args.saved = NEW_STACK;
+  args.saved = compound->list_value;
   args.skip = NEW_STACK;
   args.compound = compound;
   args.parent = parent;
   args.nr = 0;
-  get_deps(compound, args);
 
+  size_t s = args.saved->size;
+  unsigned int prev = 0;
   unsigned int pushed = 1;
 
-  while (pushed) {
+  while ((get_deps(compound, args) || args.saved->size != prev) && pushed) {
     pushed = 0;
-    LOOP_NODES(args.saved, i, child, pushed += get_deps(child, args););
+    prev = args.saved->size;
+
+    LOOP_NODES_FIXED(args.saved, i, s, child, { pushed += get_deps(child, args); });
   }
 
   list_T* all_symbols = list_merge(args.saved, compound->list_value);

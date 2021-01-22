@@ -176,8 +176,12 @@ list_T* list_merge(list_T* a, list_T* b)
   for (unsigned int i = 0; i < a->size; i++)
     list_push(new_list, a->items[i]);
 
-  for (unsigned int i = 0; i < b->size; i++)
+  for (unsigned int i = 0; i < b->size; i++) {
+    if (ptr_in_list(new_list, b->items[i]))
+      continue;
+
     list_push(new_list, b->items[i]);
+  }
 
   return new_list;
 }

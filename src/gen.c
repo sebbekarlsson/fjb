@@ -421,10 +421,20 @@ char* gen_import(AST_T* ast, gen_flags_T flags)
 {
   if (!ast->compiled_value)
     return 0;
+
   char* head_str = 0;
+  char* encoding = ast->list_value ? ast_encode_strings(ast->list_value) : 0;
+
+  if (!encoding)
+    encoding = strdup("tmp");
 
   if (ast->type == AST_IMPORT && ast->list_value) {
-    head_str = str_append(&head_str, (char*)_tmp_head_import_js);
+    if (encoding) {
+      const char* template = (const char*)_tmp_head_import_js;
+      char buff[256];
+      sprintf(buff, template, encoding);
+      head_str = str_append(&head_str, buff);
+    }
   } else if (ast->type == AST_CALL) {
     head_str = str_append(&head_str, (char*)_tmp_head_require_js);
   }
@@ -448,9 +458,10 @@ char* gen_import(AST_T* ast, gen_flags_T flags)
         if (!child->name)
           continue;
 
-        const char* template = "let %s = tmp.%s\n";
-        char* defstr = calloc(strlen(template) + (strlen(child->name) * 2) + 1, sizeof(char));
-        sprintf(defstr, template, child->name, child->name);
+        const char* template = "let %s = %s.%s\n";
+        char* defstr =
+          calloc(strlen(template) + strlen(encoding) + (strlen(child->name) * 2) + 1, sizeof(char));
+        sprintf(defstr, template, child->name, encoding, child->name);
 
         str = str_append(&str, defstr);
         free(defstr);
@@ -458,6 +469,10 @@ char* gen_import(AST_T* ast, gen_flags_T flags)
     }
   } else {
     str = str_append(&str, ast->compiled_value);
+  }
+
+  if (encoding) {
+    free(encoding);
   }
 
   return str;

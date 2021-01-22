@@ -41,11 +41,15 @@ char* str_encode(char* source)
   char* newstr = 0;
   size_t len = strlen(source);
 
+  if (len) {
+    newstr = str_append(&newstr, "_");
+  }
+
   for (unsigned int i = 0; i < len; i++) {
     char buff[4];
     sprintf(buff, "%d", (int)source[i]);
 
-    str_append(&newstr, buff);
+    newstr = str_append(&newstr, buff);
   }
 
   return newstr;

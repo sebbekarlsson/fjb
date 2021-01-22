@@ -111,6 +111,8 @@ AST_T* ast_query(list_T* list, AST_query_T query);
 
 AST_T* ast_search_pointer(AST_T* ast, int type);
 
+char* ast_encode_strings(list_T* strings);
+
 void list_free(gc_T* gc, list_T* list);
 
 void ast_free(AST_T* ast);
@@ -119,6 +121,12 @@ void ast_free(AST_T* ast);
 
 #define LOOP_NODES(list, C, NAME, WHAT)                                                            \
   for (unsigned int C = 0; C < list->size; C++) {                                                  \
+    AST_T* NAME = (AST_T*)list->items[C];                                                          \
+    WHAT;                                                                                          \
+  }
+
+#define LOOP_NODES_FIXED(list, C, S, NAME, WHAT)                                                   \
+  for (unsigned int C = 0; C < S; C++) {                                                           \
     AST_T* NAME = (AST_T*)list->items[C];                                                          \
     WHAT;                                                                                          \
   }
