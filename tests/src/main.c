@@ -1,3 +1,7 @@
+/**
+ * TODO: write better tests where we actually inspect
+ * the AST to find expected nodes.
+ */
 #include <fjb.h>
 #include <gc.h>
 #include <io.h>
