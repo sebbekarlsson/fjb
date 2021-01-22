@@ -23,11 +23,11 @@ fjb index.js
 - [x] Supports package.json 
 
 ### Planned Features
-- [] JSX support
-- [] Plugin support
-- [] TypeScript support
-- [] Loading CSS
-- [] Loading JSON
+- [ ] JSX support
+- [ ] Plugin support
+- [ ] TypeScript support
+- [ ] Loading CSS
+- [ ] Loading JSON
 
 ## Installing
 ### Dependencies
@@ -49,3 +49,28 @@ fjb index.js
 ```bash
 sudo make install
 ```
+
+## Final Notes
+
+### Import aliases does not work
+> One thing which is not implemented yet (but planned to), is importing using
+> aliases.  
+Example:
+```typescript
+import { ceil as C } from 'lodash';
+```
+> And as mentioned, support for this is planned.
+
+### Import ALL does not work
+> Another thing which is not implemented yet:
+```typescript
+import * as _ from 'lodash';
+```
+> Support for this is also coming.  
+> In the meantime, use instead:
+```typescript
+const _ = require('lodash');
+```
+
+## That's it!
+> Cheers.
