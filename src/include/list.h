@@ -38,4 +38,6 @@ list_T* list_merge(list_T* a, list_T* b);
 list_T* list_copy(list_T* a);
 
 void list_clear(list_T* list);
+
+void list_free_shallow(list_T* list);
 #endif

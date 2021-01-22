@@ -10,11 +10,6 @@ AST_T* init_ast(int type)
 {
   AST_T* ast = calloc(1, sizeof(struct FJB_AST_STRUCT));
   ast->type = type;
-  ast->expr = 0;
-  ast->list_value = 0;
-  ast->value = 0;
-  ast->left = 0;
-  ast->right = 0;
   ast->line = 0;
 
   return ast;
@@ -26,20 +21,6 @@ AST_T* init_ast_line(int type, int line)
   ast->line = line;
 
   return ast;
-}
-
-void ast_init_parent_lists(AST_T* ast)
-{
-  if (!ast->parent_lists)
-    ast->parent_lists = NEW_STACK;
-}
-
-unsigned int ast_is_in_list(AST_T* ast, list_T* list)
-{
-  if (!ast->parent_lists)
-    return ptr_in_list(list, ast);
-
-  return ptr_in_list(ast->parent_lists, list);
 }
 
 char* ast_binop_to_str(AST_T* ast)
@@ -361,9 +342,6 @@ char* ast_to_str(AST_T* ast)
   if (!ast)
     return strdup("AST(nil)");
 
-  // if (ast->ptr)
-  //  return ast_to_str(ast->ptr);
-
   switch (ast->type) {
     case AST_BINOP: return ast_binop_to_str(ast); break;
     case AST_TERNARY: return ast_ternary_to_str(ast); break;
@@ -407,52 +385,6 @@ void list_free(gc_T* gc, list_T* list)
 
 void ast_free(AST_T* ast)
 {
-  /*if (ast->expr)
-  {
-    ast_free(ast->expr, freed);
-  }*/
-
-  /*
-  if (ast->value)
-  {
-    ast_free(ast->value, freed);
-  }*/
-
-  /*if (ast->ref)
-  {
-    ast_free(ast->ref, freed);
-  }
-
-  if (ast->body)
-  {
-    ast_free(ast->body, freed);
-  }
-
-  if (ast->body2)
-  {
-    ast_free(ast->body2, freed);
-  }
-
-  if (ast->access)
-  {
-    ast_free(ast->access, freed);
-  }
-
-  if (ast->label_value)
-  {
-    ast_free(ast->label_value, freed);
-  }
-
-  if (ast->phony_value)
-  {
-    ast_free(ast->phony_value, freed);
-  }
-
-  if (ast->ptr)
-  {
-    ast_free(ast->ptr, freed);
-  }*/
-
   if (ast->token) {
     token_free(ast->token);
   }
@@ -472,13 +404,9 @@ void ast_free(AST_T* ast)
   if (ast->name) {
     free(ast->name);
   }
-
+  
   if (ast->list_value) {
-    if (ast->list_value->items) {
-      free(ast->list_value->items);
-    }
-
-    free(ast->list_value);
+    list_free_shallow(ast->list_value);
   }
 
   if (ast->flags) {

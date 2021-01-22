@@ -3,15 +3,17 @@ sources = $(wildcard src/*.c)
 objects = $(sources:.c=.o)
 flags = -I./external/libjson/src/include -g -Wall -lm -ldl -fPIC -rdynamic -L./ -ljson
 
+objects_no_main = $(filter-out src/main.o, $(objects))
+
 jsfiles = $(wildcard src/js/*.js)
 jsheaders = $(jsfiles:.js=.js.h)
 
-GPP_PATH=./gpp.out
+GPP_PATH=$(or $(shell test -f ./gpp.out && echo ./gpp.out), gpp)
 
 $(exec): $(objects) libjson.a $(jsheaders)
 	gcc $(objects) $(flags) -o $(exec)
 
-libfjb.a: $(objects)
+libfjb.a: $(objects_no_main)
 	ar rcs $@ $^
 
 %.o: %.c include/%.h

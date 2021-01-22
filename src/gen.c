@@ -235,7 +235,12 @@ char* gen(AST_T* ast, gen_flags_T flags)
       str = str_append(&str, ",");
 
     char* nextstr = gen(next, flags);
-    str = str_append(&str, nextstr);
+    
+    if (nextstr)
+    {
+      str = str_append(&str, nextstr);
+      free(nextstr);
+    }
   }
 
   return str;
@@ -447,7 +452,7 @@ char* gen_import(AST_T* ast, gen_flags_T flags)
     str = str_append(&str, "\n");
 
     str = str_append(&str, "return this;\n");
-    str = str_append(&str, "})()\n");
+    str = str_append(&str, "}).bind(this)()\n");
     free(head_str);
 
     if (ast->type == AST_IMPORT && ast->list_value) {

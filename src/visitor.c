@@ -71,7 +71,6 @@ visitor_T* init_visitor(parser_T* parser, const char* filepath, list_T* imports,
   visitor->parser = parser;
   visitor->filepath = filepath;
   visitor->imports = imports;
-  visitor->es_exports = init_list(sizeof(AST_T*));
   visitor->module = module;
   visitor->exports = exports;
 
@@ -127,7 +126,6 @@ AST_T* visitor_visit_import(visitor_T* visitor, AST_T* ast, list_T* stack)
   compiler_result_T* result = fjb(flags, contents, visitor->imports);
   ast->compiled_value = strdup(result->stdout);
   ast->es_exports = result->es_exports;
-  ast->stack_frame = list_copy(stack);
 
   free(final_file_to_read);
   free(contents);
@@ -178,10 +176,6 @@ AST_T* visitor_visit_assignment(visitor_T* visitor, AST_T* ast, list_T* stack)
 
 AST_T* visitor_visit_state(visitor_T* visitor, AST_T* ast, list_T* stack)
 {
-  if (strcmp(ast->name, "export") == 0 && ast->value) {
-    list_push_safe(visitor->es_exports, ast->value);
-  }
-
   if (ast->value) {
     visitor_visit(visitor, ast->value, stack);
   }
@@ -377,8 +371,6 @@ AST_T* visitor_visit_compound(visitor_T* visitor, AST_T* ast, list_T* stack)
     }
   }
 
-  ast->stack_frame = list_copy(stack);
-
   return ast;
 }
 
@@ -500,7 +492,7 @@ AST_T* visitor_visit_call(visitor_T* visitor, AST_T* ast, list_T* stack)
         ast->compiled_value = ast->compiled_value;
         ast->node = result->node;
         ast->ptr = result->node;
-        // gc_mark(GC, ast->left);
+        ast->es_exports = result->es_exports;
         ast->left = 0;
         free(contents);
         compiler_result_free(result);

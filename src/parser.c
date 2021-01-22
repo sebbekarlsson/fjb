@@ -1,5 +1,4 @@
 #include "include/parser.h"
-#include "include/array_utils.h"
 #include "include/fjb.h"
 #include "include/gc.h"
 #include "include/gen.h"
@@ -348,6 +347,7 @@ AST_T* parser_parse_definition(parser_T* parser, parser_options_T options)
 AST_T* parser_parse_assignment(parser_T* parser, parser_options_T options, AST_T* id)
 {
   AST_T* ast = init_ast_line(AST_ASSIGNMENT, parser->lexer->line);
+  gc_mark(GC, ast);
   ast->parent = options.parent;
   ast->left = id;
 
@@ -873,6 +873,7 @@ AST_T* parser_parse_expr(parser_T* parser, parser_options_T options)
 
   if (parser->token->type == TOKEN_COMMA) {
     AST_T* tuple = init_ast_line(AST_TUPLE, parser->lexer->line);
+    gc_mark(GC, tuple);
     tuple->parent = options.parent;
     tuple->list_value = parse_tuple(parser, options);
 

@@ -32,7 +32,7 @@ void list_push_at(list_T* list, void* item, void* ptr)
   if (!list || !item)
     return;
 
-  if (!ptr_in_list(list, ptr))
+  if (ptr && !ptr_in_list(list, ptr))
     return list_prefix(list, item);
 
   list->size += 1;
@@ -146,6 +146,8 @@ unsigned int ptr_in_list(list_T* list, void* ptr)
   if (!list)
     return 0;
 
+  if (!ptr) return 0;
+
   for (unsigned int i = 0; i < list->size; i++) {
     if (ptr == list->items[i])
       return 1;
@@ -188,14 +190,29 @@ list_T* list_merge(list_T* a, list_T* b)
 
 list_T* list_copy(list_T* a)
 {
-  return list_merge(init_list(a->item_size), a);
+  list_T* b = init_list(a->item_size);
+  list_T* new_list = list_merge(b, a);
+  list_free_shallow(b);
+  return new_list;
 }
 
 void list_clear(list_T* list)
 {
+  if (!list)
+    return;
+
   if (list->size && list->items) {
     free(list->items);
     list->size = 0;
     list->items = 0;
   }
+}
+
+void list_free_shallow(list_T* list)
+{
+  if (!list)
+    return;
+
+  list_clear(list);
+  free(list);
 }

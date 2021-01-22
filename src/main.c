@@ -13,16 +13,14 @@ int main(int argc, char* argv[])
   char* contents = fjb_read_file(argv[1]);
   gen_flags_T flags;
   flags.filepath = argv[1];
-  compiler_result_T* result = fjb(flags, contents, init_list(sizeof(AST_T*)));
+  list_T* es_exports = init_list(sizeof(AST_T*));
+  gc_mark_list(GC, es_exports);
+  compiler_result_T* result = fjb(flags, contents, es_exports);
 
   printf("%s\n", result->stdout);
 
   gc_sweep(GC);
   gc_free(GC);
-
-  if (result->es_exports) {
-    free(result->es_exports);
-  }
 
   compiler_result_free(result);
   free(contents);

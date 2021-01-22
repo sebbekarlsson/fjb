@@ -70,6 +70,15 @@ char* dirname(const char* path)
   int pos = (last)-path;
   char* dir = strndup(path, pos);
 
+  if (dir)
+  {
+    if (strrchr(dir, '/') == 0)
+    {
+      free(dir);
+      dir = strdup(".");
+    }
+  }
+
   return dir;
 }
 
@@ -176,4 +185,28 @@ char* resolve_import(char* basepath, char* filepath)
   free(dir);
 
   return final_file_to_read;
+}
+
+char* remove_whitespace(char* source)
+{
+  char* newstr = 0;
+  size_t len = strlen(source);
+
+  for (unsigned int i = 0; i < len; i++)
+  {
+    char c = source[i];
+    
+    if (
+      c == '\n' ||
+      c == '\t' ||
+      c == '\r' ||
+      c == 10 ||
+      c == ' '
+    )
+      continue;
+
+    newstr = str_append(&newstr, (char[]){c, 0});
+  }
+
+  return newstr;
 }

@@ -17,6 +17,8 @@ list_T* stack;
 
 compiler_result_T* fjb(gen_flags_T flags, char* source, list_T* imports)
 {
+  if (!source) return 0;
+
   NOOP = init_ast(AST_NOOP);
   gc_mark(GC, NOOP);
 
@@ -52,7 +54,9 @@ compiler_result_T* fjb(gen_flags_T flags, char* source, list_T* imports)
   list_push(module->list_value, exports_assignment);
 
   if (!stack)
+  {
     stack = NEW_STACK;
+  }
 
   list_push(stack, exports_assignment);
   list_push(stack, assignment);
@@ -60,10 +64,12 @@ compiler_result_T* fjb(gen_flags_T flags, char* source, list_T* imports)
   /* ==== Evaluate ==== */
   visitor_T* visitor = init_visitor(parser, flags.filepath, imports, module, exports);
   visitor->pre_loaded_symbols = NEW_STACK;
+  gc_mark_list(GC, visitor->pre_loaded_symbols);
   root = visitor_visit(visitor, root, stack);
 
   /* ==== Tree-shake ==== */
   list_T* es_exports = NEW_STACK;
+  gc_mark_list(GC, es_exports);
   AST_T* root_to_generate = new_compound(root, visitor->imports, es_exports);
 
   /* ==== Generate ==== */
@@ -85,6 +91,12 @@ compiler_result_T* fjb(gen_flags_T flags, char* source, list_T* imports)
   lexer_free(lexer);
   parser_free(parser);
   visitor_free(visitor);
+
+  if (root_to_generate != root)
+  {
+    root_to_generate->list_value = 0;
+    gc_mark(GC, root_to_generate);
+  }
 
   return result;
 }

@@ -1,8 +1,11 @@
 #include "include/compound.h"
 #include "include/AST.h"
+#include "include/gc.h"
 #include "include/resolve.h"
 #include <stdio.h>
 #include <string.h>
+
+extern gc_T* GC;
 
 typedef struct
 {
@@ -11,8 +14,6 @@ typedef struct
   AST_T* last_pushed;
   AST_T* parent;
   list_T* saved;
-  list_T* skip;
-  unsigned int nr;
 } options_T;
 
 static unsigned int resolve_basic_query(AST_T* ast, query_T data)
@@ -91,6 +92,7 @@ unsigned int get_deps(AST_T* ast, options_T args)
   if (ast->value)
     get_deps(ast->value, args);
 
+
   if (ast->list_value && ast->type != AST_FUNCTION) {
     LOOP_NODES(ast->list_value, i, child, get_deps(child, args););
   }
@@ -120,22 +122,31 @@ unsigned int get_deps(AST_T* ast, options_T args)
 
   unsigned int pushed = 0;
 
-  LOOP_NODES(pointers, i, ptr, {
-    if (!ptr->name || ptr_in_list(args.saved, ptr) || ptr->from_obj || ptr == ast ||
-        ptr == args.compound)
-      continue;
+  list_T* ptrs = pointers;
 
-    query_T query;
-    query.type = ptr->type;
-    query.name = ptr->name;
+  LOOP_NODES(ptrs, i, ptr,
+      if (!ptr) continue;
+      if (ptr->name == 0 || (args.saved && ptr_in_list(args.saved, ptr)) || ptr->from_obj || ptr == ast ||
+          ptr == args.compound)
+        continue;
 
-    if (!resolve(args.compound, resolve_deps_query, query)) {
-      list_push_at(args.saved, ptr, args.last_pushed ? args.last_pushed : ast);
-      args.last_pushed = ptr;
-      args.nr += 1;
-      pushed += 1;
-    }
-  });
+      query_T query;
+      query.type = ptr->type;
+      query.name = ptr->name;
+
+      if (!resolve(args.compound, resolve_deps_query, query)) {
+
+        if (args.saved)
+        {
+          list_push_at(args.saved, ptr, args.last_pushed ? args.last_pushed : ast);
+          args.last_pushed = ptr;
+          pushed += 1;
+        }
+      }
+    );
+    
+  gc_mark_list(GC, pointers);
+
 
   return pushed;
 }
@@ -146,9 +157,9 @@ AST_T* new_compound(AST_T* lookup, list_T* imports, list_T* es_exports)
     return lookup;
 
   AST_T* compound = init_ast(AST_COMPOUND);
-  compound->stack_frame = list_copy(lookup->stack_frame);
   compound->list_value = get_imported_symbols(lookup, imports);
   compound->es_exports = imports;
+  gc_mark_list(GC, compound->list_value);
 
   AST_T* parent = 0;
 
@@ -158,25 +169,28 @@ AST_T* new_compound(AST_T* lookup, list_T* imports, list_T* es_exports)
   options_T args;
   args.lookup = lookup;
   args.saved = compound->list_value;
-  args.skip = NEW_STACK;
   args.compound = compound;
   args.parent = parent;
-  args.nr = 0;
 
   size_t s = args.saved->size;
   unsigned int prev = 0;
   unsigned int pushed = 1;
 
-  while ((get_deps(compound, args) || args.saved->size != prev) && pushed) {
+  while ((get_deps(compound, args) || (args.saved && args.saved->size != prev)) && pushed) {
     pushed = 0;
-    prev = args.saved->size;
+    prev = args.saved ? args.saved->size : 0;
 
     LOOP_NODES_FIXED(args.saved, i, s, child, { pushed += get_deps(child, args); });
   }
-
+  
   list_T* all_symbols = list_merge(args.saved, compound->list_value);
-
-  compound->list_value = all_symbols->size ? all_symbols : lookup->list_value;
+  
+  list_T* copied = list_copy(lookup->list_value);
+  compound->list_value = all_symbols->size ? all_symbols : copied;
+  
+  gc_mark_list(GC, copied);
+  gc_mark_list(GC, all_symbols);
+  
 
   return compound;
 }

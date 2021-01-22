@@ -1,0 +1,1 @@
+/*IMPORTEDFROM`src/test_projects/es6/index.js`*/var_115117981161149799116=(function(){/*IMPORTEDFROM`src/test_projects/es6/./helpers/math.js`*/functionsubtract(x,y){returnx-y;}this.subtract=subtract;returnthis;}).bind(this)();letsubtract=_115117981161149799116.subtractconstx=10;consty=5;constr=subtract(x,y);console.log(r);
