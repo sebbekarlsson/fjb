@@ -5,6 +5,8 @@ char* str_append(char** source, const char* piece);
 
 char* str_prefix(char* source, const char* piece);
 
+char* str_encode(char* source);
+
 char* charstr(char c);
 
 char* dirname(const char* path);
@@ -13,7 +15,7 @@ const char* extension(const char* path);
 
 char* remove_char(char* str, char find);
 
-const char *get_filename_ext(const char *filename);
+const char* get_filename_ext(const char* filename);
 
 char* int_to_str(int x);
 

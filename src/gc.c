@@ -2,7 +2,6 @@
 #include "include/AST.h"
 #include <stdio.h>
 
-
 gc_T* init_gc()
 {
   gc_T* gc = calloc(1, sizeof(struct FJB_GC_STRUCT));
@@ -13,15 +12,15 @@ gc_T* init_gc()
 
 void gc_mark(gc_T* gc, AST_T* item)
 {
-  if (!item) return;
+  if (!item)
+    return;
 
   list_push(gc->trash, item);
 }
 
 void gc_sweep(gc_T* gc)
 {
-  for (unsigned int i = 0; i < gc->trash->size; i++)
-  {
+  for (unsigned int i = 0; i < gc->trash->size; i++) {
     AST_T* child = gc->trash->items[i];
 
     ast_free(child);
@@ -35,13 +34,11 @@ void gc_sweep(gc_T* gc)
 void gc_free(gc_T* gc)
 {
   gc_sweep(gc);
-  if (gc->trash)
-  {
-    if (gc->trash->items)
-    {
+  if (gc->trash) {
+    if (gc->trash->items) {
       free(gc->trash->items);
     }
-    
+
     free(gc->trash);
   }
 

@@ -1,8 +1,7 @@
 #include "include/token.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
-
 
 token_T* init_token(char* value, int type)
 {
@@ -15,9 +14,10 @@ token_T* init_token(char* value, int type)
 
 char* token_to_str(token_T* token)
 {
-  if (!token) return strdup("<token nil>");
+  if (!token)
+    return strdup("<token nil>");
 
-  char* op = token->value ? token->value: strdup("(unknown)");
+  char* op = token->value ? token->value : strdup("(unknown)");
   const char* template = "<token value='%s' type='%s'>";
   char* typestr = token_type_to_str(token->type);
   char* value = calloc(strlen(template) + strlen(op) + strlen(typestr) + 32, sizeof(char));
@@ -26,7 +26,6 @@ char* token_to_str(token_T* token)
 
   return value;
 }
-
 
 char* token_type_to_str(int type)
 {
@@ -115,7 +114,8 @@ char* token_type_to_str(int type)
 
 unsigned int token_is_statement_or_id(token_T* token)
 {
-  return token->type == TOKEN_ID || token->type == TOKEN_IMPORT || token->type == TOKEN_FOR || token->type == TOKEN_FROM;
+  return token->type == TOKEN_ID || token->type == TOKEN_IMPORT || token->type == TOKEN_FOR ||
+         token->type == TOKEN_FROM;
 }
 
 void token_free(token_T* token)
@@ -128,7 +128,8 @@ void token_free(token_T* token)
 
 token_T* token_clone(token_T* token)
 {
-  if (!token) return 0;
+  if (!token)
+    return 0;
 
   token_T* new_token = init_token(strdup(token->value), token->type);
   return new_token;

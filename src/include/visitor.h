@@ -1,15 +1,16 @@
 #ifndef FJB_VISITOR_H
 #define FJB_VISITOR_H
 #include "AST.h"
-#include "parser.h"
 #include "gc.h"
 #include "list.h"
+#include "parser.h"
 
 #define NONE -1
 #define LEFT 0
 #define RIGHT 1
 
-typedef struct FJB_VISITOR_STRUCT {
+typedef struct FJB_VISITOR_STRUCT
+{
   parser_T* parser;
   const char* filepath;
   list_T* imports;
@@ -19,13 +20,14 @@ typedef struct FJB_VISITOR_STRUCT {
   list_T* pre_loaded_symbols;
 } visitor_T;
 
-visitor_T* init_visitor(parser_T* parser, const char* filepath, list_T* imports, AST_T* module, AST_T* exports);
+visitor_T* init_visitor(parser_T* parser, const char* filepath, list_T* imports, AST_T* module,
+                        AST_T* exports);
 
-AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack);
+AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* stack);
 
-AST_T* visitor_visit_compound(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack);
+AST_T* visitor_visit_compound(visitor_T* visitor, AST_T* ast, list_T* stack);
 
-AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* args, list_T* stack);
+AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* stack);
 
 void visitor_free(visitor_T* visitor);
 

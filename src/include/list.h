@@ -39,4 +39,3 @@ list_T* list_copy(list_T* a);
 
 void list_clear(list_T* list);
 #endif
-

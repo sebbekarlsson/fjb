@@ -1,15 +1,16 @@
 #include "include/string_utils.h"
 #include "include/package.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
 char* str_append(char** source, const char* piece)
 {
 
   char* src = *source;
-  
-  if (!piece) return src;
+
+  if (!piece)
+    return src;
 
   if (!src) {
     src = calloc((strlen(piece) + 1) * sizeof(char), sizeof(char));
@@ -23,12 +24,31 @@ char* str_append(char** source, const char* piece)
 
 char* str_prefix(char* source, const char* piece)
 {
-  if (!piece) return source;
+  if (!piece)
+    return source;
 
   char* str = calloc(strlen(source) + strlen(piece) + 1, sizeof(char));
   sprintf(str, "%s%s", piece, source);
 
   return str;
+}
+
+char* str_encode(char* source)
+{
+  if (!source)
+    return 0;
+
+  char* newstr = 0;
+  size_t len = strlen(source);
+
+  for (unsigned int i = 0; i < len; i++) {
+    char buff[4];
+    sprintf(buff, "%d", (int)source[i]);
+
+    str_append(&newstr, buff);
+  }
+
+  return newstr;
 }
 
 char* charstr(char c)
@@ -43,7 +63,7 @@ char* charstr(char c)
 char* dirname(const char* path)
 {
   char* last = strrchr(path, '/');
-  int pos = (last) - path;
+  int pos = (last)-path;
   char* dir = strndup(path, pos);
 
   return dir;
@@ -56,13 +76,12 @@ const char* extension(const char* path)
   return path + pos;
 }
 
-char* remove_char(char* str, char find){
+char* remove_char(char* str, char find)
+{
   char* newstr = calloc(1, sizeof(char));
 
-  for (int i = 0; i < strlen(str); i++)
-  {
-    if (str[i] != find)
-    {
+  for (int i = 0; i < strlen(str); i++) {
+    if (str[i] != find) {
       newstr = realloc(newstr, (strlen(newstr) + 2) * sizeof(char));
       char* chstr = charstr(str[i]);
       strcat(newstr, chstr);
@@ -73,10 +92,12 @@ char* remove_char(char* str, char find){
   return newstr;
 }
 
-const char *get_filename_ext(const char *filename) {
-    const char *dot = strrchr(filename, '.');
-    if(!dot || dot == filename) return "";
-    return dot + 1;
+const char* get_filename_ext(const char* filename)
+{
+  const char* dot = strrchr(filename, '.');
+  if (!dot || dot == filename)
+    return "";
+  return dot + 1;
 }
 
 char* int_to_str(int x)
@@ -98,42 +119,41 @@ char* float_to_str(float x)
 unsigned int is_special(char c)
 {
   const char* specials = "\"!#$%&'()*+,-./:;<=>?@[]^_`{|}~";
-  return strchr(specials, c) != (void*) 0;
+  return strchr(specials, c) != (void*)0;
 }
 
 unsigned int first_char_is_special(char* str)
 {
-  if (!str) return 0;
+  if (!str)
+    return 0;
 
   unsigned int length = strlen(str);
-  if (!length) return 0;
-  
+  if (!length)
+    return 0;
+
   return is_special(str[0]);
 }
 
 char* resolve_import(char* basepath, char* filepath)
 {
-  if (!filepath)
-  {
+  if (!filepath) {
     return 0;
   }
   const char* ext = extension(basepath);
   char* file_to_read = strdup(filepath);
 
   char* dir = 0;
-  
-  if (file_to_read[0] == '.')
-  {
+
+  if (file_to_read[0] == '.') {
     dir = dirname(basepath);
-  } else { 
+  } else {
     dir = str_append(&dir, "node_modules");
     dir = str_append(&dir, "/");
     dir = str_append(&dir, file_to_read);
 
     char* package_json_main = package_get(dir, "main");
 
-    if (file_to_read)
-    {
+    if (file_to_read) {
       free(file_to_read);
     }
 
@@ -142,8 +162,8 @@ char* resolve_import(char* basepath, char* filepath)
 
   if (!strlen(get_filename_ext(file_to_read))) {
     file_to_read = str_append(&file_to_read, ext);
-  } 
-  
+  }
+
   dir = str_append(&dir, "/");
 
   char* final_file_to_read = str_prefix(file_to_read, dir);

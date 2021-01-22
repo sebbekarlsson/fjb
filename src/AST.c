@@ -1,7 +1,7 @@
 #include "include/AST.h"
+#include "include/gc.h"
 #include "include/string_utils.h"
 #include "include/token.h"
-#include "include/gc.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,12 +30,14 @@ AST_T* init_ast_line(int type, int line)
 
 void ast_init_parent_lists(AST_T* ast)
 {
-  if (!ast->parent_lists) ast->parent_lists = NEW_STACK;
+  if (!ast->parent_lists)
+    ast->parent_lists = NEW_STACK;
 }
 
 unsigned int ast_is_in_list(AST_T* ast, list_T* list)
 {
-  if (!ast->parent_lists) return ptr_in_list(list, ast);
+  if (!ast->parent_lists)
+    return ptr_in_list(list, ast);
 
   return ptr_in_list(ast->parent_lists, list);
 }
@@ -65,7 +67,7 @@ char* ast_binop_to_str(AST_T* ast)
 char* ast_ternary_to_str(AST_T* ast)
 {
   char* left = ast_to_str(ast->left);
-  char* val = ast_to_str(ast->value); 
+  char* val = ast_to_str(ast->value);
   char* right = ast_to_str(ast->right);
 
   left = left ? left : strdup("");
@@ -123,7 +125,8 @@ char* ast_state_to_str(AST_T* ast)
   char* exprstr = ast->expr ? ast_to_str(ast->expr) : "";
   char* rightstr = ast->right ? ast_to_str(ast->right) : ast->value ? ast_to_str(ast->value) : "";
   char* v = ast->name ? ast->name : ast->string_value ? ast->string_value : "";
-  char* value = calloc(strlen(template) + strlen(exprstr) + strlen(rightstr) + strlen(v) + 1, sizeof(char));
+  char* value =
+    calloc(strlen(template) + strlen(exprstr) + strlen(rightstr) + strlen(v) + 1, sizeof(char));
   sprintf(value, template, v, exprstr, rightstr);
 
   return value;
@@ -175,7 +178,7 @@ char* ast_call_to_str(AST_T* ast)
   }
 
   str = str ? str : "";
-  
+
   char* value = calloc(strlen(template) + strlen(str) + strlen(name) + 128, sizeof(char));
 
   sprintf(value, template, name, str);
@@ -188,9 +191,10 @@ char* ast_assignment_to_str(AST_T* ast)
   const char* template = "ASSIGNMENT(%s = %s)";
 
   char* name = ast->left ? ast_to_str(ast->left) : ast->name ? ast->name : "UNKNOWN";
-  
+
   char* val = ast->value ? ast_to_str(ast->value) : "(nil)";
-  char* value = calloc(strlen(template) + (name ? strlen(name) : 0) + strlen(val) + 1, sizeof(char));
+  char* value =
+    calloc(strlen(template) + (name ? strlen(name) : 0) + strlen(val) + 1, sizeof(char));
   sprintf(value, template, name, val ? val : "");
 
   return value;
@@ -316,7 +320,8 @@ char* ast_compound_to_str(AST_T* ast)
 
     char* childstr = ast_to_str(child);
 
-    if (!childstr) continue;
+    if (!childstr)
+      continue;
 
     str = str_append(&str, childstr);
 
@@ -356,7 +361,7 @@ char* ast_to_str(AST_T* ast)
   if (!ast)
     return strdup("AST(nil)");
 
-  //if (ast->ptr)
+  // if (ast->ptr)
   //  return ast_to_str(ast->ptr);
 
   switch (ast->type) {
@@ -412,7 +417,7 @@ void ast_free(AST_T* ast)
   {
     ast_free(ast->value, freed);
   }*/
- 
+
   /*if (ast->ref)
   {
     ast_free(ast->ref, freed);
@@ -448,50 +453,41 @@ void ast_free(AST_T* ast)
     ast_free(ast->ptr, freed);
   }*/
 
-  if (ast->token)
-  {
+  if (ast->token) {
     token_free(ast->token);
   }
 
-  if (ast->string_value)
-  {
+  if (ast->string_value) {
     free(ast->string_value);
   }
 
-  if (ast->from_module)
-  {
+  if (ast->from_module) {
     free(ast->from_module);
   }
 
-  if (ast->compiled_value)
-  {
+  if (ast->compiled_value) {
     free(ast->compiled_value);
   }
 
-  if (ast->name)
-  {
+  if (ast->name) {
     free(ast->name);
   }
 
- if (ast->list_value)
- {
-   if (ast->list_value->items)
-   {
-     free(ast->list_value->items);
-   }
+  if (ast->list_value) {
+    if (ast->list_value->items) {
+      free(ast->list_value->items);
+    }
 
-   free(ast->list_value);
- }
+    free(ast->list_value);
+  }
 
-if (ast->flags)
- {
-   if (ast->flags->items)
-   {
-     free(ast->flags->items);
-   }
+  if (ast->flags) {
+    if (ast->flags->items) {
+      free(ast->flags->items);
+    }
 
-   free(ast->flags);
- }
+    free(ast->flags);
+  }
 
   free(ast);
   ast = 0;
@@ -512,14 +508,13 @@ list_T* ast_get_pointers(AST_T* ast)
 {
   list_T* list = init_list(sizeof(AST_T*));
 
-  if (!ast) return list;
-  
+  if (!ast)
+    return list;
+
   AST_T* ptr = ast->ptr;
 
-  while (ptr && !ptr_in_list(list, ptr))
-  {
-    if (ptr)
-    {
+  while (ptr && !ptr_in_list(list, ptr)) {
+    if (ptr) {
       list_push(list, ptr);
 
       if (ptr)
@@ -532,33 +527,37 @@ list_T* ast_get_pointers(AST_T* ast)
 
 AST_T* ast_get_final_ptr(AST_T* ast)
 {
-  if (!ast) return 0;
-  if (ast->value) return ast_get_final_ptr(ast->value);
-  if (ast->ptr) return ast->ptr;
+  if (!ast)
+    return 0;
+  if (ast->value)
+    return ast_get_final_ptr(ast->value);
+  if (ast->ptr)
+    return ast->ptr;
   return ast;
 }
 
 AST_T* ast_search_pointer(AST_T* ast, int type)
 {
-  if (ast->type == type) return ast;
+  if (ast->type == type)
+    return ast;
   list_T* pointers = ast_get_pointers(ast);
 
   AST_T* ptr = 0;
 
   for (unsigned int i = 0; i < pointers->size; i++) {
     AST_T* child = pointers->items[i];
-    if (!child) continue;
+    if (!child)
+      continue;
 
-    if (child->type == type)
-    {
+    if (child->type == type) {
       ptr = child;
       break;
     }
   }
 
-  if (pointers)
-  {
-    if (pointers->items) free(pointers->items);
+  if (pointers) {
+    if (pointers->items)
+      free(pointers->items);
     free(pointers);
   }
 
@@ -567,18 +566,30 @@ AST_T* ast_search_pointer(AST_T* ast, int type)
 
 AST_T* get_node_by_name(list_T* list, char* name)
 {
-  LOOP_NODES(
-    list,
-    i,
-    child,
-    {
-      if (!child->name)
+  LOOP_NODES(list, i, child, {
+    if (!child->name)
+      continue;
+
+    if (strcmp(child->name, name) == 0)
+      return child;
+  });
+
+  return 0;
+}
+
+AST_T* ast_query(list_T* list, AST_query_T query)
+{
+  LOOP_NODES(list, i, child, {
+    if (!child->name)
+      continue;
+
+    if (query.type != -1)
+      if (child->type != query.type)
         continue;
 
-      if (strcmp(child->name, name) == 0)
-        return child; 
-    }
- );
+    if (query.name && strcmp(child->name, query.name) == 0)
+      return child;
+  });
 
   return 0;
 }

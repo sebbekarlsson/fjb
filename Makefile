@@ -1,9 +1,12 @@
 exec = fjb.out
 sources = $(wildcard src/*.c)
 objects = $(sources:.c=.o)
-flags = -I./external/libjson/src/include -g -Wall -lm -ldl -fPIC -rdynamic -L./ -ljson 
+flags = -I./external/libjson/src/include -g -Wall -lm -ldl -fPIC -rdynamic -L./ -ljson
 
-$(exec): $(objects) libjson.a
+jsfiles = $(wildcard src/js/*.js)
+jsheaders = $(jsfiles:.js=.js.h)
+
+$(exec): $(objects) libjson.a $(jsheaders)
 	gcc $(objects) $(flags) -o $(exec)
 
 libfjb.a: $(objects)
@@ -11,6 +14,16 @@ libfjb.a: $(objects)
 
 %.o: %.c include/%.h
 	gcc -c $(flags) $< -o $@
+
+tmp:
+	mkdir -p .tmp
+
+%.js.h: %.js
+	gpp $^ > .tmp/$(notdir $^)
+	xxd -i .tmp/$(notdir $^) > src/include/js/$(notdir $^.h)
+ 
+# > src/include/js/$(notdir $^).h
+
 
 libjson.a:
 	cd external/libjson ; make ; mv ./libjson.a ../../.
@@ -28,6 +41,7 @@ clean:
 	-rm *.o
 	-rm *.a
 	-rm src/*.o
+	-rm .tmp
 
 lint:
 	clang-tidy src/*.c src/include/*.h

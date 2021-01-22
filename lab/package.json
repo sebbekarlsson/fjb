@@ -1,10 +1,16 @@
 {
   "dependencies": {
+    "gulp": "^4.0.2",
     "lodash": "^4.17.20",
+    "microbundle": "^0.13.0",
     "randomstring": "^1.1.5",
     "react": "^17.0.1",
     "secure-random-password": "^0.2.2",
     "validate.js": "^0.13.1",
-    "vue": "^2.6.12"
+    "vue": "^2.6.12",
+    "webpack": "^5.16.0"
+  },
+  "devDependencies": {
+    "webpack-cli": "^4.4.0"
   }
 }

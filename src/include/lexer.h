@@ -2,7 +2,8 @@
 #define FJB_LEXER_H
 #include "token.h"
 
-typedef struct FJB_LEXER_STRUCT {
+typedef struct FJB_LEXER_STRUCT
+{
   char* source;
   unsigned int source_size;
   char c;

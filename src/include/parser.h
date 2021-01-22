@@ -3,7 +3,8 @@
 #include "AST.h"
 #include "lexer.h"
 
-typedef struct FJB_PARSER_STRUCT {
+typedef struct FJB_PARSER_STRUCT
+{
   lexer_T* lexer;
   token_T* token;
   const char* filepath;
@@ -15,8 +16,10 @@ typedef struct FJB_PARSER_OPTIONS_STRUCT
   AST_T* parent;
 } parser_options_T;
 
-#define EMPTY_PARSER_OPTIONS\
-  {-1, 0}
+#define EMPTY_PARSER_OPTIONS                                                                       \
+  {                                                                                                \
+    -1, 0                                                                                          \
+  }
 
 parser_T* init_parser(lexer_T* lexer, const char* filepath);
 

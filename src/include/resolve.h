@@ -2,7 +2,8 @@
 #define FJB_RESOLVE_H
 #include "AST.h"
 
-typedef struct QUERY_STRUCT_T {
+typedef struct QUERY_STRUCT_T
+{
   char* name;
   int type;
   list_T* ignore;

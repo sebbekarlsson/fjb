@@ -1,8 +1,10 @@
 #ifndef FJB_TOKEN_H
 #define FJB_TOKEN_H
-typedef struct FJB_TOKEN_STRUCT {
+typedef struct FJB_TOKEN_STRUCT
+{
   char* value;
-  enum {
+  enum
+  {
     TOKEN_ID,
     TOKEN_LBRACE,
     TOKEN_RBRACE,

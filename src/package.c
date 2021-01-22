@@ -1,8 +1,7 @@
 #include "include/package.h"
-#include "include/string_utils.h"
 #include "include/io.h"
+#include "include/string_utils.h"
 #include <string.h>
-
 
 char* package_get(const char* path, const char* key)
 {
@@ -15,8 +14,9 @@ char* package_get(const char* path, const char* key)
   char* v = 0;
 
   free(full_path);
-  
-  if (!contents) return 0;
+
+  if (!contents)
+    return 0;
 
   json_parser_T* parser = init_json_parser(init_json_lexer(contents));
 
@@ -24,12 +24,10 @@ char* package_get(const char* path, const char* key)
   json_ast_T* ast = json_parser_parse(parser);
 
   // look for the key we are interested in
-  for (int i = 0; i < ast->key_value_list_size; i++)
-  {
+  for (int i = 0; i < ast->key_value_list_size; i++) {
     json_ast_T* key_value = ast->key_value_list_value[i];
 
-    if (strcmp(key_value->key_value_key, key) == 0)
-    {
+    if (strcmp(key_value->key_value_key, key) == 0) {
       v = strdup(key_value->key_value_value->string_value);
       break;
     }

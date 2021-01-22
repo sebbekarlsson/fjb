@@ -189,3 +189,6 @@ tags
 [._]*.un~
 
 # End of https://www.toptal.com/developers/gitignore/api/vim,C,node
+
+src/include/js/*
+/.tmp

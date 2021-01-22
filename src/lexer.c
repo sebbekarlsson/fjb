@@ -5,8 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MIN(a, b) \
-  a > b ? b : a
+#define MIN(a, b) a > b ? b : a
 
 lexer_T* init_lexer(char* source, const char* filepath)
 {
@@ -41,7 +40,9 @@ void lexer_advance(lexer_T* lexer)
 
 void lexer_skip_whitespace(lexer_T* lexer)
 {
-  while ((lexer->c == '\t' || lexer->c == 10 || lexer->c == ' ' || lexer->c == '\n' || lexer->c == '\r') && lexer->c != 0) {
+  while ((lexer->c == '\t' || lexer->c == 10 || lexer->c == ' ' || lexer->c == '\n' ||
+          lexer->c == '\r') &&
+         lexer->c != 0) {
     lexer_advance(lexer);
   }
 }
@@ -81,18 +82,11 @@ unsigned int lexer_check_regex(lexer_T* lexer)
   if (!lexer->prev_token)
     return 0;
 
-  if (
-    (
-      lexer->c == '/' &&
-      lexer_peek(lexer, 1) != '/' &&
-      lexer->prev_token->type != TOKEN_INT &&
-      lexer->prev_token->type != TOKEN_DIV &&
-      lexer->prev_token->type != TOKEN_ID &&
-      lexer->prev_token->type != TOKEN_RPAREN &&
-      lexer->prev_token->type != TOKEN_RBRACKET &&
-      lexer->prev_token->type != TOKEN_RBRACE &&
-      lexer->prev_token->type != TOKEN_STRING) ||
-    (lexer->c == '/' && lexer_peek(lexer, 1) == '^')) {
+  if ((lexer->c == '/' && lexer_peek(lexer, 1) != '/' && lexer->prev_token->type != TOKEN_INT &&
+       lexer->prev_token->type != TOKEN_DIV && lexer->prev_token->type != TOKEN_ID &&
+       lexer->prev_token->type != TOKEN_RPAREN && lexer->prev_token->type != TOKEN_RBRACKET &&
+       lexer->prev_token->type != TOKEN_RBRACE && lexer->prev_token->type != TOKEN_STRING) ||
+      (lexer->c == '/' && lexer_peek(lexer, 1) == '^')) {
     return 1;
   }
 
@@ -108,7 +102,8 @@ token_T* lexer_advance_token(lexer_T* lexer, token_T* token)
 token_T* lexer_next(lexer_T* lexer)
 {
   while (lexer->c != 0) {
-    if (lexer->c == '\t' || lexer->c == 10 || lexer->c == ' ' || lexer->c == '\n' || lexer->c == '\r') {
+    if (lexer->c == '\t' || lexer->c == 10 || lexer->c == ' ' || lexer->c == '\n' ||
+        lexer->c == '\r') {
       lexer_skip_whitespace(lexer);
     }
 
@@ -146,7 +141,8 @@ token_T* lexer_next(lexer_T* lexer)
         lexer_advance(lexer);
         return tok;
       } else if (lexer_peek(lexer, 1) == '=' && lexer_peek(lexer, 2) == '=') {
-        token_T* tok = lexer_advance_token(lexer, init_token(strdup("==="), TOKEN_EQUALS_EQUALS_EQUALS));
+        token_T* tok =
+          lexer_advance_token(lexer, init_token(strdup("==="), TOKEN_EQUALS_EQUALS_EQUALS));
         lexer_advance(lexer);
         return lexer_advance_token(lexer, tok);
       } else if (lexer_peek(lexer, 1) == '=') {
@@ -158,7 +154,8 @@ token_T* lexer_next(lexer_T* lexer)
 
     if (lexer->c == '!') {
       if (lexer_peek(lexer, 1) == '=' && lexer_peek(lexer, 2) == '=') {
-        token_T* tok = lexer_advance_token(lexer, init_token(strdup("!=="), TOKEN_NOT_EQUALS_EQUALS));
+        token_T* tok =
+          lexer_advance_token(lexer, init_token(strdup("!=="), TOKEN_NOT_EQUALS_EQUALS));
         lexer_advance(lexer);
         return lexer_advance_token(lexer, tok);
       } else if (lexer_peek(lexer, 1) == '=') {
@@ -205,8 +202,10 @@ token_T* lexer_next(lexer_T* lexer)
     }
 
     if (lexer->c == '>') {
-      if (lexer_peek(lexer, 1) == '>' && lexer_peek(lexer, 2) == '>' && lexer_peek(lexer, 3) == '=') {
-        token_T* tok = lexer_advance_token(lexer, init_token(strdup(">>>="), TOKEN_SHIFT_RIGHT_UNSIGNED_EQUALS));
+      if (lexer_peek(lexer, 1) == '>' && lexer_peek(lexer, 2) == '>' &&
+          lexer_peek(lexer, 3) == '=') {
+        token_T* tok =
+          lexer_advance_token(lexer, init_token(strdup(">>>="), TOKEN_SHIFT_RIGHT_UNSIGNED_EQUALS));
         lexer_advance(lexer);
         lexer_advance(lexer);
         return lexer_advance_token(lexer, tok);
@@ -217,7 +216,8 @@ token_T* lexer_next(lexer_T* lexer)
         return lexer_advance_token(lexer, tok);
       }
       if (lexer_peek(lexer, 1) == '>' && lexer_peek(lexer, 2) == '>') {
-        token_T* tok = lexer_advance_token(lexer, init_token(strdup(">>>"), TOKEN_SHIFT_RIGHT_UNSIGNED));
+        token_T* tok =
+          lexer_advance_token(lexer, init_token(strdup(">>>"), TOKEN_SHIFT_RIGHT_UNSIGNED));
         lexer_advance(lexer);
         return lexer_advance_token(lexer, tok);
       }
@@ -306,7 +306,11 @@ token_T* lexer_next(lexer_T* lexer)
     }
 
     if (lexer->c != 0) {
-      printf("[Lexer]: Unexpected token (%s):%d: `%c` (%d)\n", lexer->filepath, lexer->line, lexer->c, (int)lexer->c);
+      printf("[Lexer]: Unexpected token (%s):%d: `%c` (%d)\n",
+             lexer->filepath,
+             lexer->line,
+             lexer->c,
+             (int)lexer->c);
       break;
     }
   }
@@ -370,7 +374,7 @@ token_T* lexer_parse_regex(lexer_T* lexer)
   char prevc;
 
   lexer_skip_whitespace(lexer);
-  
+
   str = str_append(&str, lexer->cstr);
   prevc = lexer->c;
   lexer_advance(lexer);
@@ -399,7 +403,7 @@ token_T* lexer_parse_regex(lexer_T* lexer)
       lexer_advance(lexer);
       break;
     }
-    
+
     str = str_append(&str, lexer->cstr);
     prevc = lexer->c;
     lexer_advance(lexer);
@@ -522,7 +526,8 @@ token_T* lexer_switch_id(lexer_T* lexer, token_T* token)
 
 token_T* ret_tok(lexer_T* lexer, token_T* token)
 {
-  if (lexer->prev_token) token_free(lexer->prev_token);
+  if (lexer->prev_token)
+    token_free(lexer->prev_token);
 
   lexer->prev_token = token_clone(token);
   return token;
@@ -530,7 +535,8 @@ token_T* ret_tok(lexer_T* lexer, token_T* token)
 
 void lexer_free(lexer_T* lexer)
 {
-  if (lexer->prev_token) token_free(lexer->prev_token);
+  if (lexer->prev_token)
+    token_free(lexer->prev_token);
 
   if (lexer->source)
     free(lexer->source);

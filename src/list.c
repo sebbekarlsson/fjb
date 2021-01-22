@@ -1,11 +1,9 @@
 #include "include/list.h"
 #include <string.h>
 
-#define MAX(a, b)\
-  a > b ? a : b
+#define MAX(a, b) a > b ? a : b
 
-#define MIN(a, b)\
-  a < b ? a : b
+#define MIN(a, b) a < b ? a : b
 
 list_T* init_list(size_t item_size)
 {
@@ -26,14 +24,16 @@ void list_push(list_T* list, void* item)
   else
     list->items = realloc(list->items, (list->size * list->item_size));
 
-  list->items[list->size-1] = item;
+  list->items[list->size - 1] = item;
 }
 
 void list_push_at(list_T* list, void* item, void* ptr)
 {
-  if (!list || !item) return;
+  if (!list || !item)
+    return;
 
-  if (!ptr_in_list(list, ptr)) return list_prefix(list, item);
+  if (!ptr_in_list(list, ptr))
+    return list_prefix(list, item);
 
   list->size += 1;
 
@@ -42,12 +42,9 @@ void list_push_at(list_T* list, void* item, void* ptr)
   else
     list->items = realloc(list->items, (list->size * list->item_size));
 
-
   unsigned int c = 0;
-  for (unsigned int i = 0; i < list->size; i++)
-  {
-    if (list->items[i] == ptr)
-    {
+  for (unsigned int i = 0; i < list->size; i++) {
+    if (list->items[i] == ptr) {
       c = i;
       break;
     }
@@ -65,22 +62,22 @@ void list_push_safe(list_T* list, void* item)
 
 void list_push_safe_at(list_T* list, void* item, void* ptr)
 {
-  if (!list || !item) return;
-  
+  if (!list || !item)
+    return;
+
   if (!ptr_in_list(list, item))
     list_push_at(list, item, ptr);
 }
 
 void list_shift_left(list_T* list, int index)
 {
-   for (int i = index; i < list->size - 1; i++)
-       list->items[i] = list->items[i + 1];
+  for (int i = index; i < list->size - 1; i++)
+    list->items[i] = list->items[i + 1];
 }
 
 void list_shift_right(list_T* list, int index)
 {
-  for (int i = list->size-1; i >= index; i--)
-  {
+  for (int i = list->size - 1; i >= index; i--) {
     list->items[MIN(list->size - 1, i + 1)] = list->items[i];
     list->items[i] = 0;
   }
@@ -88,39 +85,37 @@ void list_shift_right(list_T* list, int index)
 
 void list_remove(list_T* list, void* element, void (*free_method)(void* item))
 {
-    int index = 0;
+  int index = 0;
 
-    if (element == (void*)0)
-        return;
+  if (element == (void*)0)
+    return;
 
-    for (int i = 0; i < list->size; i++)
-    {
-        if (list->items[i] == element)
-        {
-            index = i;
-            break;
-        }
+  for (int i = 0; i < list->size; i++) {
+    if (list->items[i] == element) {
+      index = i;
+      break;
     }
+  }
 
-    if (free_method != (void*)0)    
-        free_method(list->items[index]);
+  if (free_method != (void*)0)
+    free_method(list->items[index]);
 
-    list_shift_left(list, index);  /* First shift the elements, then reallocate */
-    void *tmp = realloc(
-        list->items, (list->size - 1) * list->item_size
-    );
-    if (tmp == NULL && list->size > 1) {
-       /* No memory available */
-       exit(EXIT_FAILURE);
-    }
-    list->size = list->size - 1;
-    list->items = tmp;
+  list_shift_left(list, index); /* First shift the elements, then reallocate */
+  void* tmp = realloc(list->items, (list->size - 1) * list->item_size);
+  if (tmp == NULL && list->size > 1) {
+    /* No memory available */
+    exit(EXIT_FAILURE);
+  }
+  list->size = list->size - 1;
+  list->items = tmp;
 }
 
 void list_prefix(list_T* list, void* item)
 {
-  if (!list) return;
-  if (!list->size) return list_push(list, item);
+  if (!list)
+    return;
+  if (!list->size)
+    return list_push(list, item);
 
   list->size += 1;
 
@@ -135,25 +130,24 @@ void list_prefix(list_T* list, void* item)
 
 int list_indexof_str(list_T* list, char* item)
 {
-  for (unsigned int i = 0; i < list->size; i++)
-  {
+  for (unsigned int i = 0; i < list->size; i++) {
     if (!list->items[i])
       continue;
 
     if (strcmp((char*)list->items[i], item) == 0)
-      return (int) -i;
+      return (int)-i;
   }
 
-  return -1; 
+  return -1;
 }
 
 unsigned int ptr_in_list(list_T* list, void* ptr)
 {
-  if (!list) return 0;
+  if (!list)
+    return 0;
 
-  for (unsigned int i = 0; i < list->size; i++)
-  {
-    if(ptr == list->items[i])
+  for (unsigned int i = 0; i < list->size; i++) {
+    if (ptr == list->items[i])
       return 1;
   }
 
@@ -164,12 +158,10 @@ list_T* list_filter(list_T* list, unsigned int (*filter_method)(void* item))
 {
   list_T* new_list = init_list(list->item_size);
 
-  for (unsigned int i = 0; i < list->size; i++)
-  {
+  for (unsigned int i = 0; i < list->size; i++) {
     void* item = list->items[i];
 
-    if (filter_method(item))
-    {
+    if (filter_method(item)) {
       list_push(new_list, item);
     }
   }
@@ -197,8 +189,7 @@ list_T* list_copy(list_T* a)
 
 void list_clear(list_T* list)
 {
-  if (list->size && list->items)
-  {
+  if (list->size && list->items) {
     free(list->items);
     list->size = 0;
     list->items = 0;

@@ -1,10 +1,12 @@
 #ifndef FJB_AST_H
 #define FJB_AST_H
-#include "token.h"
-#include "list.h"
 #include "gc.h"
-typedef struct FJB_AST_STRUCT {
-  enum {
+#include "list.h"
+#include "token.h"
+typedef struct FJB_AST_STRUCT
+{
+  enum
+  {
     AST_ARROW_DEFINITION,
     AST_CALL,
     AST_FUNCTION,
@@ -14,7 +16,7 @@ typedef struct FJB_AST_STRUCT {
     AST_HEX,
     AST_FLOAT,
     AST_ASSIGNMENT,
-    //AST_DEFINITION,
+    // AST_DEFINITION,
     AST_COLON_ASSIGNMENT,
     AST_WHILE,
     AST_DO,
@@ -57,6 +59,7 @@ typedef struct FJB_AST_STRUCT {
   struct FJB_AST_STRUCT* def;
   struct FJB_AST_STRUCT* parent;
   struct FJB_AST_STRUCT* next;
+  struct FJB_AST_STRUCT* node;
   token_T* token;
 
   int int_value;
@@ -81,7 +84,6 @@ typedef struct FJB_AST_STRUCT {
 
 } AST_T;
 
-
 AST_T* init_ast(int type);
 
 AST_T* init_ast_line(int type, int line);
@@ -100,6 +102,13 @@ list_T* ast_get_pointers(AST_T* ast);
 
 AST_T* get_node_by_name(list_T* list, char* name);
 
+typedef struct
+{
+  char* name;
+  int type;
+} AST_query_T;
+AST_T* ast_query(list_T* list, AST_query_T query);
+
 AST_T* ast_search_pointer(AST_T* ast, int type);
 
 void list_free(gc_T* gc, list_T* list);
@@ -108,10 +117,10 @@ void ast_free(AST_T* ast);
 
 #define NEW_STACK init_list(sizeof(AST_T*))
 
-#define LOOP_NODES(list, C, NAME, WHAT)\
-  for (unsigned int C = 0; C < list->size; C++) {\
-    AST_T* NAME = (AST_T*) list->items[C];\
-    WHAT;\
+#define LOOP_NODES(list, C, NAME, WHAT)                                                            \
+  for (unsigned int C = 0; C < list->size; C++) {                                                  \
+    AST_T* NAME = (AST_T*)list->items[C];                                                          \
+    WHAT;                                                                                          \
   }
 
 #endif
