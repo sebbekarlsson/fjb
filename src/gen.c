@@ -235,9 +235,8 @@ char* gen(AST_T* ast, gen_flags_T flags)
       str = str_append(&str, ",");
 
     char* nextstr = gen(next, flags);
-    
-    if (nextstr)
-    {
+
+    if (nextstr) {
       str = str_append(&str, nextstr);
       free(nextstr);
     }

@@ -146,7 +146,8 @@ unsigned int ptr_in_list(list_T* list, void* ptr)
   if (!list)
     return 0;
 
-  if (!ptr) return 0;
+  if (!ptr)
+    return 0;
 
   for (unsigned int i = 0; i < list->size; i++) {
     if (ptr == list->items[i])

@@ -92,7 +92,6 @@ unsigned int get_deps(AST_T* ast, options_T args)
   if (ast->value)
     get_deps(ast->value, args);
 
-
   if (ast->list_value && ast->type != AST_FUNCTION) {
     LOOP_NODES(ast->list_value, i, child, get_deps(child, args););
   }
@@ -124,29 +123,22 @@ unsigned int get_deps(AST_T* ast, options_T args)
 
   list_T* ptrs = pointers;
 
-  LOOP_NODES(ptrs, i, ptr,
-      if (!ptr) continue;
-      if (ptr->name == 0 || (args.saved && ptr_in_list(args.saved, ptr)) || ptr->from_obj || ptr == ast ||
-          ptr == args.compound)
-        continue;
+  LOOP_NODES(
+    ptrs, i, ptr, if (!ptr) continue;
+    if (ptr->name == 0 || (args.saved && ptr_in_list(args.saved, ptr)) || ptr->from_obj ||
+        ptr == ast || ptr == args.compound) continue;
 
-      query_T query;
-      query.type = ptr->type;
-      query.name = ptr->name;
+    query_T query; query.type = ptr->type; query.name = ptr->name;
 
-      if (!resolve(args.compound, resolve_deps_query, query)) {
-
-        if (args.saved)
-        {
-          list_push_at(args.saved, ptr, args.last_pushed ? args.last_pushed : ast);
-          args.last_pushed = ptr;
-          pushed += 1;
-        }
+    if (!resolve(args.compound, resolve_deps_query, query)) {
+      if (args.saved) {
+        list_push_at(args.saved, ptr, args.last_pushed ? args.last_pushed : ast);
+        args.last_pushed = ptr;
+        pushed += 1;
       }
-    );
-    
-  gc_mark_list(GC, pointers);
+    });
 
+  gc_mark_list(GC, pointers);
 
   return pushed;
 }
@@ -182,15 +174,14 @@ AST_T* new_compound(AST_T* lookup, list_T* imports, list_T* es_exports)
 
     LOOP_NODES_FIXED(args.saved, i, s, child, { pushed += get_deps(child, args); });
   }
-  
+
   list_T* all_symbols = list_merge(args.saved, compound->list_value);
-  
+
   list_T* copied = list_copy(lookup->list_value);
   compound->list_value = all_symbols->size ? all_symbols : copied;
-  
+
   gc_mark_list(GC, copied);
   gc_mark_list(GC, all_symbols);
-  
 
   return compound;
 }

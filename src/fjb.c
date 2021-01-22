@@ -17,7 +17,8 @@ list_T* stack;
 
 compiler_result_T* fjb(gen_flags_T flags, char* source, list_T* imports)
 {
-  if (!source) return 0;
+  if (!source)
+    return 0;
 
   NOOP = init_ast(AST_NOOP);
   gc_mark(GC, NOOP);
@@ -53,8 +54,7 @@ compiler_result_T* fjb(gen_flags_T flags, char* source, list_T* imports)
 
   list_push(module->list_value, exports_assignment);
 
-  if (!stack)
-  {
+  if (!stack) {
     stack = NEW_STACK;
   }
 
@@ -92,8 +92,7 @@ compiler_result_T* fjb(gen_flags_T flags, char* source, list_T* imports)
   parser_free(parser);
   visitor_free(visitor);
 
-  if (root_to_generate != root)
-  {
+  if (root_to_generate != root) {
     root_to_generate->list_value = 0;
     gc_mark(GC, root_to_generate);
   }

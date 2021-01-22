@@ -404,7 +404,7 @@ void ast_free(AST_T* ast)
   if (ast->name) {
     free(ast->name);
   }
-  
+
   if (ast->list_value) {
     list_free_shallow(ast->list_value);
   }
