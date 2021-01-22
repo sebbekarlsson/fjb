@@ -13,6 +13,7 @@ char* gen_array(AST_T* ast, gen_flags_T flags);
 char* gen_tuple_ast(AST_T* ast, gen_flags_T flags);
 char* gen_hex(AST_T* ast, gen_flags_T flags);
 char* gen_int(AST_T* ast, gen_flags_T flags);
+char* gen_int_min(AST_T* ast, gen_flags_T flags);
 char* gen_float(AST_T* ast, gen_flags_T flags);
 char* gen_string(AST_T* ast, gen_flags_T flags);
 char* gen_arrow_definition(AST_T* ast, gen_flags_T flags);

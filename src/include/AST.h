@@ -13,6 +13,7 @@ typedef struct FJB_AST_STRUCT
     AST_ARRAY,
     AST_STRING,
     AST_INT,
+    AST_INT_MIN,
     AST_HEX,
     AST_FLOAT,
     AST_ASSIGNMENT,
@@ -60,6 +61,7 @@ typedef struct FJB_AST_STRUCT
   struct FJB_AST_STRUCT* parent;
   struct FJB_AST_STRUCT* next;
   struct FJB_AST_STRUCT* node;
+  struct FJB_AST_STRUCT* condition;
   token_T* token;
 
   int int_value;

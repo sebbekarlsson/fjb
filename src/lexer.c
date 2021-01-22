@@ -234,6 +234,19 @@ token_T* lexer_next(lexer_T* lexer)
         lexer_advance(lexer);
         return tok;
       }
+      if (lexer_peek(lexer, 1) == '<') {
+        token_T* tok = lexer_advance_token(lexer, init_token(strdup("<<"), TOKEN_SHIFT_LEFT));
+        lexer_advance(lexer);
+        return tok;
+      }
+    }
+
+    if (lexer->c == '%') {
+      if (lexer_peek(lexer, 1) == '=') {
+        token_T* tok = lexer_advance_token(lexer, init_token(strdup("%="), TOKEN_MOD_EQUALS));
+        lexer_advance(lexer);
+        return tok;
+      }
     }
 
     if (lexer->c == '-') {
@@ -417,6 +430,12 @@ token_T* lexer_parse_regex(lexer_T* lexer)
     lexer_advance(lexer);
   }
 
+  if (lexer->c == 'm') {
+    str = str_append(&str, lexer->cstr);
+    prevc = lexer->c;
+    lexer_advance(lexer);
+  }
+
   str = str ? str : strdup("");
 
   token_T* tok = ret_tok(lexer, init_token(str, TOKEN_REGEX));
@@ -428,30 +447,39 @@ token_T* lexer_parse_number(lexer_T* lexer)
   char* str = 0;
   int type = TOKEN_INT;
 
-  while (isdigit(lexer->c) || lexer->c == 'e') {
-    str = str_append(&str, lexer->cstr);
-    lexer_advance(lexer);
-  }
+  if (isdigit(lexer->c) && (lexer_peek(lexer, 1) == 'e' || lexer_peek(lexer, 1) == 'E')) {
+    type = TOKEN_INT_MIN;
 
-  if (lexer->c == '.') {
-    type = TOKEN_FLOAT;
-
-    str = str_append(&str, lexer->cstr);
-    lexer_advance(lexer);
-
+    while (isdigit(lexer->c) || lexer->c == 'e' || lexer->c == 'E') {
+      str = str_append(&str, lexer->cstr);
+      lexer_advance(lexer);
+    }
+  } else {
     while (isdigit(lexer->c) || lexer->c == 'e') {
+      str = str_append(&str, lexer->cstr);
+      lexer_advance(lexer);
+    }
 
-      if (lexer->c == 'e' && lexer_peek(lexer, 1) == '+') {
-        str = str_append(&str, lexer->cstr);
-        str = str_append(&str, "+");
-        lexer_advance(lexer);
-        lexer_advance(lexer);
-
-        continue;
-      }
+    if (lexer->c == '.') {
+      type = TOKEN_FLOAT;
 
       str = str_append(&str, lexer->cstr);
       lexer_advance(lexer);
+
+      while (isdigit(lexer->c) || lexer->c == 'e') {
+
+        if (lexer->c == 'e' && lexer_peek(lexer, 1) == '+') {
+          str = str_append(&str, lexer->cstr);
+          str = str_append(&str, "+");
+          lexer_advance(lexer);
+          lexer_advance(lexer);
+
+          continue;
+        }
+
+        str = str_append(&str, lexer->cstr);
+        lexer_advance(lexer);
+      }
     }
   }
 

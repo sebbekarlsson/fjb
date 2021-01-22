@@ -46,7 +46,7 @@ static char* gen_semi_args(list_T* list_value, gen_flags_T flags)
     char* child_str = gen(child, flags);
     str = str_append(&str, child_str);
 
-    if (i < living->size - 1 && child->type != AST_NOOP && child_str)
+    if (i < living->size - 1 && child_str)
       str = str_append(&str, ";");
 
     free(child_str);
@@ -138,6 +138,7 @@ char* gen(AST_T* ast, gen_flags_T flags)
     case AST_TUPLE: body = gen_tuple_ast(ast, flags); break;
     case AST_HEX: body = gen_int(ast, flags); break;
     case AST_INT: body = gen_int(ast, flags); break;
+    case AST_INT_MIN: body = gen_int_min(ast, flags); break;
     case AST_FLOAT: body = gen_float(ast, flags); break;
     case AST_STRING: body = gen_string(ast, flags); break;
     case AST_ARROW_DEFINITION: body = gen_arrow_definition(ast, flags); break;
@@ -256,6 +257,11 @@ char* gen_tuple_ast(AST_T* ast, gen_flags_T flags)
 char* gen_int(AST_T* ast, gen_flags_T flags)
 {
   return int_to_str(ast->int_value);
+}
+
+char* gen_int_min(AST_T* ast, gen_flags_T flags)
+{
+  return strdup(ast->string_value);
 }
 
 char* gen_hex(AST_T* ast, gen_flags_T flags)
