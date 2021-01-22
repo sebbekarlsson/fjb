@@ -90,6 +90,7 @@ typedef struct FJB_TOKEN_STRUCT
     TOKEN_SPREAD,
     TOKEN_HEX,
   } type;
+  char c;
 } token_T;
 
 token_T* init_token(char* value, int type);

@@ -364,7 +364,9 @@ token_T* lexer_parse_string(lexer_T* lexer)
   if (lexer->c == start)
     lexer_advance(lexer);
 
-  return ret_tok(lexer, init_token(str ? str : strdup(""), TOKEN_STRING));
+  token_T* token = init_token(str ? str : strdup(""), TOKEN_STRING);
+  token->c = start;
+  return ret_tok(lexer, token);
 }
 
 token_T* lexer_parse_regex(lexer_T* lexer)

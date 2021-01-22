@@ -265,6 +265,7 @@ AST_T* parser_parse_float(parser_T* parser, parser_options_T options)
 AST_T* parser_parse_string(parser_T* parser, parser_options_T options)
 {
   AST_T* ast = init_ast_line(AST_STRING, parser->lexer->line);
+  ast->token = token_clone(parser->token);
 
   ast->string_value = calloc(strlen(parser->token->value) + 1, sizeof(char));
   strcpy(ast->string_value, parser->token->value);
@@ -665,7 +666,7 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
     }
   }
 
-  while (parser->token->type == TOKEN_ARROW_RIGHT) {
+  while (left && parser->token->type == TOKEN_ARROW_RIGHT) {
     left->capsulated = 0;
     parser_eat(parser, TOKEN_ARROW_RIGHT);
     AST_T* ast_arrow_def = init_ast_line(AST_ARROW_DEFINITION, parser->lexer->line);
@@ -738,6 +739,28 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
     default: {
       left = NOOP;
     }; break;
+  }
+
+  while (left && parser->token->type == TOKEN_ARROW_RIGHT) {
+    left->capsulated = 0;
+    parser_eat(parser, TOKEN_ARROW_RIGHT);
+    AST_T* ast_arrow_def = init_ast_line(AST_ARROW_DEFINITION, parser->lexer->line);
+    ast_arrow_def->list_value = init_list(sizeof(AST_T*));
+    list_push(ast_arrow_def->list_value, left);
+
+    if (parser->token->type == TOKEN_LBRACE) {
+      parser_eat(parser, TOKEN_LBRACE);
+      if (parser->token->type != TOKEN_RBRACE) {
+        ast_arrow_def->body = parser_parse(parser, options);
+      }
+      parser_eat(parser, TOKEN_RBRACE);
+    } else {
+      ast_arrow_def->body = parser_parse_expr(parser, options);
+    }
+
+    gc_mark(GC, ast_arrow_def);
+
+    left = ast_arrow_def;
   }
 
   while (parser->token->type == TOKEN_LPAREN) {

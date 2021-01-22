@@ -270,8 +270,14 @@ char* gen_float(AST_T* ast, gen_flags_T flags)
 
 char* gen_string(AST_T* ast, gen_flags_T flags)
 {
-  char* str = calloc(strlen(ast->string_value) + 3, sizeof(char));
-  sprintf(str, "\"%s\"", ast->string_value);
+  char* m = (ast->token && ast->token->c) ? charstr(ast->token->c) : strdup("\"");
+  char* str = 0;
+
+  str = str_append(&str, m);
+  str = str_append(&str, ast->string_value);
+  str = str_append(&str, m);
+
+  free(m);
 
   return str;
 }
