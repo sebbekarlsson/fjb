@@ -21,7 +21,7 @@ fjb index.js
 - [x] ES6 module imports / exports
 - [x] Removing dead code (Tree shaking)
 - [x] Supports package.json
-- [x] Importing _anything_ even when it's not imported, no matter how deeply nested it is
+- [x] Importing _anything_, even when it's not exported, no matter how deeply nested it is
 
 ### Planned Features
 - [ ] JSX support
