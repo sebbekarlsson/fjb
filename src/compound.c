@@ -46,7 +46,7 @@ static unsigned int resolve_deps_query(AST_T* ast, query_T data)
   return resolve_basic_query(ast, data);
 }
 
-list_T* get_imported_symbols(AST_T* lookup, list_T* imports)
+list_T* get_imported_symbols(AST_T* lookup, list_T* imports, list_T* search_index)
 {
   list_T* list = NEW_STACK;
 
@@ -60,7 +60,8 @@ list_T* get_imported_symbols(AST_T* lookup, list_T* imports)
     for (unsigned int k = 0; k < nr_types; k++) {
       data.type = types[k];
       data.name = child->name;
-      resolved = resolve(lookup, resolve_basic_query, data);
+      resolved = ast_query(search_index, resolve_basic_query,
+                           data); // resolve(lookup, resolve_basic_query, data);
       if (resolved) {
         list_push_safe(list, resolved);
         break;
@@ -71,7 +72,7 @@ list_T* get_imported_symbols(AST_T* lookup, list_T* imports)
   return list;
 }
 
-unsigned int get_deps(AST_T* ast, options_T args)
+unsigned int get_deps(AST_T* ast, options_T args, list_T* search_index)
 {
   if (!ast)
     return 0;
@@ -79,21 +80,21 @@ unsigned int get_deps(AST_T* ast, options_T args)
     return 0;
 
   if (ast->left && ast->type != AST_CALL)
-    get_deps(ast->left, args);
+    get_deps(ast->left, args, search_index);
   if (ast->right && !ast->right->from_obj)
-    get_deps(ast->right, args);
+    get_deps(ast->right, args, search_index);
 
   if (ast->expr)
-    get_deps(ast->expr, args);
+    get_deps(ast->expr, args, search_index);
   if (ast->body)
-    get_deps(ast->body, args);
+    get_deps(ast->body, args, search_index);
   if (ast->next)
-    get_deps(ast->next, args);
+    get_deps(ast->next, args, search_index);
   if (ast->value)
-    get_deps(ast->value, args);
+    get_deps(ast->value, args, search_index);
 
   if (ast->list_value && ast->type != AST_FUNCTION) {
-    LOOP_NODES(ast->list_value, i, child, get_deps(child, args););
+    LOOP_NODES(ast->list_value, i, child, get_deps(child, args, search_index););
   }
 
   list_T* pointers = NEW_STACK;
@@ -110,7 +111,8 @@ unsigned int get_deps(AST_T* ast, options_T args)
 
     for (unsigned int i = 0; i < nr_types; i++) {
       query.type = types[i];
-      AST_T* ptr = resolve(args.lookup, resolve_deps_query, query);
+      AST_T* ptr = ast_query(search_index, resolve_deps_query,
+                             query); // resolve(args.lookup, resolve_deps_query, query);
 
       if (ptr) {
         list_push(pointers, ptr);
@@ -143,13 +145,13 @@ unsigned int get_deps(AST_T* ast, options_T args)
   return pushed;
 }
 
-AST_T* new_compound(AST_T* lookup, list_T* imports, list_T* es_exports)
+AST_T* new_compound(AST_T* lookup, list_T* imports, list_T* es_exports, list_T* search_index)
 {
   if (!imports->size)
     return lookup;
 
   AST_T* compound = init_ast(AST_COMPOUND);
-  compound->list_value = get_imported_symbols(lookup, imports);
+  compound->list_value = get_imported_symbols(lookup, imports, search_index);
   compound->es_exports = imports;
   gc_mark_list(GC, compound->list_value);
 
@@ -168,11 +170,12 @@ AST_T* new_compound(AST_T* lookup, list_T* imports, list_T* es_exports)
   unsigned int prev = 0;
   unsigned int pushed = 1;
 
-  while ((get_deps(compound, args) || (args.saved && args.saved->size != prev)) && pushed) {
+  while ((get_deps(compound, args, search_index) || (args.saved && args.saved->size != prev)) &&
+         pushed) {
     pushed = 0;
     prev = args.saved ? args.saved->size : 0;
 
-    LOOP_NODES_FIXED(args.saved, i, s, child, { pushed += get_deps(child, args); });
+    LOOP_NODES_FIXED(args.saved, i, s, child, { pushed += get_deps(child, args, search_index); });
   }
 
   list_T* all_symbols = list_merge(args.saved, compound->list_value);

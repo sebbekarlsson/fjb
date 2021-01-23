@@ -192,3 +192,4 @@ tags
 
 src/include/js/*
 /.tmp
+/lab

@@ -2,13 +2,13 @@
  * TODO: write better tests where we actually inspect
  * the AST to find expected nodes.
  */
-#include <fjb.h>
-#include <gc.h>
-#include <io.h>
+#include "../../src/include/fjb.h"
+#include "../../src/include/gc.h"
+#include "../../src/include/io.h"
+#include "../../src/include/string_utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <string_utils.h>
 
 gc_T* GC;
 

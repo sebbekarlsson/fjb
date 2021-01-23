@@ -351,7 +351,7 @@ char* gen_colon_assignment(AST_T* ast, gen_flags_T flags)
   char* str = 0;
 
   if (ast->left || ast->name) {
-    if (ast->name) {
+    if (ast->name && !ast->left) {
       str = str_append(&str, ast->name);
     }
     str = str_append(&str, " ");
@@ -361,8 +361,9 @@ char* gen_colon_assignment(AST_T* ast, gen_flags_T flags)
       str = str_append(&str, exprstr);
       free(exprstr);
     }
-
-    str = str_append(&str, ":");
+    
+    if (!(ast->expr && ast->expr->type == AST_COLON_ASSIGNMENT))
+      str = str_append(&str, ":");
   }
 
   return str;
@@ -807,7 +808,7 @@ char* gen_ternary(AST_T* ast, gen_flags_T flags)
   str = str_append(&str, "?");
   str = str_append(&str, valuestr);
 
-  str = str_append(&str, ":");
+  //str = str_append(&str, ":");
 
   free(valuestr);
 

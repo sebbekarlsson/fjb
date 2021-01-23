@@ -505,18 +505,10 @@ AST_T* get_node_by_name(list_T* list, char* name)
   return 0;
 }
 
-AST_T* ast_query(list_T* list, AST_query_T query)
+AST_T* ast_query(list_T* list, unsigned int (*match)(AST_T* ast, query_T query), query_T query)
 {
   LOOP_NODES(list, i, child, {
-    if (!child->name)
-      continue;
-
-    if (query.type != -1)
-      if (child->type != query.type)
-        continue;
-
-    if (query.name && strcmp(child->name, query.name) == 0)
-      return child;
+      if (match(child, query)) return child;
   });
 
   return 0;
@@ -538,4 +530,13 @@ char* ast_encode_strings(list_T* strings)
   });
 
   return str;
+}
+
+char* ast_get_string(AST_T* ast)
+{
+  if (!ast->name && !ast->string_value) return 0;
+
+  if (ast->string_value) return ast->string_value;
+  if (ast->name) return ast->name;
+  return 0;
 }

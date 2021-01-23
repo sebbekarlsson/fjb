@@ -23,9 +23,11 @@ compiler_result_T* fjb(gen_flags_T flags, char* source, list_T* imports)
   NOOP = init_ast(AST_NOOP);
   gc_mark(GC, NOOP);
 
+  list_T* search_index = NEW_STACK;
+
   /* ==== Lexing ==== */
   lexer_T* lexer = init_lexer(source, flags.filepath);
-  parser_T* parser = init_parser(lexer, flags.filepath);
+  parser_T* parser = init_parser(lexer, flags.filepath, search_index);
 
   /* ==== Parsing ==== */
   parser_options_T options = EMPTY_PARSER_OPTIONS;
@@ -70,7 +72,7 @@ compiler_result_T* fjb(gen_flags_T flags, char* source, list_T* imports)
   /* ==== Tree-shake ==== */
   list_T* es_exports = NEW_STACK;
   gc_mark_list(GC, es_exports);
-  AST_T* root_to_generate = new_compound(root, visitor->imports, es_exports);
+  AST_T* root_to_generate = new_compound(root, visitor->imports, es_exports, search_index);
 
   /* ==== Generate ==== */
   flags.exports = exports;

@@ -10,6 +10,10 @@ jsheaders = $(jsfiles:.js=.js.h)
 
 GPP_PATH=$(or $(shell test -f ./gpp.out && echo ./gpp.out), gpp)
 
+#ifdef DEBUG
+	flags += -D DEBUG
+#endif
+
 $(exec): $(objects) libjson.a $(jsheaders)
 	gcc $(objects) $(flags) -o $(exec)
 

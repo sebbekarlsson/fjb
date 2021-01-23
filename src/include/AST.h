@@ -104,16 +104,20 @@ list_T* ast_get_pointers(AST_T* ast);
 
 AST_T* get_node_by_name(list_T* list, char* name);
 
-typedef struct
+typedef struct QUERY_STRUCT_T
 {
   char* name;
   int type;
-} AST_query_T;
-AST_T* ast_query(list_T* list, AST_query_T query);
+  list_T* ignore;
+  AST_T* parent;
+} query_T;
+AST_T* ast_query(list_T* list, unsigned int (*match)(AST_T* ast, query_T query), query_T query);
 
 AST_T* ast_search_pointer(AST_T* ast, int type);
 
 char* ast_encode_strings(list_T* strings);
+
+char* ast_get_string(AST_T* ast);
 
 void list_free(gc_T* gc, list_T* list);
 
