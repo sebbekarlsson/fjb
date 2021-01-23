@@ -8,13 +8,16 @@ objects_no_main = $(filter-out src/main.o, $(objects))
 jsfiles = $(wildcard src/js/*.js)
 jsheaders = $(jsfiles:.js=.js.h)
 
+gppfiles = $(wildcard src/enums/*.gpp)
+gppheaders = $(gppfiles:.gpp=.h)
+
 GPP_PATH=$(or $(shell test -f ./gpp.out && echo ./gpp.out), gpp)
 
 #ifdef DEBUG
 	flags += -D DEBUG
 #endif
 
-$(exec): $(objects) libjson.a $(jsheaders)
+$(exec): $(objects) libjson.a $(jsheaders) $(gppheaders)
 	gcc $(objects) $(flags) -o $(exec)
 
 libfjb.a: $(objects_no_main)
@@ -27,8 +30,14 @@ tmp:
 	mkdir -p .tmp
 
 %.js.h: %.js
+	mkdir -p .tmp
 	$(GPP_PATH) $^ > .tmp/$(notdir $^)
 	xxd -i .tmp/$(notdir $^) > src/include/js/$(notdir $^.h)
+
+%.h: %.gpp
+	mkdir -p ./src/include/enums
+	$(GPP_PATH) $^ > ./src/include/enums/$(notdir $^.h)
+	#xxd -i .tmp/$(notdir $^) > src/include/js/$(notdir $^.h)
  
 libjson.a:
 	cd external/libjson ; make ; mv ./libjson.a ../../.

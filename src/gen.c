@@ -130,6 +130,7 @@ char* gen(AST_T* ast, gen_flags_T flags)
     printf("[Gen]: Received nil AST.\n");
     exit(1);
   }
+
   char* body = 0;
   char* str = 0;
 
@@ -530,8 +531,17 @@ char* gen_function(AST_T* ast, gen_flags_T flags)
   char* str = 0;
   str = str_append(&str, "function ");
 
-  if (ast->name) {
-    str = str_append(&str, ast->name);
+  char* name = ast->name;
+
+  if (!name)
+  {
+    char buff[256];
+    sprintf(buff, "_%p", ast);
+    name = buff;
+  }
+
+  if (name) {
+    str = str_append(&str, name);
   }
 
   if (ast->list_value) {
@@ -548,7 +558,7 @@ char* gen_function(AST_T* ast, gen_flags_T flags)
   }
   str = str_append(&str, "}");
 
-  if (ast->name) {
+  if (flags.imports && ast->name && ast->flags && get_node_by_name(flags.imports, ast->name)) {
     str = str_append(&str, "\n");
     str = str_append(&str, "this.");
     str = str_append(&str, ast->name);

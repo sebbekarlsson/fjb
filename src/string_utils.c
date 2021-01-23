@@ -6,7 +6,6 @@
 
 char* str_append(char** source, const char* piece)
 {
-
   char* src = *source;
 
   if (!piece)
@@ -22,15 +21,18 @@ char* str_append(char** source, const char* piece)
   return src;
 }
 
-char* str_prefix(char* source, const char* piece)
+char* str_prefix(char** source, const char* piece)
 {
-  if (!piece)
-    return source;
+  char* v = strdup(*source);
 
-  char* str = calloc(strlen(source) + strlen(piece) + 1, sizeof(char));
-  sprintf(str, "%s%s", piece, source);
+  const char* template = "%s%s";
+  char* newstr = calloc((strlen(v) + strlen(piece) + strlen(template)), sizeof(char));
+  sprintf(newstr, template, piece, v);
 
-  return str;
+  v = newstr;
+  *source = v;
+
+  return v;
 }
 
 char* str_encode(char* source)
@@ -162,7 +164,10 @@ char* resolve_import(char* basepath, char* filepath)
     dir = str_append(&dir, "/");
     dir = str_append(&dir, file_to_read);
 
-    char* package_json_main = package_get(dir, "main");
+    char* package_json_main = package_get(dir, "jsnext:main");
+
+    if (!package_json_main)
+      package_json_main = package_get(dir, "main");
 
     if (file_to_read) {
       free(file_to_read);
@@ -177,9 +182,9 @@ char* resolve_import(char* basepath, char* filepath)
 
   dir = str_append(&dir, "/");
 
-  char* final_file_to_read = str_prefix(file_to_read, dir);
+  char* final_file_to_read = strdup(str_prefix(&file_to_read, dir));
 
-  free(file_to_read);
+  //free(file_to_read);
   free(dir);
 
   return final_file_to_read;
@@ -200,4 +205,16 @@ char* remove_whitespace(char* source)
   }
 
   return newstr;
+}
+
+char* get_indent(unsigned int size)
+{
+  char* str = 0;
+
+  for (unsigned int i = 0; i < size; i++)
+  {
+    str = str_append(&str, "-");
+  }
+
+  return str ? str : strdup("");
 }

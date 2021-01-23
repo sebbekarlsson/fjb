@@ -3,48 +3,10 @@
 #include "gc.h"
 #include "list.h"
 #include "token.h"
+#include "enums/AST_TYPES.gpp.h"
 typedef struct FJB_AST_STRUCT
 {
-  enum
-  {
-    AST_ARROW_DEFINITION,
-    AST_CALL,
-    AST_FUNCTION,
-    AST_ARRAY,
-    AST_STRING,
-    AST_INT,
-    AST_INT_MIN,
-    AST_HEX,
-    AST_FLOAT,
-    AST_ASSIGNMENT,
-    // AST_DEFINITION,
-    AST_COLON_ASSIGNMENT,
-    AST_WHILE,
-    AST_DO,
-    AST_FOR,
-    AST_CONDITION,
-    AST_TERNARY,
-    AST_COMPOUND,
-    AST_UNDEFINED,
-    AST_IMPORT,
-    AST_IMPORT_PHONY,
-    AST_OBJECT,
-    AST_SCOPE,
-    AST_NAME,
-    AST_STATE,
-    AST_BINOP,
-    AST_UNOP,
-    AST_TRY,
-    AST_INCREMENT,
-    AST_DECREMENT,
-    AST_REGEX,
-    AST_SWITCH,
-    AST_SIGNATURE,
-    AST_LABEL,
-    AST_NOOP,
-    AST_TUPLE
-  } type;
-
+  enum AST_TYPE type;
   struct FJB_AST_STRUCT* value;
   struct FJB_AST_STRUCT* body;
   struct FJB_AST_STRUCT* body2;
@@ -96,9 +58,12 @@ void ast_init_parent_lists(AST_T* ast);
 
 unsigned int ast_is_in_list(AST_T* ast, list_T* list);
 
-char* ast_to_str(AST_T* ast);
+char* _ast_to_str(AST_T* ast, int indent);
 
-char* ast_binop_to_str(AST_T* ast);
+char* ast_binop_to_str(AST_T* ast, int indent);
+
+#define ast_to_str(ast)\
+  _ast_to_str(ast, indent)
 
 list_T* ast_get_pointers(AST_T* ast);
 

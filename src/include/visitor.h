@@ -17,6 +17,7 @@ typedef struct FJB_VISITOR_STRUCT
   AST_T* module;
   AST_T* exports;
   list_T* pre_loaded_symbols;
+  char* dumped;
 } visitor_T;
 
 visitor_T* init_visitor(parser_T* parser, const char* filepath, list_T* imports, AST_T* module,

@@ -23,345 +23,349 @@ AST_T* init_ast_line(int type, int line)
   return ast;
 }
 
-char* ast_binop_to_str(AST_T* ast)
+#define PAD(v)\
+  str_prefix(v, (const char*) get_indent(indent))
+
+#define NL()\
+  str = str_append(&str, "\n")
+
+#define SPACE()\
+  str = str_append(&str, " ")
+
+#define LEFT()\
+  char* _left = ast_to_str(ast->left);\
+  str = str_append(&str, _left);
+
+#define RIGHT()\
+  char* _right = ast_to_str(ast->right);\
+  str = str_append(&str, _right);
+
+char* MKPAD(char* source, int indent)
 {
-  char* left = ast_to_str(ast->left);
-  char* tok = token_to_str(ast->token);
-  char* right = ast_to_str(ast->right);
-
-  left = left ? left : strdup("");
-  tok = tok ? tok : strdup("");
-  right = right ? right : strdup("");
-
-  const char* template = "BINOP(%s -> %s -> %s)";
-  char* value =
-    calloc(strlen(template) + strlen(left) + strlen(tok) + strlen(right) + 1, sizeof(char));
-  sprintf(value, template, left, tok, right);
-
-  free(left);
-  free(tok);
-  free(right);
-
-  return value;
+  PAD(&source);
+  return source;
 }
 
-char* ast_ternary_to_str(AST_T* ast)
+char* ast_compound_to_str(AST_T* ast, int indent)
 {
-  char* left = ast_to_str(ast->left);
-  char* val = ast_to_str(ast->value);
-  char* right = ast_to_str(ast->right);
-
-  left = left ? left : strdup("");
-  val = val ? val : strdup("");
-  right = right ? right : strdup("");
-
-  const char* template = "TERNARY(%s ? %s : %s)";
-  char* value =
-    calloc(strlen(template) + strlen(left) + strlen(val) + strlen(right) + 1, sizeof(char));
-  sprintf(value, template, left, val, right);
-
-  free(left);
-  free(val);
-  free(right);
-
-  return value;
-}
-
-char* ast_unop_to_str(AST_T* ast)
-{
-  char* left = ast->left ? ast_to_str(ast->left) : strdup("");
-  char* tok = token_to_str(ast->token);
-  char* right = ast->right ? ast_to_str(ast->right) : strdup("");
-
-  const char* template = "UNOP(%s -> %s -> %s)";
-  char* value =
-    calloc(strlen(template) + strlen(left) + strlen(tok) + strlen(right) + 1, sizeof(char));
-  sprintf(value, template, left, tok, right);
-
-  if (left)
-    free(left);
-
-  if (tok)
-    free(tok);
-
-  if (right)
-    free(right);
-
-  return value;
-}
-
-char* ast_name_to_str(AST_T* ast)
-{
-  const char* template = "NAME(%s)";
-  char* v = ast->name ? ast->name : ast->string_value ? ast->string_value : "";
-  char* value = calloc(strlen(template) + strlen(v) + 1, sizeof(char));
-  sprintf(value, template, v);
-
-  return value;
-}
-
-char* ast_state_to_str(AST_T* ast)
-{
-  const char* template = "STATE(%s -> %s -> %s)";
-  char* exprstr = ast->expr ? ast_to_str(ast->expr) : "";
-  char* rightstr = ast->right ? ast_to_str(ast->right) : ast->value ? ast_to_str(ast->value) : "";
-  char* v = ast->name ? ast->name : ast->string_value ? ast->string_value : "";
-  char* value =
-    calloc(strlen(template) + strlen(exprstr) + strlen(rightstr) + strlen(v) + 1, sizeof(char));
-  sprintf(value, template, v, exprstr, rightstr);
-
-  return value;
-}
-
-char* ast_string_to_str(AST_T* ast)
-{
-  const char* template = "STRING(%s)";
-  char* value = calloc(strlen(template) + strlen(ast->string_value) + 1, sizeof(char));
-  sprintf(value, template, ast->string_value);
-
-  return value;
-}
-
-char* ast_int_to_str(AST_T* ast)
-{
-  const char* template = "INT(%d)";
-  char* value = calloc(strlen(template) + 32, sizeof(char));
-  sprintf(value, template, ast->int_value);
-
-  return value;
-}
-
-char* ast_arrow_definition_to_str(AST_T* ast)
-{
-  const char* template = "ARROW_DEFINITION(%s)";
-  char* value = calloc(strlen(template), sizeof(char));
-  sprintf(value, template, "");
-
-  return value;
-}
-
-char* ast_call_to_str(AST_T* ast)
-{
-  const char* template = "%s.CALL(%s)";
-  char* name = ast->left ? ast_to_str(ast->left) : "UNKNOWN";
-
   char* str = 0;
 
-  for (unsigned int i = 0; i < ast->list_value->size; i++) {
-    AST_T* child = ast->list_value->items[i];
+  indent += 1;
+  LOOP_NODES(ast->list_value, i, child,
+      char* childstr = ast_to_str(child);
+      str = str_append(&str, childstr);
 
-    char* childstr = ast_to_str(child);
+      if (i < ast->list_value->size - 1)
+      {
+        char* comma = MKPAD(",", indent);
+        str = str_append(&str, comma);
+        NL();
+      }
+  );
+  indent -= 1;
 
-    str = str_append(&str, childstr);
-
-    if (i < ast->list_value->size - 1)
-      str = str_append(&str, ",");
-  }
-
-  str = str ? str : "";
-
-  char* value = calloc(strlen(template) + strlen(str) + strlen(name) + 128, sizeof(char));
-
-  sprintf(value, template, name, str);
-
-  return value;
+  return str;
 }
 
-char* ast_assignment_to_str(AST_T* ast)
+char* ast_tuple_to_str(AST_T* ast, int indent)
 {
-  const char* template = "ASSIGNMENT(%s = %s)";
-
-  char* name = ast->left ? ast_to_str(ast->left) : ast->name ? ast->name : "UNKNOWN";
-
-  char* val = ast->value ? ast_to_str(ast->value) : "(nil)";
-  char* value =
-    calloc(strlen(template) + (name ? strlen(name) : 0) + strlen(val) + 1, sizeof(char));
-  sprintf(value, template, name, val ? val : "");
-
-  return value;
-}
-
-char* ast_object_to_str(AST_T* ast)
-{
-  const char* template = "OBJECT(%s)";
-
   char* str = 0;
 
-  for (unsigned int i = 0; i < ast->list_value->size; i++) {
-    AST_T* child = ast->list_value->items[i];
+  char* lbracket = MKPAD("[\n", indent);
+  str = str_append(&str, lbracket);
 
-    char* childstr = ast_to_str(child);
+  indent += 1;
+  LOOP_NODES(ast->list_value, i, child,
+      char* childstr = ast_to_str(child);
+      str = str_append(&str, childstr);
 
-    str = str_append(&str, childstr);
+      if (i < ast->list_value->size - 1)
+      {
+        char* comma = MKPAD(",", indent);
+        str = str_append(&str, comma);
+        NL();
+      }
+  );
+  indent -= 1;
 
-    if (i < ast->list_value->size - 1)
-      str = str_append(&str, ",\n");
-  }
+  char* rbracket = MKPAD("]", indent);
+  NL();
+  str = str_append(&str, rbracket);
 
-  str = str ? str : strdup("");
-
-  char* value = calloc(strlen(template) + strlen(str) + 1, sizeof(char));
-  sprintf(value, template, str);
-
-  return value;
+  return str;
 }
 
-char* ast_tuple_to_str(AST_T* ast)
+char* ast_call_to_str(AST_T* ast, int indent)
 {
-  const char* template = "TUPLE(%s)";
-
+  indent += 1;
   char* str = 0;
 
-  for (unsigned int i = 0; i < ast->list_value->size; i++) {
-    AST_T* child = ast->list_value->items[i];
-    char* childstr = ast_to_str(child);
-
-    str = str_append(&str, childstr);
-
-    if (i < ast->list_value->size - 1)
-      str = str_append(&str, ",");
+  {
+    LEFT();
   }
 
-  str = str ? str : strdup("");
+  char* left = MKPAD("(\n", indent);
+  str = str_append(&str, left);
 
-  char* value = calloc(strlen(template) + strlen(str) + 1, sizeof(char));
-  sprintf(value, template, str);
+  LOOP_NODES(ast->list_value, i, child,
+      char* childstr = ast_to_str(child);
+      str = str_append(&str, childstr);
 
-  return value;
+      if (i < ast->list_value->size - 1)
+      {
+        char* comma = MKPAD(",", indent);
+        str = str_append(&str, comma);
+        NL();
+      }
+  );
+  indent -= 1;
+
+  char* right = MKPAD(")", indent);
+  NL();
+  str = str_append(&str, right);
+
+  return str;
 }
 
-char* ast_function_to_str(AST_T* ast)
+char* ast_object_to_str(AST_T* ast, int indent)
 {
-  const char* template = "FUNCTION %s(%s) {\n";
-
   char* str = 0;
 
-  for (unsigned int i = 0; i < ast->list_value->size; i++) {
-    AST_T* child = ast->list_value->items[i];
+  char* left = MKPAD("{\n", indent);
+  str = str_append(&str, left);
 
-    char* childstr = ast_to_str(child);
+  indent += 1;
+  LOOP_NODES(ast->list_value, i, child,
+      char* childstr = ast_to_str(child);
+      str = str_append(&str, childstr);
 
-    str = str_append(&str, childstr);
+      if (i < ast->list_value->size - 1)
+      {
+        char* comma = MKPAD(",", indent);
+        str = str_append(&str, comma);
+        NL();
+      }
+  );
+  indent -= 1;
 
-    if (i < ast->list_value->size - 1)
-      str = str_append(&str, ",\n");
-  }
+  char* right = MKPAD("}", indent);
+  NL();
+  str = str_append(&str, right);
 
-  str = str ? str : strdup("");
-
-  char* name = ast->name ? ast->name : "";
-
-  char* value = calloc(strlen(template) + strlen(str) + strlen(name) + 1, sizeof(char));
-  sprintf(value, template, name, str);
-
-  if (ast->body) {
-    char* bodystr = ast_to_str(ast->body);
-
-    if (bodystr)
-      value = str_append(&value, bodystr);
-  }
-  value = str_append(&value, "\n}");
-
-  return value;
+  return str;
 }
 
-char* ast_array_to_str(AST_T* ast)
+char* ast_function_to_str(AST_T* ast, int indent)
 {
-  const char* template = "ARRAY(%s)";
-
   char* str = 0;
 
-  for (unsigned int i = 0; i < ast->list_value->size; i++) {
-    AST_T* child = ast->list_value->items[i];
+  char* lparen = MKPAD("(\n", indent);
+  str = str_append(&str, lparen);
 
-    char* childstr = ast_to_str(child);
+  indent += 1;
 
-    str = str_append(&str, childstr);
+  LOOP_NODES(ast->list_value, i, child,
+      char* childstr = ast_to_str(child);
+      str = str_append(&str, childstr);
 
-    if (i < ast->list_value->size - 1)
-      str = str_append(&str, ",");
-  }
+      if (i < ast->list_value->size - 1)
+      {
+        char* comma = MKPAD(",", indent);
+        str = str_append(&str, comma);
+        NL();
+      }
+  );
+  
+  indent -= 1;
+ 
+  NL(); 
+  char* rparen = strdup(")");
+  PAD(&rparen);
+  str = str_append(&str, rparen);
 
-  str = str ? str : strdup("");
+  NL();
+  char* lbrace = MKPAD("{\n", indent);
+  str = str_append(&str, lbrace);
+  
+  indent += 1;
+  char* body = ast_to_str(ast->body);
+  str = str_append(&str, body);
+  indent -= 1;
 
-  char* value = calloc(strlen(template) + strlen(str) + 1, sizeof(char));
-  sprintf(value, template, str);
 
-  return value;
+  char* rbrace = MKPAD("}", indent);
+  NL();
+  str = str_append(&str, rbrace);
+
+  return str;
 }
 
-char* ast_compound_to_str(AST_T* ast)
+char* ast_import_to_str(AST_T* ast, int indent)
 {
-  const char* template = "COMPOUND(%s)";
-
   char* str = 0;
 
-  for (unsigned int i = 0; i < ast->list_value->size; i++) {
-    AST_T* child = ast->list_value->items[i];
+  char* lbrace = MKPAD("{\n", indent);
+  str = str_append(&str, lbrace);
+  
+  indent += 1;
+  
+  char buff[256];
+  sprintf(buff, "BYTES(%ld)", (strlen(ast->compiled_value) + 1 ) * sizeof(char));
 
-    char* childstr = ast_to_str(child);
+  char* body = strdup(buff);
+  PAD(&body);
+  str = str_append(&str, body);
+  indent -= 1;
 
-    if (!childstr)
-      continue;
 
-    str = str_append(&str, childstr);
+  char* rbrace = MKPAD("}", indent);
+  NL();
+  str = str_append(&str, rbrace);
+  
+  return str;
+}
 
-    if (i < ast->list_value->size - 1)
-      str = str_append(&str, ",\n");
+char* ast_condition_to_str(AST_T* ast, int indent)
+{
+  char* str = 0;
+
+  char* lparen = MKPAD("(\n", indent);
+  str = str_append(&str, lparen);
+
+  indent += 1;
+
+  char* expr = ast_to_str(ast->expr);
+  str = str_append(&str, expr);
+
+  indent -= 1;
+ 
+  NL(); 
+  char* rparen = strdup(")");
+  PAD(&rparen);
+  str = str_append(&str, rparen);
+
+  NL();
+  char* lbrace = MKPAD("{\n", indent);
+  str = str_append(&str, lbrace);
+  
+  indent += 1;
+  char* body = ast_to_str(ast->body);
+  str = str_append(&str, body);
+  indent -= 1;
+
+
+  char* rbrace = MKPAD("}", indent);
+  NL();
+  str = str_append(&str, rbrace);
+  
+  indent += 1;
+  RIGHT();
+  indent -= 1;
+
+  return str;
+}
+
+char* ast_to_str_default(AST_T* ast, int indent)
+{
+  return strdup((AST_TYPE_STR[ast->type]));
+}
+
+char* ast_name_to_str(AST_T* ast, int indent)
+{
+  char* value = strdup(ast_get_string(ast));
+  indent += 1;
+  PAD(&value);
+  indent -= 1;
+  return value;
+}
+
+char* ast_state_to_str(AST_T* ast, int indent)
+{
+  indent += 1;
+  char* name = ast_get_string(ast);
+  name = str_append(&name, " ");
+  PAD(&name);
+  char* value = ast_to_str(ast->value);
+
+  char* str = 0;
+  str = str_append(&str, name);
+  str = str_append(&str, value);
+  indent -= 1;
+  return value;
+}
+
+char* ast_assignment_to_str(AST_T* ast, int indent)
+{
+  indent += 1;
+  char* str = 0;
+  
+  LEFT();
+
+  char* value = ast_to_str(ast->value);
+
+  if (ast->value)
+  {
+    str = str_append(&str, value);
   }
-
-  str = str ? str : strdup("");
-
-  char* value = calloc(strlen(template) + strlen(str) + 1, sizeof(char));
-  sprintf(value, template, str);
-
-  return value;
+  indent -= 1;
+  return str;
 }
 
-char* unstringable(AST_T* ast)
-{
-  const char* template = "UNSTRINGABLE(%d)";
-  char* value = calloc(strlen(template) + 32, sizeof(char));
-  sprintf(value, template, ast ? (int)ast->type : 0);
-
-  return value;
-}
-
-char* ast_noop_to_str(AST_T* ast)
-{
-  return strdup("NOOP()");
-}
-
-char* ast_undefined_to_str(AST_T* ast)
-{
-  return strdup("UNDEFINED()");
-}
-
-char* ast_to_str(AST_T* ast)
+char* _ast_to_str(AST_T* ast, int indent)
 {
   if (!ast)
-    return strdup("AST(nil)");
+    return 0;
 
-  switch (ast->type) {
-    case AST_BINOP: return ast_binop_to_str(ast); break;
-    case AST_TERNARY: return ast_ternary_to_str(ast); break;
-    case AST_UNOP: return ast_unop_to_str(ast); break;
-    case AST_NAME: return ast_name_to_str(ast); break;
-    case AST_NOOP: return ast_noop_to_str(ast); break;
-    case AST_UNDEFINED: return ast_undefined_to_str(ast); break;
-    case AST_STATE: return ast_state_to_str(ast); break;
-    case AST_INT: return ast_int_to_str(ast); break;
-    case AST_ARROW_DEFINITION: return ast_arrow_definition_to_str(ast); break;
-    case AST_CALL: return ast_call_to_str(ast); break;
-    case AST_OBJECT: return ast_object_to_str(ast); break;
-    case AST_ASSIGNMENT: return ast_assignment_to_str(ast); break;
-    case AST_TUPLE: return ast_tuple_to_str(ast); break;
-    case AST_ARRAY: return ast_array_to_str(ast); break;
-    case AST_STRING: return ast_string_to_str(ast); break;
-    case AST_FUNCTION: return ast_function_to_str(ast); break;
-    case AST_COMPOUND: return ast_compound_to_str(ast); break;
-    default: return unstringable(ast); break;
+  char* str = 0; 
+
+  char* head = ast_to_str_default(ast, indent);
+  PAD(&head);
+  str = str_append(&str, head);
+
+  char buff[256];
+  sprintf(buff, "%p", ast);
+  str = str_append(&str, "[");
+  str = str_append(&str, buff);
+  str = str_append(&str, "]");
+
+  str = str_append(&str, "(\n");
+
+  switch (ast->type)
+  {
+    case AST_COMPOUND: str = str_append(&str, ast_compound_to_str(ast, indent)); break;
+    case AST_IMPORT: str = str_append(&str, ast_import_to_str(ast, indent)); break;
+    case AST_ARRAY:
+    case AST_TUPLE: str = str_append(&str, ast_tuple_to_str(ast, indent)); break;
+    case AST_CALL: str = str_append(&str, ast_call_to_str(ast, indent)); break;
+    case AST_OBJECT: str = str_append(&str, ast_object_to_str(ast, indent)); break;
+    case AST_FUNCTION: str = str_append(&str, ast_function_to_str(ast, indent)); break;
+    case AST_WHILE:
+    case AST_TRY:
+    case AST_CONDITION: str = str_append(&str, ast_condition_to_str(ast, indent)); break;
+    case AST_STRING:
+    case AST_REGEX:
+    case AST_INT:
+    case AST_INT_MIN:
+    case AST_FLOAT:
+    case AST_NAME: str = str_append(&str, ast_name_to_str(ast, indent)); break;
+    case AST_STATE: str = str_append(&str, ast_state_to_str(ast, indent)); break;
+    case AST_COLON_ASSIGNMENT:
+    case AST_ASSIGNMENT: str = str_append(&str, ast_assignment_to_str(ast, indent)); break;
+    default: { /* noop */ } break;
   }
+
+  NL(); 
+  char* rparen = strdup(")\n");
+  PAD(&rparen); 
+  str = str_append(&str, rparen);
+  
+  char* right = ast_to_str(ast->right);
+  str = str_append(&str, right);
+  char* next = ast_to_str(ast->next);
+  str = str_append(&str, next);
+  
+
+  return str;
 }
 
 void list_free(gc_T* gc, list_T* list)
@@ -424,9 +428,10 @@ void ast_free(AST_T* ast)
 AST_T* init_assignment(char* name, AST_T* value)
 {
   AST_T* ast = init_ast(AST_ASSIGNMENT);
-  ast->name = strdup(name);
+
+  ast->name = name ? strdup(name) : 0;
   ast->left = init_ast(AST_NAME);
-  ast->left->name = strdup(name);
+  ast->left->name = name ? strdup(name) : 0;
   ast->value = value;
 
   return ast;

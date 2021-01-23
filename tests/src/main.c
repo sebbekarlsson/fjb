@@ -12,6 +12,8 @@
 
 gc_T* GC;
 
+volatile unsigned int dump;
+
 char* run(const char* filepath)
 {
   GC = init_gc();
@@ -62,6 +64,7 @@ void test_simple()
 
 int main(int argc, char* argv[])
 {
+  dump = 0;
   test_es6();
   test_simple();
   return 0;

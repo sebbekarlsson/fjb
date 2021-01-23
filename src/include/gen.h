@@ -6,6 +6,7 @@ typedef struct
   char* filepath;
   AST_T* exports;
   list_T* imports;
+  unsigned int dump;
 } gen_flags_T;
 char* gen(AST_T* ast, gen_flags_T flags);
 char* gen_compound(AST_T* ast, gen_flags_T flags);

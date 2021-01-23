@@ -424,13 +424,7 @@ token_T* lexer_parse_regex(lexer_T* lexer)
     lexer_advance(lexer);
   }
 
-  if (lexer->c == 'g' || lexer->c == 'i') {
-    str = str_append(&str, lexer->cstr);
-    prevc = lexer->c;
-    lexer_advance(lexer);
-  }
-
-  if (lexer->c == 'm') {
+  while (lexer->c == 'g' || lexer->c == 'i' || lexer->c == 'm') {
     str = str_append(&str, lexer->cstr);
     prevc = lexer->c;
     lexer_advance(lexer);
@@ -510,6 +504,8 @@ token_T* lexer_switch_id(lexer_T* lexer, token_T* token)
     token->type = TOKEN_IMPORT;
   else if (strcmp(token->value, "export") == 0)
     token->type = TOKEN_EXPORT;
+  else if (strcmp(token->value, "default") == 0)
+    token->type = TOKEN_DEFAULT;
   else if (strcmp(token->value, "from") == 0)
     token->type = TOKEN_FROM;
   else if (strcmp(token->value, "as") == 0)

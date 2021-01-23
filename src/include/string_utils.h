@@ -3,7 +3,7 @@
 
 char* str_append(char** source, const char* piece);
 
-char* str_prefix(char* source, const char* piece);
+char* str_prefix(char** source, const char* piece);
 
 char* str_encode(char* source);
 
@@ -28,4 +28,6 @@ unsigned int first_char_is_special(char* str);
 char* resolve_import(char* basepath, char* filepath);
 
 char* remove_whitespace(char* source);
+
+char* get_indent(unsigned int size);
 #endif

@@ -12,6 +12,7 @@
 
 extern gc_T* GC;
 AST_T* NOOP;
+extern volatile unsigned int dump;
 
 list_T* stack;
 
@@ -78,6 +79,7 @@ compiler_result_T* fjb(gen_flags_T flags, char* source, list_T* imports)
   flags.exports = exports;
   flags.imports = imports;
   char* str = 0;
+
   str = str_append(&str, "/* IMPORTED FROM `");
   str = str_append(&str, flags.filepath);
   str = str_append(&str, "` */\n");
@@ -89,6 +91,16 @@ compiler_result_T* fjb(gen_flags_T flags, char* source, list_T* imports)
   result->stdout = str;
   result->es_exports = es_exports;
   result->node = root_to_generate;
+  
+  if (dump)
+  {
+    char* dumped = visitor->dumped;
+    char* newdump = _ast_to_str(result->node, 0);
+
+    dumped = str_append(&dumped, newdump);
+
+    result->dumped = dumped;
+  }
 
   lexer_free(lexer);
   parser_free(parser);

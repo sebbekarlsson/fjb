@@ -244,6 +244,7 @@ AST_T* parser_parse_int(parser_T* parser, parser_options_T options)
 {
   AST_T* ast = init_ast_line(AST_INT, parser->lexer->line);
   ast->int_value = atoi(parser->token->value);
+  ast->string_value = strdup(parser->token->value);
   parser_eat(parser, TOKEN_INT);
 
   gc_mark(GC, ast);
@@ -394,8 +395,10 @@ AST_T* parser_parse_state(parser_T* parser, parser_options_T options)
   ast->token = token_clone(parser->token);
   ast->string_value = strdup(parser->token->value);
   ast->name = strdup(ast->string_value ? ast->string_value : ast->name);
-
   parser_eat(parser, parser->token->type);
+
+  if (parser->token->type == TOKEN_DEFAULT)
+    parser_eat(parser, parser->token->type);
 
   if (parser->token->type != TOKEN_SEMI)
     ast->value = parser_parse_expr(parser, options);
@@ -630,9 +633,9 @@ AST_T* parser_parse_function(parser_T* parser, parser_options_T options)
   ast->parent = options.parent;
   options.parent = ast;
 
-  if (parser->token->type == TOKEN_ID) {
+  if (parser->token->type != TOKEN_LPAREN) {
     ast->name = strdup(parser->token->value);
-    parser_eat(parser, TOKEN_ID);
+    parser_eat_any(parser);
   }
 
   if (parser->token->type == TOKEN_LPAREN) {
@@ -736,6 +739,8 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
     case TOKEN_ELSE:
     case TOKEN_FROM:
     case TOKEN_ASYNC:
+    case TOKEN_AS:
+    case TOKEN_DEFAULT:
     case TOKEN_FOR: left = parser_parse_id(parser, options); break;
     case TOKEN_INT: left = parser_parse_int(parser, options); break;
     case TOKEN_INT_MIN: left = parser_parse_int_min(parser, options); break;
@@ -1009,6 +1014,7 @@ AST_T* parser_parse_statement(parser_T* parser, parser_options_T options)
     case TOKEN_VOID:
     case TOKEN_ASYNC:
     case TOKEN_AWAIT:
+    case TOKEN_DEFAULT:
     case TOKEN_ASSERT: return parser_parse_state(parser, options); break;
     default: return 0; break;
   }
