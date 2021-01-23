@@ -51,7 +51,7 @@ void lexer_skip_comment(lexer_T* lexer)
 {
   if (lexer->c == '/') {
     if (lexer_peek(lexer, 1) == '/') {
-      while (lexer->c != '\n')
+      while (lexer->c != '\n' && lexer->c != 0)
         lexer_advance(lexer);
     } else if (lexer_peek(lexer, 1) == '*') {
       while (1) {
@@ -123,7 +123,7 @@ token_T* lexer_next(lexer_T* lexer)
       return lexer_parse_hex(lexer);
     }
 
-    if (isdigit(lexer->c)) {
+    if (isdigit(lexer->c) || (lexer->c == '.' && isdigit(lexer_peek(lexer, 1)))) {
       return lexer_parse_number(lexer);
     }
 
@@ -287,7 +287,7 @@ token_T* lexer_next(lexer_T* lexer)
         continue;
       }
     }
-
+    
     switch (lexer->c) {
       case '{': return lexer_advance_token(lexer, init_token(charstr(lexer->c), TOKEN_LBRACE));
       case '}': return lexer_advance_token(lexer, init_token(charstr(lexer->c), TOKEN_RBRACE));
@@ -446,6 +446,12 @@ token_T* lexer_parse_number(lexer_T* lexer)
 {
   char* str = 0;
   int type = TOKEN_INT;
+
+  if(lexer->c == '.') {
+    str = str_append(&str, "0");
+    str = str_append(&str, lexer->cstr);
+    lexer_advance(lexer);
+  }
 
   if (isdigit(lexer->c) && (lexer_peek(lexer, 1) == 'e' || lexer_peek(lexer, 1) == 'E')) {
     type = TOKEN_INT_MIN;
