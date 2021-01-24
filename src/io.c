@@ -71,3 +71,8 @@ char* sh(const char* cmd)
 
   return output;
 }
+
+unsigned int file_exists(char* filepath)
+{
+  return access(filepath, F_OK) == 0;
+}

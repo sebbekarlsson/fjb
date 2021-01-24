@@ -13,6 +13,9 @@ const char* NODE_MODULES[] = {
 
 unsigned int is_builtin_module(char* name)
 {
+  if (!name)
+    return 1;
+
   for (int i = 0; i < NODE_MODULES_LENGTH; i++) {
     if (strcmp(NODE_MODULES[i], name) == 0)
       return 1;

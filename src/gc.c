@@ -25,7 +25,7 @@ void gc_mark_list(gc_T* gc, list_T* list)
   if (!list)
     return;
 
- // if (ptr_in_list(gc->trashy_lists, list))
+  // if (ptr_in_list(gc->trashy_lists, list))
   //  return;
 
   list_push(gc->trashy_lists, list);

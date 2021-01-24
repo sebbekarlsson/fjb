@@ -1,8 +1,12 @@
 #include "include/string_utils.h"
+#include "include/io.h"
 #include "include/package.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 char* str_append(char** source, const char* piece)
 {
@@ -68,23 +72,29 @@ char* charstr(char c)
 
 char* dirname(const char* path)
 {
+  if (!path)
+    return 0;
+
   char* last = strrchr(path, '/');
+  if (!get_filename_ext((char*)path) && last)
+    return strdup(path);
+
   int pos = (last)-path;
   char* dir = strndup(path, pos);
 
-  if (dir) {
-    if (strrchr(dir, '/') == 0) {
-      free(dir);
-      dir = strdup(".");
-    }
-  }
+  if (get_filename_ext((char*)dir) && !last)
+    return strdup(".");
 
-  return dir;
+  return dir ? dir : strdup(path);
 }
 
 const char* extension(const char* path)
 {
   char* last = strrchr(path, '.');
+
+  if (!last || !path)
+    return 0;
+
   int pos = last - path;
   return path + pos;
 }
@@ -105,12 +115,18 @@ char* remove_char(char* str, char find)
   return newstr;
 }
 
-const char* get_filename_ext(const char* filename)
+const char* get_filename_ext(char* filename)
 {
-  const char* dot = strrchr(filename, '.');
-  if (!dot || dot == filename)
-    return "";
-  return dot + 1;
+  if (!filename)
+    return 0;
+
+  char* f = filename;
+
+  char* last = strrchr(f, '.');
+  if (!last)
+    return 0;
+
+  return last;
 }
 
 char* int_to_str(int x)
@@ -147,47 +163,117 @@ unsigned int first_char_is_special(char* str)
   return is_special(str[0]);
 }
 
-char* resolve_import(char* basepath, char* filepath)
+int is_dir(const char* path)
 {
-  if (!filepath) {
+  struct stat statbuf;
+  if (stat(path, &statbuf) != 0)
     return 0;
+  return S_ISDIR(statbuf.st_mode);
+}
+
+char* strip_ext(char* filepath)
+{
+  char* fname = strdup(filepath);
+
+  char* end = fname + strlen(fname);
+
+  while (end > fname && *end != '.' && *end != '\\' && *end != '/') {
+    --end;
   }
-  const char* ext = extension(basepath);
-  char* file_to_read = strdup(filepath);
 
-  char* dir = 0;
+  if ((end > fname && *end == '.') && (*(end - 1) != '\\' && *(end - 1) != '/')) {
+    *end = '\0';
+  }
 
-  if (file_to_read[0] == '.') {
-    dir = dirname(basepath);
-  } else {
-    dir = str_append(&dir, "node_modules");
-    dir = str_append(&dir, "/");
-    dir = str_append(&dir, file_to_read);
+  return fname;
+}
 
-    char* package_json_main = package_get(dir, "jsnext:main");
+char* get_basename(char* filepath)
+{
+  size_t len = strlen(filepath);
 
-    if (!package_json_main)
-      package_json_main = package_get(dir, "main");
+  if (filepath[len - 1] == '/')
+    return strdup(filepath);
+  if (is_dir(filepath)) {
+    char* str = 0;
+    str = str_append(&str, filepath);
+    str = str_append(&str, "/");
+    return str;
+  }
 
-    if (file_to_read) {
-      free(file_to_read);
+  return strip_ext(filepath);
+}
+
+char* get_entry(char* dir)
+{
+  char* entry_point = 0;
+
+  if (!entry_point)
+    entry_point = package_get(dir, "main");
+
+  if (!entry_point) {
+    entry_point = package_get(dir, "jsnext:main");
+  }
+
+  return entry_point;
+}
+
+char* try_resolve(char* path)
+{
+  const char* extensions[] = { ".js", ".ts", ".jsx" };
+  size_t nr_extensions = 3;
+
+  for (unsigned int i = 0; i < nr_extensions; i++) {
+    char buff[360];
+    sprintf(buff, "%s%s", path, extensions[i]);
+
+    if (file_exists(buff) && !is_dir(buff))
+      return strdup(buff);
+  }
+
+  return 0;
+}
+
+char* resolve_import(char* basepath, char* filepath, unsigned int node_modules)
+{
+  char* path = 0;
+  char* full_path = 0;
+
+  basepath = dirname(basepath);
+
+  char* with_e = try_resolve(filepath);
+  if (with_e)
+    return with_e;
+
+  if (filepath[0] != '.') {
+    basepath = str_append(&basepath, "/node_modules");
+  }
+
+  full_path = str_append(&full_path, basepath);
+  full_path = str_append(&full_path, "/");
+  full_path = str_append(&full_path, filepath);
+
+  if (is_dir(full_path)) {
+    char* entry = get_entry(full_path);
+
+    if (entry) {
+      full_path = str_append(&full_path, "/");
+      full_path = str_append(&full_path, entry);
+
+      free(entry);
     }
-
-    file_to_read = package_json_main ? package_json_main : strdup("index");
   }
 
-  if (!strlen(get_filename_ext(file_to_read))) {
-    file_to_read = str_append(&file_to_read, ext);
+  if (file_exists(full_path) && !is_dir(full_path)) {
+    return full_path;
   }
 
-  dir = str_append(&dir, "/");
+  char* with_ext = try_resolve(full_path);
 
-  char* final_file_to_read = strdup(str_prefix(&file_to_read, dir));
+  if (with_ext && file_exists(with_ext))
+    return with_ext;
 
-  //free(file_to_read);
-  free(dir);
-
-  return final_file_to_read;
+  return path;
 }
 
 char* remove_whitespace(char* source)
@@ -211,8 +297,7 @@ char* get_indent(unsigned int size)
 {
   char* str = 0;
 
-  for (unsigned int i = 0; i < size; i++)
-  {
+  for (unsigned int i = 0; i < size; i++) {
     str = str_append(&str, "-");
   }
 

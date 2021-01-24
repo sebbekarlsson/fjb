@@ -15,7 +15,7 @@ const char* extension(const char* path);
 
 char* remove_char(char* str, char find);
 
-const char* get_filename_ext(const char* filename);
+const char* get_filename_ext(char* filename);
 
 char* int_to_str(int x);
 
@@ -25,7 +25,7 @@ unsigned int is_special(char c);
 
 unsigned int first_char_is_special(char* str);
 
-char* resolve_import(char* basepath, char* filepath);
+char* resolve_import(char* basepath, char* filepath, unsigned int node_modules);
 
 char* remove_whitespace(char* source);
 

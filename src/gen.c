@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static char* gen_args(list_T* list_value, gen_flags_T flags)
+static char* gen_args(list_T* list_value, compiler_flags_T* flags)
 {
   char* str = 0;
   str = str_append(&str, "(");
@@ -33,7 +33,7 @@ static char* gen_args(list_T* list_value, gen_flags_T flags)
   return str;
 }
 
-static char* gen_semi_args(list_T* list_value, gen_flags_T flags)
+static char* gen_semi_args(list_T* list_value, compiler_flags_T* flags)
 {
   char* str = 0;
   str = str_append(&str, "(");
@@ -57,7 +57,7 @@ static char* gen_semi_args(list_T* list_value, gen_flags_T flags)
   return str;
 }
 
-static char* gen_list(list_T* list_value, gen_flags_T flags)
+static char* gen_list(list_T* list_value, compiler_flags_T* flags)
 {
   char* str = 0;
   str = str_append(&str, "[");
@@ -81,7 +81,7 @@ static char* gen_list(list_T* list_value, gen_flags_T flags)
   return str;
 }
 
-static char* gen_tuple(list_T* list_value, gen_flags_T flags)
+static char* gen_tuple(list_T* list_value, compiler_flags_T* flags)
 {
   char* str = 0;
 
@@ -103,7 +103,7 @@ static char* gen_tuple(list_T* list_value, gen_flags_T flags)
   return str;
 }
 
-static char* gen_semi_tuple(list_T* list_value, gen_flags_T flags)
+static char* gen_semi_tuple(list_T* list_value, compiler_flags_T* flags)
 {
   char* str = 0;
 
@@ -124,7 +124,7 @@ static char* gen_semi_tuple(list_T* list_value, gen_flags_T flags)
   return str ? str : strdup("/* empty semi tuple */");
 }
 
-char* gen(AST_T* ast, gen_flags_T flags)
+char* gen(AST_T* ast, compiler_flags_T* flags)
 {
   if (!ast) {
     printf("[Gen]: Received nil AST.\n");
@@ -246,36 +246,36 @@ char* gen(AST_T* ast, gen_flags_T flags)
 
   return str;
 }
-char* gen_array(AST_T* ast, gen_flags_T flags)
+char* gen_array(AST_T* ast, compiler_flags_T* flags)
 {
   return gen_list(ast->list_value, flags);
 }
 
-char* gen_tuple_ast(AST_T* ast, gen_flags_T flags)
+char* gen_tuple_ast(AST_T* ast, compiler_flags_T* flags)
 {
   return gen_tuple(ast->list_value, flags);
 }
-char* gen_int(AST_T* ast, gen_flags_T flags)
+char* gen_int(AST_T* ast, compiler_flags_T* flags)
 {
   return int_to_str(ast->int_value);
 }
 
-char* gen_int_min(AST_T* ast, gen_flags_T flags)
+char* gen_int_min(AST_T* ast, compiler_flags_T* flags)
 {
   return strdup(ast->string_value);
 }
 
-char* gen_hex(AST_T* ast, gen_flags_T flags)
+char* gen_hex(AST_T* ast, compiler_flags_T* flags)
 {
   return strdup(ast->string_value);
 }
 
-char* gen_float(AST_T* ast, gen_flags_T flags)
+char* gen_float(AST_T* ast, compiler_flags_T* flags)
 {
   return strdup(ast->string_value ? ast->string_value : float_to_str(ast->float_value));
 }
 
-char* gen_string(AST_T* ast, gen_flags_T flags)
+char* gen_string(AST_T* ast, compiler_flags_T* flags)
 {
   char* m = (ast->token && ast->token->c) ? charstr(ast->token->c) : strdup("\"");
   char* str = 0;
@@ -289,7 +289,7 @@ char* gen_string(AST_T* ast, gen_flags_T flags)
   return str;
 }
 
-char* gen_arrow_definition(AST_T* ast, gen_flags_T flags)
+char* gen_arrow_definition(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
   str = str_append(&str, "(");
@@ -322,7 +322,7 @@ char* gen_arrow_definition(AST_T* ast, gen_flags_T flags)
   return str;
 }
 
-char* gen_assignment(AST_T* ast, gen_flags_T flags)
+char* gen_assignment(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
 
@@ -335,7 +335,7 @@ char* gen_assignment(AST_T* ast, gen_flags_T flags)
     free(valuestr);
   }
 
-  if (flags.imports && ast->name && ast->flags && get_node_by_name(flags.imports, ast->name)) {
+  if (flags->imports && ast->name && ast->flags && get_node_by_name(flags->imports, ast->name)) {
     str = str_append(&str, "\n");
     str = str_append(&str, "this.");
     str = str_append(&str, ast->name);
@@ -347,7 +347,7 @@ char* gen_assignment(AST_T* ast, gen_flags_T flags)
   return str ? str : strdup("");
 }
 
-char* gen_colon_assignment(AST_T* ast, gen_flags_T flags)
+char* gen_colon_assignment(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
 
@@ -362,7 +362,7 @@ char* gen_colon_assignment(AST_T* ast, gen_flags_T flags)
       str = str_append(&str, exprstr);
       free(exprstr);
     }
-    
+
     if (!(ast->expr && ast->expr->type == AST_COLON_ASSIGNMENT))
       str = str_append(&str, ":");
   }
@@ -370,7 +370,7 @@ char* gen_colon_assignment(AST_T* ast, gen_flags_T flags)
   return str;
 }
 
-char* gen_while(AST_T* ast, gen_flags_T flags)
+char* gen_while(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
   str = str_append(&str, "while(");
@@ -392,7 +392,7 @@ char* gen_while(AST_T* ast, gen_flags_T flags)
   return str;
 }
 
-char* gen_for(AST_T* ast, gen_flags_T flags)
+char* gen_for(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
   str = str_append(&str, "for ");
@@ -410,7 +410,7 @@ char* gen_for(AST_T* ast, gen_flags_T flags)
   return str;
 }
 
-char* gen_compound(AST_T* ast, gen_flags_T flags)
+char* gen_compound(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
 
@@ -435,7 +435,7 @@ char* gen_compound(AST_T* ast, gen_flags_T flags)
   return str;
 }
 
-char* gen_import(AST_T* ast, gen_flags_T flags)
+char* gen_import(AST_T* ast, compiler_flags_T* flags)
 {
   if (!ast->compiled_value)
     return 0;
@@ -496,12 +496,12 @@ char* gen_import(AST_T* ast, gen_flags_T flags)
   return str;
 }
 
-char* gen_undefined(AST_T* ast, gen_flags_T flags)
+char* gen_undefined(AST_T* ast, compiler_flags_T* flags)
 {
   return strdup("/* undefined */");
 }
 
-char* gen_call(AST_T* ast, gen_flags_T flags)
+char* gen_call(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
 
@@ -526,15 +526,14 @@ char* gen_call(AST_T* ast, gen_flags_T flags)
   return str;
 }
 
-char* gen_function(AST_T* ast, gen_flags_T flags)
+char* gen_function(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
   str = str_append(&str, "function ");
 
   char* name = ast->name;
 
-  if (!name)
-  {
+  if (!name) {
     char buff[256];
     sprintf(buff, "_%p", ast);
     name = buff;
@@ -558,7 +557,7 @@ char* gen_function(AST_T* ast, gen_flags_T flags)
   }
   str = str_append(&str, "}");
 
-  if (flags.imports && ast->name && ast->flags && get_node_by_name(flags.imports, ast->name)) {
+  if (flags->imports && ast->name && ast->flags && get_node_by_name(flags->imports, ast->name)) {
     str = str_append(&str, "\n");
     str = str_append(&str, "this.");
     str = str_append(&str, ast->name);
@@ -570,7 +569,7 @@ char* gen_function(AST_T* ast, gen_flags_T flags)
   return str;
 }
 
-char* gen_scope(AST_T* ast, gen_flags_T flags)
+char* gen_scope(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
 
@@ -587,7 +586,7 @@ char* gen_scope(AST_T* ast, gen_flags_T flags)
   return str;
 }
 
-char* gen_signature(AST_T* ast, gen_flags_T flags)
+char* gen_signature(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
 
@@ -615,7 +614,7 @@ char* gen_signature(AST_T* ast, gen_flags_T flags)
   return str ? str : strdup("/* empty function */");
 }
 
-char* gen_name(AST_T* ast, gen_flags_T flags)
+char* gen_name(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
 
@@ -634,7 +633,7 @@ char* gen_name(AST_T* ast, gen_flags_T flags)
   return str;
 }
 
-char* gen_state(AST_T* ast, gen_flags_T flags)
+char* gen_state(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = strcmp(ast->string_value, "export") == 0 ? 0 : strdup(ast->string_value);
 
@@ -648,7 +647,7 @@ char* gen_state(AST_T* ast, gen_flags_T flags)
   return str;
 }
 
-char* gen_binop(AST_T* ast, gen_flags_T flags)
+char* gen_binop(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
 
@@ -661,12 +660,12 @@ char* gen_binop(AST_T* ast, gen_flags_T flags)
   return str;
 }
 
-char* gen_unop(AST_T* ast, gen_flags_T flags)
+char* gen_unop(AST_T* ast, compiler_flags_T* flags)
 {
   return strdup(ast->token ? ast->token->value : "");
 }
 
-char* gen_block_linked_list(AST_T* ast, gen_flags_T flags)
+char* gen_block_linked_list(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
 
@@ -692,17 +691,17 @@ char* gen_block_linked_list(AST_T* ast, gen_flags_T flags)
   return str;
 }
 
-char* gen_increment(AST_T* ast, gen_flags_T flags)
+char* gen_increment(AST_T* ast, compiler_flags_T* flags)
 {
   return strdup(ast->token->value);
 }
 
-char* gen_decrement(AST_T* ast, gen_flags_T flags)
+char* gen_decrement(AST_T* ast, compiler_flags_T* flags)
 {
   return strdup(ast->token->value);
 }
 
-char* gen_regex(AST_T* ast, gen_flags_T flags)
+char* gen_regex(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
 
@@ -712,7 +711,7 @@ char* gen_regex(AST_T* ast, gen_flags_T flags)
   return str;
 }
 
-char* gen_object(AST_T* ast, gen_flags_T flags)
+char* gen_object(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
   str = str_append(&str, "{");
@@ -731,7 +730,7 @@ char* gen_object(AST_T* ast, gen_flags_T flags)
   return str;
 }
 
-char* gen_try(AST_T* ast, gen_flags_T flags)
+char* gen_try(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
   char* linkedstr = gen_block_linked_list(ast, flags);
@@ -741,7 +740,7 @@ char* gen_try(AST_T* ast, gen_flags_T flags)
   return str;
 }
 
-char* gen_condition(AST_T* ast, gen_flags_T flags)
+char* gen_condition(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
   str = str_append(&str, ast->expr ? "if" : "");
@@ -769,7 +768,7 @@ char* gen_condition(AST_T* ast, gen_flags_T flags)
   return str;
 }
 
-char* gen_switch(AST_T* ast, gen_flags_T flags)
+char* gen_switch(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
   str = str_append(&str, "switch");
@@ -792,12 +791,12 @@ char* gen_switch(AST_T* ast, gen_flags_T flags)
   return str;
 }
 
-char* gen_noop(AST_T* ast, gen_flags_T flags)
+char* gen_noop(AST_T* ast, compiler_flags_T* flags)
 {
   return strdup("");
 }
 
-char* gen_label(AST_T* ast, gen_flags_T flags)
+char* gen_label(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
 
@@ -810,7 +809,7 @@ char* gen_label(AST_T* ast, gen_flags_T flags)
   return str;
 }
 
-char* gen_ternary(AST_T* ast, gen_flags_T flags)
+char* gen_ternary(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
 
@@ -818,14 +817,14 @@ char* gen_ternary(AST_T* ast, gen_flags_T flags)
   str = str_append(&str, "?");
   str = str_append(&str, valuestr);
 
-  //str = str_append(&str, ":");
+  // str = str_append(&str, ":");
 
   free(valuestr);
 
   return str;
 }
 
-char* gen_do(AST_T* ast, gen_flags_T flags)
+char* gen_do(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = strdup("do {");
   if (ast->body) {

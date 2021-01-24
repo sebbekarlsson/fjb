@@ -23,21 +23,18 @@ AST_T* init_ast_line(int type, int line)
   return ast;
 }
 
-#define PAD(v)\
-  str_prefix(v, (const char*) get_indent(indent))
+#define PAD(v) str_prefix(v, (const char*)get_indent(indent))
 
-#define NL()\
-  str = str_append(&str, "\n")
+#define NL() str = str_append(&str, "\n")
 
-#define SPACE()\
-  str = str_append(&str, " ")
+#define SPACE() str = str_append(&str, " ")
 
-#define LEFT()\
-  char* _left = ast_to_str(ast->left);\
+#define LEFT()                                                                                     \
+  char* _left = ast_to_str(ast->left);                                                             \
   str = str_append(&str, _left);
 
-#define RIGHT()\
-  char* _right = ast_to_str(ast->right);\
+#define RIGHT()                                                                                    \
+  char* _right = ast_to_str(ast->right);                                                           \
   str = str_append(&str, _right);
 
 char* MKPAD(char* source, int indent)
@@ -51,17 +48,14 @@ char* ast_compound_to_str(AST_T* ast, int indent)
   char* str = 0;
 
   indent += 1;
-  LOOP_NODES(ast->list_value, i, child,
-      char* childstr = ast_to_str(child);
-      str = str_append(&str, childstr);
+  LOOP_NODES(
+    ast->list_value, i, child, char* childstr = ast_to_str(child); str = str_append(&str, childstr);
 
-      if (i < ast->list_value->size - 1)
-      {
-        char* comma = MKPAD(",", indent);
-        str = str_append(&str, comma);
-        NL();
-      }
-  );
+    if (i < ast->list_value->size - 1) {
+      char* comma = MKPAD(",", indent);
+      str = str_append(&str, comma);
+      NL();
+    });
   indent -= 1;
 
   return str;
@@ -75,17 +69,14 @@ char* ast_tuple_to_str(AST_T* ast, int indent)
   str = str_append(&str, lbracket);
 
   indent += 1;
-  LOOP_NODES(ast->list_value, i, child,
-      char* childstr = ast_to_str(child);
-      str = str_append(&str, childstr);
+  LOOP_NODES(
+    ast->list_value, i, child, char* childstr = ast_to_str(child); str = str_append(&str, childstr);
 
-      if (i < ast->list_value->size - 1)
-      {
-        char* comma = MKPAD(",", indent);
-        str = str_append(&str, comma);
-        NL();
-      }
-  );
+    if (i < ast->list_value->size - 1) {
+      char* comma = MKPAD(",", indent);
+      str = str_append(&str, comma);
+      NL();
+    });
   indent -= 1;
 
   char* rbracket = MKPAD("]", indent);
@@ -107,17 +98,14 @@ char* ast_call_to_str(AST_T* ast, int indent)
   char* left = MKPAD("(\n", indent);
   str = str_append(&str, left);
 
-  LOOP_NODES(ast->list_value, i, child,
-      char* childstr = ast_to_str(child);
-      str = str_append(&str, childstr);
+  LOOP_NODES(
+    ast->list_value, i, child, char* childstr = ast_to_str(child); str = str_append(&str, childstr);
 
-      if (i < ast->list_value->size - 1)
-      {
-        char* comma = MKPAD(",", indent);
-        str = str_append(&str, comma);
-        NL();
-      }
-  );
+    if (i < ast->list_value->size - 1) {
+      char* comma = MKPAD(",", indent);
+      str = str_append(&str, comma);
+      NL();
+    });
   indent -= 1;
 
   char* right = MKPAD(")", indent);
@@ -135,17 +123,14 @@ char* ast_object_to_str(AST_T* ast, int indent)
   str = str_append(&str, left);
 
   indent += 1;
-  LOOP_NODES(ast->list_value, i, child,
-      char* childstr = ast_to_str(child);
-      str = str_append(&str, childstr);
+  LOOP_NODES(
+    ast->list_value, i, child, char* childstr = ast_to_str(child); str = str_append(&str, childstr);
 
-      if (i < ast->list_value->size - 1)
-      {
-        char* comma = MKPAD(",", indent);
-        str = str_append(&str, comma);
-        NL();
-      }
-  );
+    if (i < ast->list_value->size - 1) {
+      char* comma = MKPAD(",", indent);
+      str = str_append(&str, comma);
+      NL();
+    });
   indent -= 1;
 
   char* right = MKPAD("}", indent);
@@ -164,21 +149,18 @@ char* ast_function_to_str(AST_T* ast, int indent)
 
   indent += 1;
 
-  LOOP_NODES(ast->list_value, i, child,
-      char* childstr = ast_to_str(child);
-      str = str_append(&str, childstr);
+  LOOP_NODES(
+    ast->list_value, i, child, char* childstr = ast_to_str(child); str = str_append(&str, childstr);
 
-      if (i < ast->list_value->size - 1)
-      {
-        char* comma = MKPAD(",", indent);
-        str = str_append(&str, comma);
-        NL();
-      }
-  );
-  
+    if (i < ast->list_value->size - 1) {
+      char* comma = MKPAD(",", indent);
+      str = str_append(&str, comma);
+      NL();
+    });
+
   indent -= 1;
- 
-  NL(); 
+
+  NL();
   char* rparen = strdup(")");
   PAD(&rparen);
   str = str_append(&str, rparen);
@@ -186,12 +168,11 @@ char* ast_function_to_str(AST_T* ast, int indent)
   NL();
   char* lbrace = MKPAD("{\n", indent);
   str = str_append(&str, lbrace);
-  
+
   indent += 1;
   char* body = ast_to_str(ast->body);
   str = str_append(&str, body);
   indent -= 1;
-
 
   char* rbrace = MKPAD("}", indent);
   NL();
@@ -206,22 +187,23 @@ char* ast_import_to_str(AST_T* ast, int indent)
 
   char* lbrace = MKPAD("{\n", indent);
   str = str_append(&str, lbrace);
-  
+
   indent += 1;
-  
-  char buff[256];
-  sprintf(buff, "BYTES(%ld)", (strlen(ast->compiled_value) + 1 ) * sizeof(char));
 
-  char* body = strdup(buff);
-  PAD(&body);
-  str = str_append(&str, body);
+  if (ast->compiled_value) {
+    char buff[256];
+    sprintf(buff, "BYTES(%ld)", (strlen(ast->compiled_value) + 1) * sizeof(char));
+
+    char* body = strdup(buff);
+    PAD(&body);
+    str = str_append(&str, body);
+  }
   indent -= 1;
-
 
   char* rbrace = MKPAD("}", indent);
   NL();
   str = str_append(&str, rbrace);
-  
+
   return str;
 }
 
@@ -238,8 +220,8 @@ char* ast_condition_to_str(AST_T* ast, int indent)
   str = str_append(&str, expr);
 
   indent -= 1;
- 
-  NL(); 
+
+  NL();
   char* rparen = strdup(")");
   PAD(&rparen);
   str = str_append(&str, rparen);
@@ -247,17 +229,16 @@ char* ast_condition_to_str(AST_T* ast, int indent)
   NL();
   char* lbrace = MKPAD("{\n", indent);
   str = str_append(&str, lbrace);
-  
+
   indent += 1;
   char* body = ast_to_str(ast->body);
   str = str_append(&str, body);
   indent -= 1;
 
-
   char* rbrace = MKPAD("}", indent);
   NL();
   str = str_append(&str, rbrace);
-  
+
   indent += 1;
   RIGHT();
   indent -= 1;
@@ -298,13 +279,12 @@ char* ast_assignment_to_str(AST_T* ast, int indent)
 {
   indent += 1;
   char* str = 0;
-  
+
   LEFT();
 
   char* value = ast_to_str(ast->value);
 
-  if (ast->value)
-  {
+  if (ast->value) {
     str = str_append(&str, value);
   }
   indent -= 1;
@@ -316,7 +296,7 @@ char* _ast_to_str(AST_T* ast, int indent)
   if (!ast)
     return 0;
 
-  char* str = 0; 
+  char* str = 0;
 
   char* head = ast_to_str_default(ast, indent);
   PAD(&head);
@@ -330,8 +310,7 @@ char* _ast_to_str(AST_T* ast, int indent)
 
   str = str_append(&str, "(\n");
 
-  switch (ast->type)
-  {
+  switch (ast->type) {
     case AST_COMPOUND: str = str_append(&str, ast_compound_to_str(ast, indent)); break;
     case AST_IMPORT: str = str_append(&str, ast_import_to_str(ast, indent)); break;
     case AST_ARRAY:
@@ -351,19 +330,19 @@ char* _ast_to_str(AST_T* ast, int indent)
     case AST_STATE: str = str_append(&str, ast_state_to_str(ast, indent)); break;
     case AST_COLON_ASSIGNMENT:
     case AST_ASSIGNMENT: str = str_append(&str, ast_assignment_to_str(ast, indent)); break;
-    default: { /* noop */ } break;
+    default: { /* noop */
+    } break;
   }
 
-  NL(); 
+  NL();
   char* rparen = strdup(")\n");
-  PAD(&rparen); 
+  PAD(&rparen);
   str = str_append(&str, rparen);
-  
+
   char* right = ast_to_str(ast->right);
   str = str_append(&str, right);
   char* next = ast_to_str(ast->next);
   str = str_append(&str, next);
-  
 
   return str;
 }
@@ -513,7 +492,8 @@ AST_T* get_node_by_name(list_T* list, char* name)
 AST_T* ast_query(list_T* list, unsigned int (*match)(AST_T* ast, query_T query), query_T query)
 {
   LOOP_NODES(list, i, child, {
-      if (match(child, query)) return child;
+    if (match(child, query))
+      return child;
   });
 
   return 0;
@@ -539,9 +519,12 @@ char* ast_encode_strings(list_T* strings)
 
 char* ast_get_string(AST_T* ast)
 {
-  if (!ast->name && !ast->string_value) return 0;
+  if (!ast->name && !ast->string_value)
+    return 0;
 
-  if (ast->string_value) return ast->string_value;
-  if (ast->name) return ast->name;
+  if (ast->string_value)
+    return ast->string_value;
+  if (ast->name)
+    return ast->name;
   return 0;
 }

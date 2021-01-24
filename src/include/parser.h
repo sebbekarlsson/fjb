@@ -1,6 +1,7 @@
 #ifndef FJB_PARSER_H
 #define FJB_PARSER_H
 #include "AST.h"
+#include "flags.h"
 #include "lexer.h"
 #include "list.h"
 
@@ -8,8 +9,7 @@ typedef struct FJB_PARSER_STRUCT
 {
   lexer_T* lexer;
   token_T* token;
-  const char* filepath;
-  list_T* search_index;
+  compiler_flags_T* flags;
 } parser_T;
 
 typedef struct FJB_PARSER_OPTIONS_STRUCT
@@ -23,7 +23,7 @@ typedef struct FJB_PARSER_OPTIONS_STRUCT
     -1, 0                                                                                          \
   }
 
-parser_T* init_parser(lexer_T* lexer, const char* filepath, list_T* search_index);
+parser_T* init_parser(lexer_T* lexer, compiler_flags_T* flags);
 
 AST_T* parser_parse(parser_T* parser, parser_options_T options);
 

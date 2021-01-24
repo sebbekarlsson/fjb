@@ -1,9 +1,9 @@
 #ifndef FJB_AST_H
 #define FJB_AST_H
+#include "enums/AST_TYPES.gpp.h"
 #include "gc.h"
 #include "list.h"
 #include "token.h"
-#include "enums/AST_TYPES.gpp.h"
 typedef struct FJB_AST_STRUCT
 {
   enum AST_TYPE type;
@@ -62,8 +62,7 @@ char* _ast_to_str(AST_T* ast, int indent);
 
 char* ast_binop_to_str(AST_T* ast, int indent);
 
-#define ast_to_str(ast)\
-  _ast_to_str(ast, indent)
+#define ast_to_str(ast) _ast_to_str(ast, indent)
 
 list_T* ast_get_pointers(AST_T* ast);
 

@@ -9,16 +9,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-extern gc_T* GC;
 extern AST_T* NOOP;
 
-parser_T* init_parser(lexer_T* lexer, const char* filepath, list_T* search_index)
+parser_T* init_parser(lexer_T* lexer, compiler_flags_T* flags)
 {
   parser_T* parser = calloc(1, sizeof(struct FJB_PARSER_STRUCT));
   parser->lexer = lexer;
   parser->token = lexer_next(lexer);
-  parser->filepath = filepath;
-  parser->search_index = search_index;
+  parser->flags = flags;
 
   return parser;
 }
@@ -96,7 +94,7 @@ static list_T* parse_array(parser_T* parser, parser_options_T options)
   while (parser->token->type == TOKEN_COMMA) {
     parser_eat(parser, TOKEN_COMMA);
     AST_T* undef = init_ast_line(AST_UNDEFINED, parser->lexer->line);
-    gc_mark(GC, undef);
+    gc_mark(parser->flags->GC, undef);
     list_push(list_value, undef);
   }
 
@@ -142,7 +140,7 @@ static AST_T* parse_block_linked_list(parser_T* parser,
 
       if (left) {
         left->right = parse_block_linked_list(parser, types, length, options);
-        gc_mark(GC, left);
+        gc_mark(parser->flags->GC, left);
       }
     }
   }
@@ -162,7 +160,7 @@ AST_T* parser_parse_gate(parser_T* parser, parser_options_T options, AST_T* left
     parser_eat(parser, parser->token->type);
     binop->right = parser_parse_expr(parser, options);
 
-    gc_mark(GC, binop);
+    gc_mark(parser->flags->GC, binop);
 
     left = binop;
   }
@@ -191,7 +189,7 @@ AST_T* parser_parse_dot_notation(parser_T* parser, parser_options_T options, AST
     if (binop->right)
       binop->right->from_obj = 1;
 
-    gc_mark(GC, binop);
+    gc_mark(parser->flags->GC, binop);
     left = binop;
   }
 
@@ -208,11 +206,11 @@ AST_T* parser_parse_ternary(parser_T* parser, parser_options_T options, AST_T* l
 
     ast_tern->value = parser_parse_expr(parser, options);
 
-    //parser_eat(parser, TOKEN_COLON);
+    // parser_eat(parser, TOKEN_COLON);
 
     ast_tern->right = parser_parse_expr(parser, options);
 
-    gc_mark(GC, ast_tern);
+    gc_mark(parser->flags->GC, ast_tern);
 
     left = ast_tern;
   }
@@ -231,9 +229,9 @@ AST_T* parser_parse_id(parser_T* parser, parser_options_T options)
   ast->parent = options.parent;
   ast->string_value = strdup(parser->token->value);
   ast->name = strdup(ast->string_value);
-  ast->from_module = strdup(parser->filepath);
+  ast->from_module = strdup(parser->flags->filepath);
 
-  gc_mark(GC, ast);
+  gc_mark(parser->flags->GC, ast);
 
   parser_eat_any(parser);
 
@@ -247,7 +245,7 @@ AST_T* parser_parse_int(parser_T* parser, parser_options_T options)
   ast->string_value = strdup(parser->token->value);
   parser_eat(parser, TOKEN_INT);
 
-  gc_mark(GC, ast);
+  gc_mark(parser->flags->GC, ast);
 
   return ast;
 }
@@ -258,7 +256,7 @@ AST_T* parser_parse_int_min(parser_T* parser, parser_options_T options)
   ast->string_value = strdup(parser->token->value);
   parser_eat(parser, TOKEN_INT_MIN);
 
-  gc_mark(GC, ast);
+  gc_mark(parser->flags->GC, ast);
 
   return ast;
 }
@@ -270,7 +268,7 @@ AST_T* parser_parse_float(parser_T* parser, parser_options_T options)
   ast->string_value = strdup(parser->token->value);
   parser_eat(parser, TOKEN_FLOAT);
 
-  gc_mark(GC, ast);
+  gc_mark(parser->flags->GC, ast);
 
   return ast;
 }
@@ -285,7 +283,7 @@ AST_T* parser_parse_string(parser_T* parser, parser_options_T options)
   parser_eat(parser, TOKEN_STRING);
   ast->name = strdup(ast->string_value);
 
-  gc_mark(GC, ast);
+  gc_mark(parser->flags->GC, ast);
 
   return ast;
 }
@@ -298,7 +296,7 @@ AST_T* parser_parse_hex(parser_T* parser, parser_options_T options)
   strcpy(ast->string_value, parser->token->value);
   parser_eat(parser, TOKEN_HEX);
 
-  gc_mark(GC, ast);
+  gc_mark(parser->flags->GC, ast);
 
   return ast;
 }
@@ -334,7 +332,7 @@ AST_T* parser_parse_import(parser_T* parser, parser_options_T options)
   ast->string_value = strdup(parser->token->value);
   parser_eat(parser, TOKEN_STRING);
 
-  gc_mark(GC, ast);
+  gc_mark(parser->flags->GC, ast);
 
   return ast;
 }
@@ -348,7 +346,7 @@ AST_T* parser_parse_definition(parser_T* parser, parser_options_T options)
     AST_T* ast_flag = init_ast_line(AST_NAME, parser->lexer->line);
     ast_flag->string_value = strdup(parser->token->value);
     ast_flag->name = strdup(ast_flag->string_value);
-    gc_mark(GC, ast_flag);
+    gc_mark(parser->flags->GC, ast_flag);
     list_push(flags, ast_flag);
     parser_eat(parser, parser->token->type);
   }
@@ -362,7 +360,7 @@ AST_T* parser_parse_definition(parser_T* parser, parser_options_T options)
 AST_T* parser_parse_assignment(parser_T* parser, parser_options_T options, AST_T* id)
 {
   AST_T* ast = init_ast_line(AST_ASSIGNMENT, parser->lexer->line);
-  gc_mark(GC, ast);
+  gc_mark(parser->flags->GC, ast);
   ast->parent = options.parent;
   ast->left = id;
 
@@ -383,7 +381,7 @@ AST_T* parser_parse_assignment(parser_T* parser, parser_options_T options, AST_T
     ast->value = parser_parse_expr(parser, options);
   }
 
-  list_push(parser->search_index, ast);
+  list_push(parser->flags->search_index, ast);
 
   return ast;
 }
@@ -403,7 +401,7 @@ AST_T* parser_parse_state(parser_T* parser, parser_options_T options)
   if (parser->token->type != TOKEN_SEMI)
     ast->value = parser_parse_expr(parser, options);
 
-  gc_mark(GC, ast);
+  gc_mark(parser->flags->GC, ast);
 
   return ast;
 }
@@ -420,7 +418,7 @@ AST_T* parser_parse_try(parser_T* parser, parser_options_T options)
 
   ast->right = parse_block_linked_list(parser, (int[]){ TOKEN_CATCH, TOKEN_FINALLY }, 2, options);
 
-  gc_mark(GC, ast);
+  gc_mark(parser->flags->GC, ast);
 
   return ast;
 }
@@ -462,7 +460,7 @@ AST_T* parser_parse_condition(parser_T* parser, parser_options_T options)
     ast->right = parser_parse_condition(parser, options);
   }
 
-  gc_mark(GC, ast);
+  gc_mark(parser->flags->GC, ast);
 
   return ast;
 }
@@ -489,7 +487,7 @@ AST_T* parser_parse_do(parser_T* parser, parser_options_T options)
     ast->body = parser_parse_expr(parser, options);
   }
 
-  gc_mark(GC, ast);
+  gc_mark(parser->flags->GC, ast);
 
   return ast;
 }
@@ -515,7 +513,7 @@ AST_T* parser_parse_while(parser_T* parser, parser_options_T options)
     ast->body = parser_parse_statement_or_expr(parser, options);
   }
 
-  gc_mark(GC, ast);
+  gc_mark(parser->flags->GC, ast);
 
   return ast;
 }
@@ -534,7 +532,7 @@ AST_T* parser_parse_for(parser_T* parser, parser_options_T options)
     ast->body = parser_parse_statement_or_expr(parser, options);
   }
 
-  gc_mark(GC, ast);
+  gc_mark(parser->flags->GC, ast);
 
   return ast;
 }
@@ -551,7 +549,7 @@ AST_T* parser_parse_switch(parser_T* parser, parser_options_T options)
   ast->body = parser_parse(parser, options);
   parser_eat(parser, TOKEN_RBRACE);
 
-  gc_mark(GC, ast);
+  gc_mark(parser->flags->GC, ast);
 
   return ast;
 }
@@ -561,9 +559,9 @@ AST_T* parser_parse_array(parser_T* parser, parser_options_T options)
   AST_T* ast = init_ast_line(AST_ARRAY, parser->lexer->line);
   ast->parent = options.parent;
   ast->list_value = parse_array(parser, options);
-  ast->from_module = strdup(parser->filepath);
+  ast->from_module = strdup(parser->flags->filepath);
 
-  gc_mark(GC, ast);
+  gc_mark(parser->flags->GC, ast);
 
   return ast;
 }
@@ -574,7 +572,7 @@ AST_T* parser_parse_regex(parser_T* parser, parser_options_T options)
   ast->string_value = strdup(parser->token->value);
   parser_eat(parser, TOKEN_REGEX);
 
-  gc_mark(GC, ast);
+  gc_mark(parser->flags->GC, ast);
 
   return ast;
 }
@@ -621,7 +619,7 @@ AST_T* parser_parse_object(parser_T* parser, parser_options_T options)
   if (!is_object)
     ast->type = AST_SCOPE;
 
-  gc_mark(GC, ast);
+  gc_mark(parser->flags->GC, ast);
 
   return ast;
 }
@@ -651,12 +649,11 @@ AST_T* parser_parse_function(parser_T* parser, parser_options_T options)
 
   parser_eat(parser, TOKEN_RBRACE);
 
-  if (ast->name)
-  {
-    list_push(parser->search_index, ast);
+  if (ast->name) {
+    list_push(parser->flags->search_index, ast);
   }
 
-  gc_mark(GC, ast);
+  gc_mark(parser->flags->GC, ast);
 
   return ast;
 }
@@ -666,7 +663,7 @@ AST_T* parser_parse_signature(parser_T* parser, parser_options_T options)
   AST_T* ast = init_ast_line(AST_SIGNATURE, parser->lexer->line);
   ast->list_value = parse_args(parser, options);
 
-  gc_mark(GC, ast);
+  gc_mark(parser->flags->GC, ast);
 
   return ast;
 }
@@ -711,7 +708,7 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
       ast_arrow_def->body = parser_parse_expr(parser, options);
     }
 
-    gc_mark(GC, ast_arrow_def);
+    gc_mark(parser->flags->GC, ast_arrow_def);
 
     left = ast_arrow_def;
   }
@@ -728,7 +725,7 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
     unop->token = token_clone(parser->token);
     parser_eat(parser, parser->token->type);
     unop->right = parser_parse_expr(parser, options);
-    gc_mark(GC, unop);
+    gc_mark(parser->flags->GC, unop);
     left = unop;
     return left;
   }
@@ -790,7 +787,7 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
       ast_arrow_def->body = parser_parse_expr(parser, options);
     }
 
-    gc_mark(GC, ast_arrow_def);
+    gc_mark(parser->flags->GC, ast_arrow_def);
 
     left = ast_arrow_def;
   }
@@ -838,16 +835,16 @@ AST_T* parser_parse_term(parser_T* parser, parser_options_T options)
     parser_eat(parser, TOKEN_COLON);
     colon_ass->right = parser_parse_statement_or_expr(parser, options);
 
-    if (colon_ass->left)
-    {
+    if (colon_ass->left) {
       char* name = ast_get_string(colon_ass->left);
 
-      if (name) colon_ass->name = strdup(name);
+      if (name)
+        colon_ass->name = strdup(name);
     }
-    
-    list_push(parser->search_index, colon_ass);
 
-    gc_mark(GC, colon_ass);
+    list_push(parser->flags->search_index, colon_ass);
+
+    gc_mark(parser->flags->GC, colon_ass);
     left = colon_ass;
   }
 
@@ -866,7 +863,7 @@ AST_T* parser_parse_term(parser_T* parser, parser_options_T options)
     parser_eat(parser, parser->token->type);
     binop->right = parser_parse_factor(parser, options);
 
-    gc_mark(GC, binop);
+    gc_mark(parser->flags->GC, binop);
     return binop;
   }
 
@@ -880,7 +877,7 @@ AST_T* parser_parse_term(parser_T* parser, parser_options_T options)
     parser_eat(parser, parser->token->type);
     binop->right = parser_parse_factor(parser, options);
 
-    gc_mark(GC, binop);
+    gc_mark(parser->flags->GC, binop);
 
     left = binop;
   }
@@ -891,7 +888,7 @@ AST_T* parser_parse_term(parser_T* parser, parser_options_T options)
     unop->left = left;
     unop->token = token_clone(parser->token);
     parser_eat(parser, parser->token->type);
-    gc_mark(GC, unop);
+    gc_mark(parser->flags->GC, unop);
     left = unop;
   }
 
@@ -901,7 +898,7 @@ AST_T* parser_parse_term(parser_T* parser, parser_options_T options)
 AST_T* parser_parse_expr(parser_T* parser, parser_options_T options)
 {
   AST_T* left = parser_parse_term(parser, options);
-  AST_T* binop = 0; 
+  AST_T* binop = 0;
 
   if (!left->parent)
     left->parent = options.parent;
@@ -929,7 +926,7 @@ AST_T* parser_parse_expr(parser_T* parser, parser_options_T options)
     parser_eat(parser, parser->token->type);
     binop->right = parser_parse_expr(parser, options);
 
-    gc_mark(GC, binop);
+    gc_mark(parser->flags->GC, binop);
     return binop;
   }
 
@@ -947,17 +944,17 @@ AST_T* parser_parse_expr(parser_T* parser, parser_options_T options)
     parser_eat(parser, parser->token->type);
     binop->right = parser_parse_expr(parser, options);
 
-    gc_mark(GC, binop);
+    gc_mark(parser->flags->GC, binop);
     return binop;
   }
 
   if (parser->token->type == TOKEN_QUESTION) {
     left = parser_parse_ternary(parser, options, left);
-  } 
+  }
 
   if (parser->token->type == TOKEN_COMMA) {
     AST_T* tuple = init_ast_line(AST_TUPLE, parser->lexer->line);
-    gc_mark(GC, tuple);
+    gc_mark(parser->flags->GC, tuple);
     tuple->parent = options.parent;
     tuple->list_value = parse_tuple(parser, options);
 
@@ -982,11 +979,11 @@ AST_T* parser_parse_case(parser_T* parser, parser_options_T options)
   ast->parent = options.parent;
   ast->name = strdup(parser->token->value);
   parser_eat(parser, TOKEN_CASE);
-  //ast->expr = parser_parse_expr(parser, options);
- // parser_eat(parser, TOKEN_COLON);
+  // ast->expr = parser_parse_expr(parser, options);
+  // parser_eat(parser, TOKEN_COLON);
   ast->expr = parser_parse_statement_or_expr(parser, options);
 
-  gc_mark(GC, ast);
+  gc_mark(parser->flags->GC, ast);
 
   return ast;
 }
@@ -1029,7 +1026,7 @@ AST_T* parser_parse_statement_or_expr(parser_T* parser, parser_options_T options
 
   if (!left) {
     printf("[Parser] (%s):%d: Unexpected token `%s` (%d)\n",
-           parser->filepath,
+           parser->flags->filepath,
            parser->lexer->line,
            parser->token->value,
            parser->token->type);
@@ -1037,7 +1034,7 @@ AST_T* parser_parse_statement_or_expr(parser_T* parser, parser_options_T options
   }
 
   if (!left->parent)
-    left->parent = options.parent; 
+    left->parent = options.parent;
 
   return left;
 }
@@ -1066,7 +1063,7 @@ AST_T* parser_parse_compound(parser_T* parser, parser_options_T options)
     list_push(ast->list_value, child);
   }
 
-  gc_mark(GC, ast);
+  gc_mark(parser->flags->GC, ast);
 
   return ast;
 }
@@ -1076,7 +1073,7 @@ AST_T* parser_parse_call(parser_T* parser, parser_options_T options)
   AST_T* ast_call = init_ast_line(AST_CALL, parser->lexer->line);
   ast_call->parent = options.parent;
   ast_call->list_value = parse_args(parser, options);
-  ast_call->from_module = strdup(parser->filepath);
+  ast_call->from_module = strdup(parser->flags->filepath);
 
   if (parser->token->type == TOKEN_ARROW_RIGHT) {
     parser_eat(parser, TOKEN_ARROW_RIGHT);
@@ -1093,7 +1090,7 @@ AST_T* parser_parse_call(parser_T* parser, parser_options_T options)
     }
   }
 
-  gc_mark(GC, ast_call);
+  gc_mark(parser->flags->GC, ast_call);
 
   return ast_call;
 }
@@ -1106,7 +1103,7 @@ void parser_eat(parser_T* parser, int token_type)
     parser->token = lexer_next(parser->lexer);
   } else {
     printf("[Parser] (%s):%d: Unexpected token `%s` (%d), was expecting `%s`\n",
-           parser->filepath,
+           parser->flags->filepath,
            parser->lexer->line,
            parser->token->value,
            parser->token->type,

@@ -10,9 +10,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-extern gc_T* GC;
-extern list_T* defs;
-
 static AST_T* getptr_any(AST_T* ast, list_T* stack)
 {
   if (!ast->name)
@@ -64,16 +61,11 @@ static AST_T* getptr(AST_T* ast, list_T* stack)
   return ptr;
 }
 
-visitor_T* init_visitor(parser_T* parser, const char* filepath, list_T* imports, AST_T* module,
-                        AST_T* exports)
+visitor_T* init_visitor(parser_T* parser, compiler_flags_T* flags)
 {
   visitor_T* visitor = calloc(1, sizeof(struct FJB_VISITOR_STRUCT));
   visitor->parser = parser;
-  visitor->filepath = filepath;
-  visitor->imports = imports;
-  visitor->module = module;
-  visitor->exports = exports;
-  visitor->dumped = 0;
+  visitor->flags = flags;
 
   return visitor;
 }
@@ -115,29 +107,28 @@ AST_T* visitor_visit_string(visitor_T* visitor, AST_T* ast, list_T* stack)
 
 AST_T* visitor_visit_import(visitor_T* visitor, AST_T* ast, list_T* stack)
 {
-  char* final_file_to_read = resolve_import((char*)visitor->filepath, ast->string_value);
+  char* final_file_to_read = resolve_import((visitor->flags->filepath), ast->string_value, 0);
 
   for (unsigned int i = 0; i < ast->list_value->size; i++) {
-    list_push(visitor->imports, ast->list_value->items[i]);
+    list_push(visitor->flags->imports, ast->list_value->items[i]);
   }
 
   char* contents = fjb_read_file(final_file_to_read);
-  gen_flags_T flags;
-  flags.filepath = final_file_to_read;
-  compiler_result_T* result = fjb(flags, contents, visitor->imports);
+  visitor->flags->filepath = strdup(final_file_to_read);
+  visitor->flags->source = strdup(contents);
+  compiler_result_T* result = fjb(visitor->flags);
   ast->compiled_value = strdup(result->stdout);
   ast->es_exports = result->es_exports;
 
   if (result->dumped)
-    visitor->dumped = str_append(&visitor->dumped, result->dumped);
-
+    visitor->flags->dumped_tree = str_append(&visitor->flags->dumped_tree, result->dumped);
 
   free(final_file_to_read);
   free(contents);
 
   compiler_result_free(result);
 
-  list_clear(visitor->imports);
+  list_clear(visitor->flags->imports);
 
   return ast;
 }
@@ -164,7 +155,7 @@ AST_T* visitor_visit_assignment(visitor_T* visitor, AST_T* ast, list_T* stack)
     AST_T* assignment = init_assignment(name, rightptr);
 
     list_push_safe(stack, assignment);
-    //printf("%s\n", ast_to_str(assignment));
+    // printf("%s\n", ast_to_str(assignment));
 
     if (leftptr && rightptr) {
       if (leftptr->type == AST_OBJECT && leftptr->list_value) {
@@ -179,7 +170,7 @@ AST_T* visitor_visit_assignment(visitor_T* visitor, AST_T* ast, list_T* stack)
     }
   }
 
-  //list_push_safe(stack, ast);
+  // list_push_safe(stack, ast);
 
   return ast;
 }
@@ -413,8 +404,7 @@ AST_T* visitor_visit_name(visitor_T* visitor, AST_T* ast, list_T* stack)
 
   ast->ptr = getptr(ast, stack);
 
-  if (ast->name && !ast->ptr)
-  {
+  if (ast->name && !ast->ptr) {
     ast->ptr = getptr_any(ast, stack);
   }
 
@@ -483,10 +473,10 @@ AST_T* visitor_visit_call(visitor_T* visitor, AST_T* ast, list_T* stack)
   if (ast->list_value)
     ast->list_value = visit_array(visitor, ast->list_value, stack);
 
-  if (
-      (ast->left && ast->left->name && strcmp(ast->left->name, "require") == 0) ||
-      (ast->left && ast->left->ptr && ast->left->ptr->name && strcmp(ast->left->ptr->name, "require") == 0)
-  ) {
+  if ((ast->left && ast->left->type != AST_CALL) &&
+      ((ast->left && ast->left->name && strcmp(ast->left->name, "require") == 0) ||
+       (ast->left && ast->left->ptr && ast->left->ptr->name &&
+        strcmp(ast->left->ptr->name, "require") == 0))) {
     char* str = 0;
     for (unsigned int i = 0; i < ast->list_value->size; i++) {
       AST_T* child_ast = (AST_T*)ast->list_value->items[i];
@@ -499,13 +489,15 @@ AST_T* visitor_visit_call(visitor_T* visitor, AST_T* ast, list_T* stack)
     }
 
     if (str != 0) {
-      char* final_file_to_read = resolve_import((char*)visitor->parser->filepath, str);
+      char* final_file_to_read = resolve_import(((char*)visitor->flags->filepath), str, 0);
 
       if (final_file_to_read) {
         char* contents = fjb_read_file(final_file_to_read);
-        gen_flags_T flags;
-        flags.filepath = final_file_to_read;
-        compiler_result_T* result = fjb(flags, contents, visitor->imports);
+        char* old = visitor->flags->filepath;
+        visitor->flags->filepath = strdup(final_file_to_read);
+        visitor->flags->source = strdup(contents);
+        compiler_result_T* result = fjb(visitor->flags);
+        visitor->flags->filepath = old;
         ast->compiled_value = strdup(result->stdout);
         ast->compiled_value = ast->compiled_value;
         ast->node = result->node;

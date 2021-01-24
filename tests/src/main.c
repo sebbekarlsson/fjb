@@ -1,71 +1,48 @@
-/**
- * TODO: write better tests where we actually inspect
- * the AST to find expected nodes.
- */
-#include "../../src/include/fjb.h"
-#include "../../src/include/gc.h"
-#include "../../src/include/io.h"
-#include "../../src/include/string_utils.h"
+#include "../../src/include/AST.h"
+#include "include/test_utils.h"
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
-gc_T* GC;
-
-volatile unsigned int dump;
-
-char* run(const char* filepath)
-{
-  GC = init_gc();
-
-  char* contents = fjb_read_file(filepath);
-  gen_flags_T flags;
-  flags.filepath = (char*)filepath;
-  list_T* es_exports = init_list(sizeof(AST_T*));
-  gc_mark_list(GC, es_exports);
-  compiler_result_T* result = fjb(flags, contents, es_exports);
-
-  return remove_whitespace(result->stdout);
-}
-
-void ASSERT(unsigned int expr, const char* msg)
-{
-  if (!expr) {
-    printf("[TEST FAILED]: (code: %d) %s\n", (int)expr, msg);
-    exit(1);
-  }
-
-  printf("[TEST OK]: %s\n", msg);
-}
+#define MSG() printf("Testing: %s\n", filepath)
 
 void test_es6()
 {
-  const char* ENTRY_POINT = "src/test_projects/es6/index.js";
-  const char* DIST = "src/test_projects/es6/dist.js";
+  const char* filepath = "./src/test_projects/es6/index.js";
 
-  char* r = run(ENTRY_POINT);
+  MSG();
 
-  char* expected = remove_whitespace(fjb_read_file(DIST));
+  AST_T* root = run_get_ast(filepath);
 
-  ASSERT(strcmp(r, expected) == 0, ENTRY_POINT);
+  assert_node_exists(root, AST_FUNCTION, "subtract", "test AST_FUNCTION exists");
 }
 
 void test_simple()
 {
-  const char* ENTRY_POINT = "src/test_projects/simple/index.js";
-  const char* DIST = "src/test_projects/simple/dist.js";
+  const char* filepath = "./src/test_projects/simple/index.js";
 
-  char* r = run(ENTRY_POINT);
+  MSG();
 
-  char* expected = remove_whitespace(fjb_read_file(DIST));
+  AST_T* root = run_get_ast(filepath);
 
-  ASSERT(strcmp(r, expected) == 0, ENTRY_POINT);
+  assert_node_exists(root, AST_FUNCTION, "subtract", "test AST_FUNCTION exists");
+}
+
+void test_with_lodash()
+{
+  const char* filepath = "./src/test_projects/with_lodash/index.js";
+
+  MSG();
+
+  AST_T* root = run_get_ast(filepath);
+
+  assert_node_exists(root, AST_ASSIGNMENT, "ceil", "test AST_ASSIGNMENT exists");
+  assert_node_exists(root, AST_FUNCTION, "createRound", "test AST_FUNCTION exists");
 }
 
 int main(int argc, char* argv[])
 {
-  dump = 0;
   test_es6();
   test_simple();
+  test_with_lodash();
+
   return 0;
 }

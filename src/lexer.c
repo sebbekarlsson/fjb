@@ -287,7 +287,7 @@ token_T* lexer_next(lexer_T* lexer)
         continue;
       }
     }
-    
+
     switch (lexer->c) {
       case '{': return lexer_advance_token(lexer, init_token(charstr(lexer->c), TOKEN_LBRACE));
       case '}': return lexer_advance_token(lexer, init_token(charstr(lexer->c), TOKEN_RBRACE));
@@ -441,7 +441,7 @@ token_T* lexer_parse_number(lexer_T* lexer)
   char* str = 0;
   int type = TOKEN_INT;
 
-  if(lexer->c == '.') {
+  if (lexer->c == '.') {
     str = str_append(&str, "0");
     str = str_append(&str, lexer->cstr);
     lexer_advance(lexer);
