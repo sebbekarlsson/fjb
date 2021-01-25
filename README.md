@@ -29,7 +29,6 @@ fjb index.js
 - [ ] TypeScript support
 - [ ] Loading CSS
 - [ ] Loading JSON
-- [ ] `class` support. (yeah it doesn't support classes right now)
 - [ ] Lazy imports 
 
 ## Installing
