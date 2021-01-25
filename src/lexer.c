@@ -363,6 +363,13 @@ token_T* lexer_parse_string(lexer_T* lexer)
   lexer_advance(lexer);
 
   while (lexer->c != 0 && lexer->c != start) {
+    if (lexer->c == '\\') {
+      str = str_append(&str, "\\");
+      lexer_advance(lexer);
+      str = str_append(&str, lexer->cstr);
+      lexer_advance(lexer);
+      continue;
+    }
     if (lexer->c == start) {
       break;
     } else {
@@ -552,6 +559,10 @@ token_T* lexer_switch_id(lexer_T* lexer, token_T* token)
     token->type = TOKEN_ASSERT;
   else if (strcmp(token->value, "delete") == 0)
     token->type = TOKEN_DELETE;
+  else if (strcmp(token->value, "class") == 0)
+    token->type = TOKEN_CLASS;
+  else if (strcmp(token->value, "extends") == 0)
+    token->type = TOKEN_EXTENDS;
 
   return ret_tok(lexer, token);
 }

@@ -14,10 +14,10 @@ gppheaders = $(gppfiles:.gpp=.h)
 GPP_PATH=$(or $(shell test -f ./gpp.out && echo ./gpp.out), gpp)
 
 #ifdef DEBUG
-	flags += -D DEBUG
+flags += -D DEBUG
 #endif
 
-$(exec): $(objects) libjson.a $(jsheaders) $(gppheaders)
+$(exec): $(jsheaders) $(gppheaders) $(objects) libjson.a
 	gcc $(objects) $(flags) -o $(exec)
 
 libfjb.a: $(objects_no_main)
@@ -26,15 +26,13 @@ libfjb.a: $(objects_no_main)
 %.o: %.c include/%.h
 	gcc -c $(flags) $< -o $@
 
-tmp:
-	mkdir -p .tmp
-
 %.js.h: %.js
 	mkdir -p .tmp
 	$(GPP_PATH) $^ > .tmp/$(notdir $^)
 	xxd -i .tmp/$(notdir $^) > src/include/js/$(notdir $^.h)
 
 %.h: %.gpp
+	ls
 	mkdir -p ./src/include/enums
 	$(GPP_PATH) $^ > ./src/include/enums/$(notdir $^.h)
 	#xxd -i .tmp/$(notdir $^) > src/include/js/$(notdir $^.h)
@@ -55,7 +53,7 @@ clean:
 	-rm *.o
 	-rm *.a
 	-rm src/*.o
-	-rm .tmp
+	-rm -rf .tmp
 
 lint:
 	clang-tidy src/*.c src/include/*.h

@@ -35,6 +35,8 @@
         "AST_SIGNATURE",
         "AST_LABEL",
         "AST_NOOP",
+        "AST_CLASS",
+        "AST_CLASS_FUNCTION",
         "AST_TUPLE"
     ]
 }

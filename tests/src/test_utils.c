@@ -4,19 +4,22 @@
 #include "../../src/include/lexer.h"
 #include "../../src/include/parser.h"
 #include "../../src/include/resolve.h"
+#include "../../src/include/string_utils.h"
 #include <stdio.h>
 #include <string.h>
 
-#define OK() printf("\t[OK]\n")
+#define OK() printf(GREEN "\t[OK]\n" RESET)
 
 #define MSG() printf("\t%s\n", msg)
 
 unsigned int node_query(AST_T* ast, query_T query)
 {
-  if (!ast->name)
+  char* name = ast_get_string(ast);
+
+  if (!name)
     return 0;
 
-  return strcmp(ast->name, query.name) == 0 && ast->type == query.type;
+  return strcmp(name, query.name) == 0 && ast->type == query.type;
 }
 
 void assert_node_exists(AST_T* root, int type, char* name, const char* msg)
@@ -29,8 +32,8 @@ void assert_node_exists(AST_T* root, int type, char* name, const char* msg)
   AST_T* node = resolve(root, node_query, query);
 
   if (!node) {
-    printf("[FAIL]: Did NOT find node which was expected.\n"
-           "\tname: %s, type: %d\n",
+    printf(RED "[FAIL]: Did NOT find node which was expected.\n"
+               "\tname: %s, type: %d\n" RESET,
            name, type);
     exit(1);
   }
@@ -48,8 +51,8 @@ void assert_node_not_exists(AST_T* root, int type, char* name, const char* msg)
   AST_T* node = resolve(root, node_query, query);
 
   if (node) {
-    printf("[FAIL]: Found node which was NOT expected: %p\n"
-           "\tname: %s, type: %d\n",
+    printf(RED "[FAIL]: Found node which was NOT expected: %p\n"
+               "\tname: %s, type: %d\n" RESET,
            node, name, type);
     exit(1);
   }

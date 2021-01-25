@@ -81,6 +81,26 @@ static char* gen_list(list_T* list_value, compiler_flags_T* flags)
   return str;
 }
 
+static char* gen_spaced_list(list_T* list_value, compiler_flags_T* flags)
+{
+  char* str = 0;
+  list_T* living = list_value;
+
+  for (unsigned int i = 0; i < living->size; i++) {
+    AST_T* child = (AST_T*)living->items[i];
+
+    char* child_str = gen(child, flags);
+    str = str_append(&str, child_str);
+
+    if (i < living->size - 1 && child_str)
+      str = str_append(&str, " ");
+
+    free(child_str);
+  }
+
+  return str;
+}
+
 static char* gen_tuple(list_T* list_value, compiler_flags_T* flags)
 {
   char* str = 0;
@@ -151,6 +171,7 @@ char* gen(AST_T* ast, compiler_flags_T* flags)
     case AST_IMPORT: body = gen_import(ast, flags); break;
     case AST_UNDEFINED: body = gen_undefined(ast, flags); break;
     case AST_CALL: body = gen_call(ast, flags); break;
+    case AST_CLASS_FUNCTION:
     case AST_FUNCTION: body = gen_function(ast, flags); break;
     case AST_SCOPE: body = gen_scope(ast, flags); break;
     case AST_SIGNATURE: body = gen_signature(ast, flags); break;
@@ -165,6 +186,7 @@ char* gen(AST_T* ast, compiler_flags_T* flags)
     case AST_CONDITION: body = gen_condition(ast, flags); break;
     case AST_SWITCH: body = gen_switch(ast, flags); break;
     case AST_TRY: body = gen_try(ast, flags); break;
+    case AST_CLASS: body = gen_class(ast, flags); break;
     case AST_LABEL: body = gen_label(ast, flags); break;
     case AST_TERNARY: body = gen_ternary(ast, flags); break;
     case AST_DO: body = gen_do(ast, flags); break;
@@ -188,7 +210,7 @@ char* gen(AST_T* ast, compiler_flags_T* flags)
   char* leftstr = 0;
   char* rightstr = 0;
 
-  if (ast->left) {
+  if (ast->left && ast->type != AST_CLASS_FUNCTION) {
     leftstr = gen(ast->left, flags);
   }
 
@@ -529,7 +551,9 @@ char* gen_call(AST_T* ast, compiler_flags_T* flags)
 char* gen_function(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
-  str = str_append(&str, "function ");
+
+  if (ast->type != AST_CLASS_FUNCTION)
+    str = str_append(&str, "function ");
 
   char* name = ast->name;
 
@@ -736,6 +760,35 @@ char* gen_try(AST_T* ast, compiler_flags_T* flags)
   char* linkedstr = gen_block_linked_list(ast, flags);
   str = str_append(&str, linkedstr);
   free(linkedstr);
+
+  return str;
+}
+
+char* gen_class(AST_T* ast, compiler_flags_T* flags)
+{
+  char* str = 0;
+  char* name = ast_get_string(ast);
+  str = str_append(&str, "class ");
+  str = str_append(&str, name);
+
+  if (ast->options) {
+    char* options_str = gen_spaced_list(ast->options, flags);
+
+    if (options_str) {
+      str = str_append(&str, " ");
+      str = str_append(&str, options_str);
+      str = str_append(&str, " ");
+    }
+  }
+
+  str = str_append(&str, " {");
+
+  if (ast->body) {
+    char* body_str = gen(ast->body, flags);
+    str = str_append(&str, body_str);
+  }
+
+  str = str_append(&str, "}");
 
   return str;
 }

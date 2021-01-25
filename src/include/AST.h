@@ -34,6 +34,7 @@ typedef struct FJB_AST_STRUCT
   char* from_module;
 
   list_T* list_value;
+  list_T* options;
   list_T* flags;
   list_T* es_exports;
   list_T* stack_frame;

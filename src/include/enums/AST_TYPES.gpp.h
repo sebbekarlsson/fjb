@@ -106,6 +106,12 @@ AST_LABEL,
 AST_NOOP,
 
 
+AST_CLASS,
+
+
+AST_CLASS_FUNCTION,
+
+
 AST_TUPLE,
 
 };
@@ -215,6 +221,12 @@ static const char * AST_TYPE_STR[] = {
 
 
 "AST_NOOP",
+
+
+"AST_CLASS",
+
+
+"AST_CLASS_FUNCTION",
 
 
 "AST_TUPLE",

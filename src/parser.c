@@ -423,6 +423,31 @@ AST_T* parser_parse_try(parser_T* parser, parser_options_T options)
   return ast;
 }
 
+AST_T* parser_parse_class(parser_T* parser, parser_options_T options)
+{
+  AST_T* ast = init_ast_line(AST_CLASS, parser->lexer->line);
+  ast->token = token_clone(parser->token);
+  ast->options = NEW_STACK;
+  parser_eat(parser, TOKEN_CLASS);
+
+  ast->name = strdup(parser->token->value);
+  parser_eat(parser, TOKEN_ID);
+
+  // extends ... etc
+  while (parser->token->type != TOKEN_LBRACE) {
+    AST_T* statement = parser_parse_statement(parser, options);
+    list_push(ast->options, statement);
+  }
+
+  parser_eat(parser, TOKEN_LBRACE);
+  ast->body = parser_parse(parser, options);
+  parser_eat(parser, TOKEN_RBRACE);
+
+  gc_mark(parser->flags->GC, ast);
+
+  return ast;
+}
+
 AST_T* parser_parse_condition(parser_T* parser, parser_options_T options)
 {
   AST_T* ast = init_ast_line(AST_CONDITION, parser->lexer->line);
@@ -1002,6 +1027,7 @@ AST_T* parser_parse_statement(parser_T* parser, parser_options_T options)
     case TOKEN_IF:
     case TOKEN_ELSE: left = parser_parse_condition(parser, options); break;
     case TOKEN_TRY: left = parser_parse_try(parser, options); break;
+    case TOKEN_CLASS: left = parser_parse_class(parser, options); break;
     case TOKEN_WHILE: left = parser_parse_while(parser, options); break;
     case TOKEN_RETURN:
     case TOKEN_DELETE:
@@ -1012,6 +1038,7 @@ AST_T* parser_parse_statement(parser_T* parser, parser_options_T options)
     case TOKEN_ASYNC:
     case TOKEN_AWAIT:
     case TOKEN_DEFAULT:
+    case TOKEN_EXTENDS:
     case TOKEN_ASSERT: return parser_parse_state(parser, options); break;
     default: return 0; break;
   }
@@ -1087,6 +1114,17 @@ AST_T* parser_parse_call(parser_T* parser, parser_options_T options)
       parser_eat(parser, TOKEN_RBRACE);
     } else {
       ast_call->body = parser_parse_statement_or_expr(parser, options);
+    }
+  }
+
+  if (parser->token->type == TOKEN_LBRACE) {
+    ast_call->type = AST_CLASS_FUNCTION;
+    if (parser->token->type == TOKEN_LBRACE) {
+      parser_eat(parser, TOKEN_LBRACE);
+      if (parser->token->type != TOKEN_RBRACE) {
+        ast_call->body = parser_parse(parser, options);
+      }
+      parser_eat(parser, TOKEN_RBRACE);
     }
   }
 

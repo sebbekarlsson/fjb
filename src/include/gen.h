@@ -32,6 +32,7 @@ char* gen_decrement(AST_T* ast, compiler_flags_T* flags);
 char* gen_regex(AST_T* ast, compiler_flags_T* flags);
 char* gen_object(AST_T* ast, compiler_flags_T* flags);
 char* gen_try(AST_T* ast, compiler_flags_T* flags);
+char* gen_class(AST_T* ast, compiler_flags_T* flags);
 char* gen_condition(AST_T* ast, compiler_flags_T* flags);
 char* gen_switch(AST_T* ast, compiler_flags_T* flags);
 char* gen_label(AST_T* ast, compiler_flags_T* flags);
