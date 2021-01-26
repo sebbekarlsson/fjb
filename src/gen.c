@@ -606,13 +606,15 @@ char* gen_function(AST_T* ast, compiler_flags_T* flags)
   }
   str = str_append(&str, "}");
 
-  if (name && ast->parent && ast->parent->type == AST_FUNCTION) {
+  if (name && !ast->anon) {
     str = str_append(&str, "\n");
+    str = str_append(&str, "try {");
     str = str_append(&str, "this.");
     str = str_append(&str, name);
     str = str_append(&str, "= ");
     str = str_append(&str, name);
     str = str_append(&str, ";\n");
+    str = str_append(&str, "} catch(e){}");
   }
 
   return str;
