@@ -436,7 +436,7 @@ char* gen_compound(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
 
-  list_T* living = ast->list_value; // get_living_nodes(ast->list_value);
+  list_T* living = ast->list_value;
 
   for (unsigned int i = 0; i < living->size; i++) {
     AST_T* child_ast = (AST_T*)living->items[i];
@@ -463,7 +463,9 @@ char* gen_import(AST_T* ast, compiler_flags_T* flags)
     return 0;
 
   char* head_str = 0;
-  char* encoding = ast->list_value ? ast_encode_strings(ast->list_value) : 0;
+  char* encoding = ast->alias        ? ast->alias
+                   : ast->list_value ? ast_encode_strings(ast->list_value)
+                                     : 0;
 
   if (!encoding)
     encoding = strdup("tmp");
@@ -583,7 +585,7 @@ char* gen_function(AST_T* ast, compiler_flags_T* flags)
   }
   str = str_append(&str, "}");
 
-  if (flags->imports && name && get_node_by_name(flags->imports, name)) {
+  if (name) {
     str = str_append(&str, "\n");
     str = str_append(&str, "this.");
     str = str_append(&str, name);
