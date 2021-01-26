@@ -624,7 +624,7 @@ char* gen_scope(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
 
-  str = str_append(&str, "/*scope*/{");
+  str = str_append(&str, "{");
 
   if (ast->list_value) {
     char* args_str = gen_semi_tuple(ast->list_value, flags);
