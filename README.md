@@ -1,5 +1,5 @@
 <p align='center'>
-  <img src='logo.png' style='display: block;'/>
+  <img width='200px' src='logo.png' style='display: block;'/>
 </p>
 
 <p align='center' style='text-align: center;'>
@@ -21,7 +21,7 @@ fjb index.js
 - [x] ES6 module imports / exports
 - [x] Aliased imports
 - [x] Wildcard imports
-- [X] JSX support
+- [x] JSX support
 - [x] Removing dead code (Tree shaking)
 - [x] Supports package.json
 - [x] Importing _anything_, even when it's not exported, no matter how deeply nested it is
