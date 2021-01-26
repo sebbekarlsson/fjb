@@ -20,6 +20,7 @@ fjb index.js
 - [x] Being fast
 - [x] ES6 module imports / exports
 - [x] Aliased imports
+- [x] Wildcard imports
 - [x] Removing dead code (Tree shaking)
 - [x] Supports package.json
 - [x] Importing _anything_, even when it's not exported, no matter how deeply nested it is
@@ -51,19 +52,6 @@ fjb index.js
 3. Run:
 ```bash
 sudo make install
-```
-
-## Final Notes
-
-### Import ALL does not work
-> Another thing which is not implemented yet:
-```typescript
-import * as _ from 'lodash';
-```
-> Support for this is also coming.  
-> In the meantime, use instead:
-```typescript
-const _ = require('lodash');
 ```
 
 ## That's it!

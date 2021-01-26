@@ -331,12 +331,20 @@ AST_T* parser_parse_import(parser_T* parser, parser_options_T options)
     }
 
     parser_eat(parser, TOKEN_RBRACE);
+  } else if (parser->token->type == TOKEN_STAR) {
+    parser_eat(parser, TOKEN_STAR);
+
+    if (parser->token->type == TOKEN_AS) {
+      parser_eat(parser, TOKEN_AS);
+      ast->alias = strdup(parser->token->value);
+      parser_eat(parser, TOKEN_ID);
+    }
   } else if (parser->token->type != TOKEN_STRING) {
     AST_T* ast_import_arg = parser_parse_id(parser, options);
     list_push(ast->list_value, ast_import_arg);
   }
 
-  if (ast->list_value->size > 0) {
+  if ((ast->list_value->size > 0) || ast->alias) {
     parser_eat(parser, TOKEN_FROM);
   }
   ast->string_value = strdup(parser->token->value);
