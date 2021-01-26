@@ -85,7 +85,8 @@ unsigned int lexer_check_regex(lexer_T* lexer)
   if ((lexer->c == '/' && lexer_peek(lexer, 1) != '/' && lexer->prev_token->type != TOKEN_INT &&
        lexer->prev_token->type != TOKEN_DIV && lexer->prev_token->type != TOKEN_ID &&
        lexer->prev_token->type != TOKEN_RPAREN && lexer->prev_token->type != TOKEN_RBRACKET &&
-       lexer->prev_token->type != TOKEN_RBRACE && lexer->prev_token->type != TOKEN_STRING) ||
+       lexer->prev_token->type != TOKEN_LT && lexer->prev_token->type != TOKEN_RBRACE &&
+       lexer->prev_token->type != TOKEN_STRING) ||
       (lexer->c == '/' && lexer_peek(lexer, 1) == '^')) {
     return 1;
   }
@@ -491,6 +492,26 @@ token_T* lexer_parse_number(lexer_T* lexer)
   }
 
   return ret_tok(lexer, init_token(str, type));
+}
+
+token_T* lexer_parse_any(lexer_T* lexer, char stop_char)
+{
+  int type = TOKEN_RAW;
+
+  char* value = 0;
+  while (lexer->c != stop_char && lexer->c != 0) {
+    if (lexer->c == '{') {
+      value = str_append(&value, "$");
+      type = TOKEN_TEMPLATE_STRING;
+    }
+
+    value = str_append(&value, lexer->cstr);
+    lexer_advance(lexer);
+  }
+
+  token_T* token = init_token(value, type);
+
+  return ret_tok(lexer, token);
 }
 
 token_T* lexer_switch_id(lexer_T* lexer, token_T* token)
