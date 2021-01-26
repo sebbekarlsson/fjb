@@ -478,11 +478,15 @@ AST_T* ast_search_pointer(AST_T* ast, int type)
 
 AST_T* get_node_by_name(list_T* list, char* name)
 {
+  if (!name)
+    return 0;
+
   LOOP_NODES(list, i, child, {
-    if (!child->name)
+    char* child_name = ast_get_string(child);
+    if (!child_name)
       continue;
 
-    if (strcmp(child->name, name) == 0)
+    if (strcmp(child_name, name) == 0)
       return child;
   });
 
@@ -519,12 +523,29 @@ char* ast_encode_strings(list_T* strings)
 
 char* ast_get_string(AST_T* ast)
 {
-  if (!ast->name && !ast->string_value)
+  if (!ast)
     return 0;
 
+  if (!ast->name && !ast->string_value && !ast->alias)
+    return 0;
+
+  if (ast->alias)
+    return ast->alias;
   if (ast->string_value)
     return ast->string_value;
   if (ast->name)
     return ast->name;
   return 0;
+}
+
+char* ast_get_string_copy(AST_T* ast)
+{
+  if (!ast)
+    return 0;
+
+  char* value = ast_get_string(ast);
+  if (!value)
+    return 0;
+
+  return strdup(value);
 }

@@ -495,13 +495,15 @@ char* gen_import(AST_T* ast, compiler_flags_T* flags)
 
       for (unsigned int i = 0; i < ast->list_value->size; i++) {
         AST_T* child = (AST_T*)ast->list_value->items[i];
-        if (!child->name)
+        char* name = ast_get_string(child);
+
+        if (!name)
           continue;
 
         const char* template = "let %s = %s.%s\n";
         char* defstr =
-          calloc(strlen(template) + strlen(encoding) + (strlen(child->name) * 2) + 1, sizeof(char));
-        sprintf(defstr, template, child->name, encoding, child->name);
+          calloc(strlen(template) + strlen(encoding) + (strlen(name) * 2) + 1, sizeof(char));
+        sprintf(defstr, template, name, encoding, name);
 
         str = str_append(&str, defstr);
         free(defstr);
@@ -555,7 +557,7 @@ char* gen_function(AST_T* ast, compiler_flags_T* flags)
   if (ast->type != AST_CLASS_FUNCTION)
     str = str_append(&str, "function ");
 
-  char* name = ast->name;
+  char* name = ast_get_string_copy(ast);
 
   if (!name) {
     char buff[256];
@@ -581,12 +583,12 @@ char* gen_function(AST_T* ast, compiler_flags_T* flags)
   }
   str = str_append(&str, "}");
 
-  if (flags->imports && ast->name && ast->flags && get_node_by_name(flags->imports, ast->name)) {
+  if (flags->imports && name && get_node_by_name(flags->imports, name)) {
     str = str_append(&str, "\n");
     str = str_append(&str, "this.");
-    str = str_append(&str, ast->name);
+    str = str_append(&str, name);
     str = str_append(&str, "= ");
-    str = str_append(&str, ast->name);
+    str = str_append(&str, name);
     str = str_append(&str, ";\n");
   }
 
@@ -642,7 +644,7 @@ char* gen_name(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
 
-  char* namestr = strdup(ast->name ? ast->name : ast->string_value);
+  char* namestr = ast_get_string_copy(ast);
   str = str_append(&str, namestr);
 
   if (ast->value) {
@@ -767,7 +769,7 @@ char* gen_try(AST_T* ast, compiler_flags_T* flags)
 char* gen_class(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
-  char* name = ast_get_string(ast);
+  char* name = ast_get_string_copy(ast);
   str = str_append(&str, "class ");
   str = str_append(&str, name);
 

@@ -57,9 +57,16 @@ list_T* get_imported_symbols(AST_T* lookup, list_T* imports, list_T* search_inde
     for (unsigned int k = 0; k < nr_types; k++) {
       data.type = types[k];
       data.name = child->name;
-      resolved = ast_query(search_index, resolve_basic_query,
-                           data); // resolve(lookup, resolve_basic_query, data);
+      resolved = ast_query(search_index, resolve_basic_query, data);
+
       if (resolved) {
+        /**
+         * Copy alias from the import, to the resolved symbol.
+         */
+        if (child->alias) {
+          resolved->alias = strdup(child->alias);
+        }
+
         list_push_safe(list, resolved);
         break;
       }
