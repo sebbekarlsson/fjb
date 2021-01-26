@@ -110,6 +110,16 @@ void test_alias_imports()
                          "test AST_FUNCTION multiply does NOT exists.");
 }
 
+void test_wildcard_imports()
+{
+  const char* filepath = "./src/test_projects/wildcard_imports/index.js";
+
+  MSG();
+
+  AST_T* root = run_get_ast(filepath);
+  assert_node_exists(root, AST_ASSIGNMENT, "utils", "test AST_ASSIGNMENT utils exists.");
+}
+
 int main(int argc, char* argv[])
 {
   test_es6();
@@ -121,6 +131,7 @@ int main(int argc, char* argv[])
   test_regex();
   test_class();
   test_alias_imports();
+  test_wildcard_imports();
 
   return 0;
 }
