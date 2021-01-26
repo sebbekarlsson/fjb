@@ -31,7 +31,12 @@ fjb index.js
 - [ ] TypeScript support
 - [ ] Loading CSS
 - [ ] Loading JSON
-- [ ] Lazy imports 
+- [ ] Lazy imports
+
+## Example
+> Below is an example of some code that is **100%** supported.  
+> (Without any plugins or configuration)
+<img width='400px' src='img/code.png' style='display: block;'/>
 
 ## Installing
 ### Dependencies
