@@ -95,6 +95,8 @@ typedef struct FJB_TOKEN_STRUCT
     TOKEN_DOLLAR,
     TOKEN_SPREAD,
     TOKEN_HEX,
+    TOKEN_RAW,
+    TOKEN_TEMPLATE_STRING,
   } type;
   char c;
 } token_T;

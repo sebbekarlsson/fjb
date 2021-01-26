@@ -1,4 +1,5 @@
 #include "include/gen.h"
+#include "include/gen_jsx.h"
 #include "include/io.h"
 #include "include/js/head_import.js.h"
 #include "include/js/head_require.js.h"
@@ -81,8 +82,11 @@ static char* gen_list(list_T* list_value, compiler_flags_T* flags)
   return str;
 }
 
-static char* gen_spaced_list(list_T* list_value, compiler_flags_T* flags)
+char* gen_spaced_list(list_T* list_value, compiler_flags_T* flags)
 {
+  if (!list_value)
+    return 0;
+
   char* str = 0;
   list_T* living = list_value;
 
@@ -162,6 +166,7 @@ char* gen(AST_T* ast, compiler_flags_T* flags)
     case AST_INT_MIN: body = gen_int_min(ast, flags); break;
     case AST_FLOAT: body = gen_float(ast, flags); break;
     case AST_STRING: body = gen_string(ast, flags); break;
+    case AST_TEMPLATE_STRING: body = gen_template_string(ast, flags); break;
     case AST_ARROW_DEFINITION: body = gen_arrow_definition(ast, flags); break;
     case AST_ASSIGNMENT: body = gen_assignment(ast, flags); break;
     case AST_COLON_ASSIGNMENT: body = gen_colon_assignment(ast, flags); break;
@@ -190,6 +195,9 @@ char* gen(AST_T* ast, compiler_flags_T* flags)
     case AST_LABEL: body = gen_label(ast, flags); break;
     case AST_TERNARY: body = gen_ternary(ast, flags); break;
     case AST_DO: body = gen_do(ast, flags); break;
+    case AST_JSX_TEXT:
+    case AST_JSX_TEMPLATE_STRING:
+    case AST_JSX_ELEMENT: body = gen_jsx(ast, flags); break;
     case AST_NOOP: body = gen_noop(ast, flags); break;
     default: {
       printf("[Gen]: missing generator for `%d`", ast->type);
@@ -311,6 +319,18 @@ char* gen_string(AST_T* ast, compiler_flags_T* flags)
   return str;
 }
 
+char* gen_template_string(AST_T* ast, compiler_flags_T* flags)
+{
+  char* m = "`";
+  char* str = 0;
+
+  str = str_append(&str, m);
+  str = str_append(&str, ast->string_value);
+  str = str_append(&str, m);
+
+  return str;
+}
+
 char* gen_arrow_definition(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
@@ -357,7 +377,8 @@ char* gen_assignment(AST_T* ast, compiler_flags_T* flags)
     free(valuestr);
   }
 
-  if (flags->imports && ast->name && ast->flags && get_node_by_name(flags->imports, ast->name)) {
+  if (ast->parent && ast->parent->type == AST_FUNCTION && flags->imports && ast->name &&
+      ast->flags && get_node_by_name(flags->imports, ast->name)) {
     str = str_append(&str, "\n");
     str = str_append(&str, "this.");
     str = str_append(&str, ast->name);
@@ -585,7 +606,7 @@ char* gen_function(AST_T* ast, compiler_flags_T* flags)
   }
   str = str_append(&str, "}");
 
-  if (name) {
+  if (name && ast->parent && ast->parent->type == AST_FUNCTION) {
     str = str_append(&str, "\n");
     str = str_append(&str, "this.");
     str = str_append(&str, name);

@@ -3,6 +3,7 @@
 #include "include/gc.h"
 #include "include/gen.h"
 #include "include/io.h"
+#include "include/jsx.h"
 #include "include/node.h"
 #include "include/string_utils.h"
 #include <stdio.h>
@@ -663,6 +664,11 @@ AST_T* parser_parse_object(parser_T* parser, parser_options_T options)
   return ast;
 }
 
+AST_T* parser_parse_jsx_element(parser_T* parser, parser_options_T options)
+{
+  return parse_jsx(parser, options);
+}
+
 AST_T* parser_parse_function(parser_T* parser, parser_options_T options)
 {
   parser_eat(parser, TOKEN_FUNCTION);
@@ -789,6 +795,7 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
     case TOKEN_DO: left = parser_parse_do(parser, options); break;
     case TOKEN_LBRACKET: left = parser_parse_array(parser, options); break;
     case TOKEN_FUNCTION: left = parser_parse_function(parser, options); break;
+    case TOKEN_LT: left = parser_parse_jsx_element(parser, options); break;
     case TOKEN_RETURN:
     case TOKEN_DELETE:
     case TOKEN_EXPORT:

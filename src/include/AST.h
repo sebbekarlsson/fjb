@@ -34,6 +34,7 @@ typedef struct FJB_AST_STRUCT
   char* name;
   char* compiled_value;
   char* from_module;
+  char* innerText;
 
   list_T* list_value;
   list_T* options;
@@ -45,6 +46,7 @@ typedef struct FJB_AST_STRUCT
   unsigned int lazy;
   unsigned int saved;
   unsigned int from_obj;
+  unsigned int jsx_closed;
   int line;
 
   list_T* parent_lists;

@@ -35,6 +35,8 @@ AST_T* parser_parse_id(parser_T* parser, parser_options_T options);
 
 AST_T* parser_parse_expr(parser_T* parser, parser_options_T options);
 
+AST_T* parser_parse_definition(parser_T* parser, parser_options_T options);
+
 AST_T* parser_parse_assignment(parser_T* parser, parser_options_T options, AST_T* id);
 
 AST_T* parser_parse_compound(parser_T* parser, parser_options_T options);

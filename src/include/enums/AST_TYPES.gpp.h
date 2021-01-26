@@ -114,6 +114,21 @@ AST_CLASS_FUNCTION,
 
 AST_TUPLE,
 
+
+AST_JSX_COMPOUND,
+
+
+AST_JSX_ELEMENT,
+
+
+AST_JSX_TEXT,
+
+
+AST_JSX_TEMPLATE_STRING,
+
+
+AST_TEMPLATE_STRING,
+
 };
 
 static const char * AST_TYPE_STR[] = {
@@ -230,6 +245,21 @@ static const char * AST_TYPE_STR[] = {
 
 
 "AST_TUPLE",
+
+
+"AST_JSX_COMPOUND",
+
+
+"AST_JSX_ELEMENT",
+
+
+"AST_JSX_TEXT",
+
+
+"AST_JSX_TEMPLATE_STRING",
+
+
+"AST_TEMPLATE_STRING",
 
 };
 

@@ -120,6 +120,16 @@ void test_wildcard_imports()
   assert_node_exists(root, AST_ASSIGNMENT, "utils", "test AST_ASSIGNMENT utils exists.");
 }
 
+void test_jsx()
+{
+  const char* filepath = "./src/test_projects/jsx/index.jsx";
+
+  MSG();
+
+  AST_T* root = run_get_ast(filepath);
+  assert_node_exists(root, AST_NAME, "document", "test AST_NAME document exists.");
+}
+
 int main(int argc, char* argv[])
 {
   test_es6();
@@ -132,6 +142,7 @@ int main(int argc, char* argv[])
   test_class();
   test_alias_imports();
   test_wildcard_imports();
+  test_jsx();
 
   return 0;
 }
