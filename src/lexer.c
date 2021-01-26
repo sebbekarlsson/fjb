@@ -499,6 +499,7 @@ token_T* lexer_parse_any(lexer_T* lexer, char stop_char)
   int type = TOKEN_RAW;
 
   char* value = 0;
+
   while (lexer->c != stop_char && lexer->c != 0) {
     if (lexer->c == '{') {
       value = str_append(&value, "$");

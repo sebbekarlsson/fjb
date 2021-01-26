@@ -9,8 +9,12 @@ AST_T* parse_template(parser_T* parser, parser_options_T options)
   AST_T* ast = init_ast_line(AST_TEMPLATE_STRING, parser->lexer->line);
   char* innerText = 0;
   token_T* tok = parser->token;
-  innerText = strdup(tok->value);
-  if (parser->token->type == TOKEN_ID) {
+
+  if (tok->type == TOKEN_LBRACE)
+    innerText = str_append(&innerText, "$");
+
+  innerText = str_append(&innerText, tok->value);
+  if (parser->token->type == TOKEN_ID || parser->token->type == TOKEN_LBRACE) {
     tok = lexer_parse_any(parser->lexer, '<');
     parser->token = tok;
     innerText = str_append(&innerText, tok->value);
@@ -35,8 +39,9 @@ AST_T* parse_jsx_compound(parser_T* parser, parser_options_T options)
   ast->list_value = NEW_STACK;
 
   while (parser->lexer->c != '/' &&
-         (parser->token->type == TOKEN_LT || parser->token->type == TOKEN_ID)) {
-    if (parser->token->type == TOKEN_ID) {
+         (parser->token->type == TOKEN_LT || parser->token->type == TOKEN_ID ||
+          parser->token->type == TOKEN_LBRACE)) {
+    if (parser->token->type == TOKEN_ID || parser->token->type == TOKEN_LBRACE) {
       AST_T* template = parse_template(parser, options);
       list_push(ast->list_value, template);
     } else {
