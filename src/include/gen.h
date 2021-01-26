@@ -2,6 +2,8 @@
 #define FJB_GEN_H
 #include "AST.h"
 #include "flags.h"
+char* gen_spaced_list(list_T* list_value, compiler_flags_T* flags);
+
 char* gen(AST_T* ast, compiler_flags_T* flags);
 char* gen_compound(AST_T* ast, compiler_flags_T* flags);
 char* gen_array(AST_T* ast, compiler_flags_T* flags);
@@ -11,6 +13,7 @@ char* gen_int(AST_T* ast, compiler_flags_T* flags);
 char* gen_int_min(AST_T* ast, compiler_flags_T* flags);
 char* gen_float(AST_T* ast, compiler_flags_T* flags);
 char* gen_string(AST_T* ast, compiler_flags_T* flags);
+char* gen_template_string(AST_T* ast, compiler_flags_T* flags);
 char* gen_arrow_definition(AST_T* ast, compiler_flags_T* flags);
 char* gen_assignment(AST_T* ast, compiler_flags_T* flags);
 char* gen_colon_assignment(AST_T* ast, compiler_flags_T* flags);
