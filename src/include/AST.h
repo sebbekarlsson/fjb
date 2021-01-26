@@ -47,6 +47,7 @@ typedef struct FJB_AST_STRUCT
   unsigned int saved;
   unsigned int from_obj;
   unsigned int jsx_closed;
+  unsigned int anon;
   int line;
 
   list_T* parent_lists;

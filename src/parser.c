@@ -696,6 +696,8 @@ AST_T* parser_parse_function(parser_T* parser, parser_options_T options)
 
   if (ast->name) {
     list_push(parser->flags->search_index, ast);
+  } else {
+    ast->anon = 1;
   }
 
   gc_mark(parser->flags->GC, ast);
