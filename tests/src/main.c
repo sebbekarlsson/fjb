@@ -98,6 +98,18 @@ void test_class()
   assert_node_exists(root, AST_CLASS, "Dog", "test AST_CLASS Dog exists.");
 }
 
+void test_alias_imports()
+{
+  const char* filepath = "./src/test_projects/alias_imports/index.js";
+
+  MSG();
+
+  AST_T* root = run_get_ast(filepath);
+  assert_node_exists(root, AST_FUNCTION, "mul", "test AST_FUNCTION mul exists.");
+  assert_node_not_exists(root, AST_FUNCTION, "multiply",
+                         "test AST_FUNCTION multiply does NOT exists.");
+}
+
 int main(int argc, char* argv[])
 {
   test_es6();
@@ -108,6 +120,7 @@ int main(int argc, char* argv[])
   test_strings();
   test_regex();
   test_class();
+  test_alias_imports();
 
   return 0;
 }

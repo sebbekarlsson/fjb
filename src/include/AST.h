@@ -7,6 +7,7 @@
 typedef struct FJB_AST_STRUCT
 {
   enum AST_TYPE type;
+
   struct FJB_AST_STRUCT* value;
   struct FJB_AST_STRUCT* body;
   struct FJB_AST_STRUCT* body2;
@@ -29,6 +30,7 @@ typedef struct FJB_AST_STRUCT
   int int_value;
   float float_value;
   char* string_value;
+  char* alias;
   char* name;
   char* compiled_value;
   char* from_module;
@@ -84,6 +86,8 @@ char* ast_encode_strings(list_T* strings);
 
 char* ast_get_string(AST_T* ast);
 
+char* ast_get_string_copy(AST_T* ast);
+
 void list_free(gc_T* gc, list_T* list);
 
 void ast_free(AST_T* ast);
@@ -91,9 +95,11 @@ void ast_free(AST_T* ast);
 #define NEW_STACK init_list(sizeof(AST_T*))
 
 #define LOOP_NODES(list, C, NAME, WHAT)                                                            \
-  for (unsigned int C = 0; C < list->size; C++) {                                                  \
-    AST_T* NAME = (AST_T*)list->items[C];                                                          \
-    WHAT;                                                                                          \
+  if (list && list->items && list->size) {                                                         \
+    for (unsigned int C = 0; C < list->size; C++) {                                                \
+      AST_T* NAME = (AST_T*)list->items[C];                                                        \
+      WHAT;                                                                                        \
+    }                                                                                              \
   }
 
 #define LOOP_NODES_FIXED(list, C, S, NAME, WHAT)                                                   \
