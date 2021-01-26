@@ -131,7 +131,14 @@ token_T* token_clone(token_T* token)
   if (!token)
     return 0;
 
-  token_T* new_token = init_token(strdup(token->value), token->type);
+  char* value = 0;
+
+  if (token->value)
+    value = strdup(token->value);
+  else
+    value = strdup("");
+
+  token_T* new_token = init_token(value, token->type);
   new_token->c = token->c;
   return new_token;
 }
