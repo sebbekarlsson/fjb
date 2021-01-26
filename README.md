@@ -19,6 +19,7 @@ fjb index.js
 ### Features
 - [x] Being fast
 - [x] ES6 module imports / exports
+- [x] Aliased imports
 - [x] Removing dead code (Tree shaking)
 - [x] Supports package.json
 - [x] Importing _anything_, even when it's not exported, no matter how deeply nested it is
@@ -53,15 +54,6 @@ sudo make install
 ```
 
 ## Final Notes
-
-### Import aliases does not work
-> One thing which is not implemented yet (but planned to), is importing using
-> aliases.  
-Example:
-```typescript
-import { ceil as C } from 'lodash';
-```
-> And as mentioned, support for this is planned.
 
 ### Import ALL does not work
 > Another thing which is not implemented yet:
