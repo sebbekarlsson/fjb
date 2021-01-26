@@ -206,7 +206,11 @@ AST_T* parser_parse_ternary(parser_T* parser, parser_options_T options, AST_T* l
 
     ast_tern->value = parser_parse_expr(parser, options);
 
-    // parser_eat(parser, TOKEN_COLON);
+    /**
+     * The reason why we're not expecting a TOKEN_COLON here,
+     * is because it's later being taken care of when parsing the
+     * next expression.
+     */
 
     ast_tern->right = parser_parse_expr(parser, options);
 
@@ -231,9 +235,15 @@ AST_T* parser_parse_id(parser_T* parser, parser_options_T options)
   ast->name = strdup(ast->string_value);
   ast->from_module = strdup(parser->flags->filepath);
 
-  gc_mark(parser->flags->GC, ast);
-
   parser_eat_any(parser);
+
+  if (parser->token->type == TOKEN_AS) {
+    parser_eat(parser, TOKEN_AS);
+    ast->alias = strdup(parser->token->value);
+    parser_eat(parser, TOKEN_ID);
+  }
+
+  gc_mark(parser->flags->GC, ast);
 
   return ast;
 }
@@ -624,10 +634,6 @@ AST_T* parser_parse_object(parser_T* parser, parser_options_T options)
     }
   }
 
-  /*if (parser->token->type == TOKEN_COMMA) {
-    parser_eat(parser, TOKEN_COMMA);
-  }*/
-
   parser_eat(parser, TOKEN_RBRACE);
 
   if (ast->list_value->size) {
@@ -784,7 +790,6 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
     case TOKEN_BREAK:
     case TOKEN_INSTANCEOF:
     case TOKEN_VOID:
-    // case TOKEN_ASYNC:
     case TOKEN_AWAIT:
     case TOKEN_ASSERT: left = parser_parse_state(parser, options); break;
     case TOKEN_CONST:
@@ -1004,8 +1009,13 @@ AST_T* parser_parse_case(parser_T* parser, parser_options_T options)
   ast->parent = options.parent;
   ast->name = strdup(parser->token->value);
   parser_eat(parser, TOKEN_CASE);
-  // ast->expr = parser_parse_expr(parser, options);
-  // parser_eat(parser, TOKEN_COLON);
+
+  /**
+   * The reason why we're not expecting a TOKEN_COLON here,
+   * is because it's being taken care of later by the next
+   * parsing of expression.
+   */
+
   ast->expr = parser_parse_statement_or_expr(parser, options);
 
   gc_mark(parser->flags->GC, ast);
