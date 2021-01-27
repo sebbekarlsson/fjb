@@ -4,6 +4,7 @@
 #include "include/js/jsx_append.js.h"
 #include "include/js/jsx_attr.js.h"
 #include "include/js/jsx_close.js.h"
+#include "include/js/jsx_ptr.js.h"
 #include "include/string_utils.h"
 #include <stdio.h>
 #include <string.h>
@@ -61,14 +62,25 @@ char* gen_jsx_attributes(AST_T* ast, compiler_flags_T* flags)
   return str ? str : strdup("");
 }
 
+char* gen_jsx_call(AST_T* ast, compiler_flags_T* flags)
+{
+  AST_T* call_ast = init_ast(AST_CALL);
+  call_ast->name = strdup(ast->ptr->name);
+  call_ast->list_value = list_copy(ast->options);
+
+  char* value = gen(call_ast, flags);
+
+  return value;
+}
+
 char* gen_jsx_element(AST_T* ast, compiler_flags_T* flags)
 {
-  const char* TEMPLATE = (const char*)_tmp_jsx_js;
-  unsigned int TEMPLATE_LEN = _tmp_jsx_js_len;
+  const char* TEMPLATE = (const char*)(ast->ptr ? _tmp_jsx_ptr_js : _tmp_jsx_js);
+  unsigned int TEMPLATE_LEN = ast->ptr ? _tmp_jsx_ptr_js_len : _tmp_jsx_js_len;
   char* name = ast_get_string(ast);
-  char* func_name = "document.createElement";
+  char* func_name = ast->ptr ? gen_jsx_call(ast, flags) : strdup("document.createElement");
   char* attr = gen_jsx_attributes(ast, flags);
-  char* body = gen_jsx_body(ast->body, flags);
+  char* body = ast->body ? gen_jsx_body(ast->body, flags) : strdup("");
   char* value =
     calloc(TEMPLATE_LEN + strlen(name) + strlen(func_name) + strlen(attr) + strlen(body) + 1,
            sizeof(char));

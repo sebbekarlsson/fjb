@@ -3,6 +3,7 @@
 #include "include/gc.h"
 #include "include/gen.h"
 #include "include/io.h"
+#include "include/jsx_eval.h"
 #include "include/node.h"
 #include "include/resolve.h"
 #include "include/string_utils.h"
@@ -333,6 +334,8 @@ AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* stack)
       AST_T* child = (AST_T*)stack->items[i];
       if (!child)
         continue;
+      if (child == ast)
+        continue;
 
       list_remove(stack, child, 0);
     }
@@ -608,6 +611,8 @@ AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* stack)
     case AST_DO: ast = visitor_visit_do(visitor, ast, stack); break;
     case AST_NOOP: ast = visitor_visit_noop(visitor, ast, stack); break;
     case AST_TUPLE: ast = visitor_visit_tuple(visitor, ast, stack); break;
+    case AST_JSX_COMPOUND: return eval_jsx(visitor, ast, stack); break;
+    case AST_JSX_ELEMENT: return eval_jsx(visitor, ast, stack); break;
     default: {
     } break;
   }
