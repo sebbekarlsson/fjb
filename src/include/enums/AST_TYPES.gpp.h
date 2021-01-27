@@ -129,6 +129,9 @@ AST_JSX_TEMPLATE_STRING,
 
 AST_TEMPLATE_STRING,
 
+
+AST_RAW,
+
 };
 
 static const char * AST_TYPE_STR[] = {
@@ -260,6 +263,9 @@ static const char * AST_TYPE_STR[] = {
 
 
 "AST_TEMPLATE_STRING",
+
+
+"AST_RAW",
 
 };
 

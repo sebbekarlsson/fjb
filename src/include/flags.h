@@ -16,6 +16,7 @@ typedef struct FJB_COMPILER_FLAGS
   AST_T* exports;
   gc_T* GC;
   list_T* imports;
+  unsigned int aliased_import;
 
   list_T* search_index;
 } compiler_flags_T;

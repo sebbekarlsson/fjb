@@ -5,6 +5,7 @@
 #include "include/io.h"
 #include "include/lexer.h"
 #include "include/parser.h"
+#include "include/special_gen.h"
 #include "include/string_utils.h"
 #include "include/visitor.h"
 #include <stdio.h>
@@ -17,6 +18,12 @@ compiler_result_T* fjb(compiler_flags_T* flags)
 {
   if (!flags->source)
     return 0;
+
+  char* ext = get_filename_ext(flags->filepath);
+
+  if (strcasecmp(ext, ".json") == 0) {
+    return special_gen_json(flags);
+  }
 
   NOOP = init_ast(AST_NOOP);
   gc_mark(flags->GC, NOOP);
@@ -81,15 +88,4 @@ compiler_result_T* fjb(compiler_flags_T* flags)
   }
 
   return result;
-}
-
-void compiler_result_free(compiler_result_T* result)
-{
-  if (!result)
-    return;
-
-  if (result->stdout)
-    free(result->stdout);
-
-  free(result);
 }
