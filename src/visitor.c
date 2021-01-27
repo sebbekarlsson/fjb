@@ -116,6 +116,7 @@ AST_T* visitor_visit_import(visitor_T* visitor, AST_T* ast, list_T* stack)
 
   char* contents = fjb_read_file(final_file_to_read);
   visitor->flags->filepath = strdup(final_file_to_read);
+  visitor->flags->aliased_import = ast->alias != 0;
   visitor->flags->source = strdup(contents);
   compiler_result_T* result = fjb(visitor->flags);
   ast->compiled_value = strdup(result->stdout);

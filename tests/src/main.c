@@ -141,6 +141,18 @@ void test_jsx_custom()
   assert_node_exists(root, AST_NAME, "HeadTitle", "test AST_NAME HeadTitle exists.");
 }
 
+void test_json_import()
+{
+  const char* filepath = "./src/test_projects/json_import/index.js";
+
+  MSG();
+
+  AST_T* root = run_get_ast(filepath, 0);
+  assert_node_not_exists(root, AST_ARRAY, 0, "test AST_ARRAY does not exists.");
+  AST_T* root_after = run_get_ast(filepath, 1);
+  assert_node_not_exists(root, AST_ARRAY, 0, "test AST_ARRAY exists.");
+}
+
 int main(int argc, char* argv[])
 {
   test_es6();
@@ -155,6 +167,7 @@ int main(int argc, char* argv[])
   test_wildcard_imports();
   test_jsx();
   test_jsx_custom();
+  test_json_import();
 
   return 0;
 }

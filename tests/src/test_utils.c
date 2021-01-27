@@ -16,10 +16,10 @@ unsigned int node_query(AST_T* ast, query_T query)
 {
   char* name = ast_get_string(ast);
 
-  if (!name)
+  if (query.name && !name)
     return 0;
 
-  return strcmp(name, query.name) == 0 && ast->type == query.type;
+  return (query.name ? strcmp(name, query.name) == 0 : 1) && ast->type == query.type;
 }
 
 void assert_node_exists(AST_T* root, int type, char* name, const char* msg)
