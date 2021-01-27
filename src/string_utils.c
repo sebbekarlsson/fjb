@@ -303,3 +303,20 @@ char* get_indent(unsigned int size)
 
   return str ? str : strdup("");
 }
+
+char char_tolower(unsigned char ch)
+{
+  if (ch >= 'A' && ch <= 'Z')
+    ch = 'a' + (ch - 'A');
+  return ch;
+}
+
+int strcasecmp(const char* s1, const char* s2)
+{
+  const unsigned char *us1 = (const u_char*)s1, *us2 = (const u_char*)s2;
+
+  while (char_tolower(*us1) == char_tolower(*us2++))
+    if (*us1++ == '\0')
+      return (0);
+  return (char_tolower(*us1) - char_tolower(*--us2));
+}

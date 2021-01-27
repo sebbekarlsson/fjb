@@ -338,7 +338,7 @@ AST_T* parser_parse_import(parser_T* parser, parser_options_T options)
     if (parser->token->type == TOKEN_AS) {
       parser_eat(parser, TOKEN_AS);
       ast->alias = strdup(parser->token->value);
-      parser_eat(parser, TOKEN_ID);
+      list_push(ast->list_value, parser_parse_id(parser, options));
     }
   } else if (parser->token->type != TOKEN_STRING) {
     AST_T* ast_import_arg = parser_parse_id(parser, options);

@@ -166,6 +166,7 @@ char* gen(AST_T* ast, compiler_flags_T* flags)
     case AST_INT_MIN: body = gen_int_min(ast, flags); break;
     case AST_FLOAT: body = gen_float(ast, flags); break;
     case AST_STRING: body = gen_string(ast, flags); break;
+    case AST_RAW: body = gen_raw(ast, flags); break;
     case AST_TEMPLATE_STRING: body = gen_template_string(ast, flags); break;
     case AST_ARROW_DEFINITION: body = gen_arrow_definition(ast, flags); break;
     case AST_ASSIGNMENT: body = gen_assignment(ast, flags); break;
@@ -300,6 +301,11 @@ char* gen_hex(AST_T* ast, compiler_flags_T* flags)
   return strdup(ast->string_value);
 }
 
+char* gen_raw(AST_T* ast, compiler_flags_T* flags)
+{
+  return strdup(ast->string_value);
+}
+
 char* gen_float(AST_T* ast, compiler_flags_T* flags)
 {
   return strdup(ast->string_value ? ast->string_value : float_to_str(ast->float_value));
@@ -377,8 +383,9 @@ char* gen_assignment(AST_T* ast, compiler_flags_T* flags)
     free(valuestr);
   }
 
-  if (ast->parent && ast->parent->type == AST_FUNCTION && flags->imports && ast->name &&
-      ast->flags && get_node_by_name(flags->imports, ast->name)) {
+  if ((ast->parent && ast->parent->type == AST_FUNCTION && flags->imports && ast->name &&
+       ast->flags && get_node_by_name(flags->imports, ast->name)) ||
+      ast->exported) {
     str = str_append(&str, "\n");
     str = str_append(&str, "this.");
     str = str_append(&str, ast->name);
@@ -513,7 +520,7 @@ char* gen_import(AST_T* ast, compiler_flags_T* flags)
     str = str_append(&str, "}).bind(this)()\n");
     free(head_str);
 
-    if (ast->type == AST_IMPORT && ast->list_value) {
+    if (ast->type == AST_IMPORT && ast->list_value && !ast->alias) {
       str = str_append(&str, ";");
 
       for (unsigned int i = 0; i < ast->list_value->size; i++) {

@@ -13,6 +13,7 @@ char* gen_int(AST_T* ast, compiler_flags_T* flags);
 char* gen_int_min(AST_T* ast, compiler_flags_T* flags);
 char* gen_float(AST_T* ast, compiler_flags_T* flags);
 char* gen_string(AST_T* ast, compiler_flags_T* flags);
+char* gen_raw(AST_T* ast, compiler_flags_T* flags);
 char* gen_template_string(AST_T* ast, compiler_flags_T* flags);
 char* gen_arrow_definition(AST_T* ast, compiler_flags_T* flags);
 char* gen_assignment(AST_T* ast, compiler_flags_T* flags);
