@@ -30,4 +30,8 @@ char* resolve_import(char* basepath, char* filepath, unsigned int node_modules);
 char* remove_whitespace(char* source);
 
 char* get_indent(unsigned int size);
+
+char char_tolower(unsigned char ch);
+
+int strcasecmp(const char* s1, const char* s2);
 #endif
