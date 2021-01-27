@@ -7,6 +7,7 @@
 AST_T* parse_template(parser_T* parser, parser_options_T options)
 {
   AST_T* ast = init_ast_line(AST_TEMPLATE_STRING, parser->lexer->line);
+  ast->parent = options.parent;
   char* innerText = 0;
   token_T* tok = parser->token;
 
@@ -36,6 +37,7 @@ AST_T* parse_template(parser_T* parser, parser_options_T options)
 AST_T* parse_jsx_compound(parser_T* parser, parser_options_T options)
 {
   AST_T* ast = init_ast_line(AST_JSX_COMPOUND, parser->lexer->line);
+  ast->parent = options.parent;
   ast->list_value = NEW_STACK;
 
   while (parser->lexer->c != '/' &&
@@ -46,6 +48,8 @@ AST_T* parse_jsx_compound(parser_T* parser, parser_options_T options)
       list_push(ast->list_value, template);
     } else {
       AST_T* jsx = parse_jsx(parser, options);
+      if (!jsx->parent)
+        jsx->parent = options.parent;
       list_push(ast->list_value, jsx);
     }
   }
@@ -98,6 +102,7 @@ AST_T* parse_jsx_attr(parser_T* parser, parser_options_T options)
 AST_T* parse_jsx(parser_T* parser, parser_options_T options)
 {
   AST_T* ast = init_ast_line(AST_JSX_ELEMENT, parser->lexer->line);
+  ast->parent = options.parent;
   ast->options = NEW_STACK;
   ast->list_value = NEW_STACK;
   char* innerText = 0;
@@ -111,6 +116,12 @@ AST_T* parse_jsx(parser_T* parser, parser_options_T options)
   while (parser->token->type == TOKEN_ID) {
     AST_T* assignment = parse_jsx_attr(parser, options);
     list_push(ast->options, assignment);
+  }
+
+  if (parser->token->type == TOKEN_DIV) {
+    parser_eat(parser, TOKEN_DIV);
+    parser_eat(parser, TOKEN_GT);
+    return ast;
   }
 
   parser_eat(parser, TOKEN_GT);
