@@ -59,5 +59,29 @@ fjb index.js
 sudo make install
 ```
 
-## That's it!
-> Cheers.
+## Questions and Answers
+### How serious is this?
+> Not sure, it's just a hobby project at this point.
+
+### Why are you making this?
+> Frustration, frustration with existing tools.  
+> The existing alternatives are not fast enough, and gets in the
+> way a bit more than they should.
+
+### Is it mature enough to use it with React?
+> At some point, I want this project to get there.  
+> But right now, it lacks some features.  
+> For example, fjb currently supports JSX; but react-jsx is not implemented  
+> right now.
+
+### Should I use it?
+> I will not encourage anyone to use it, but feel free to do it.
+
+### Can I contribute?
+> Yes you can. Simply fork it and start making pull-requests.
+
+### How do I create a plugin for it?
+> It's not possible at this point.  
+> This is a feature I plan to implement.  
+> If you want some other behaviour right now, simply just change the
+> source code.
