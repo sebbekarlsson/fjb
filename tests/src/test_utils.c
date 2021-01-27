@@ -60,11 +60,14 @@ void assert_node_not_exists(AST_T* root, int type, char* name, const char* msg)
   OK();
 }
 
-AST_T* run_get_ast(const char* filepath)
+AST_T* run_get_ast(const char* filepath, unsigned int post_process)
 {
   char* contents = fjb_read_file(filepath);
   compiler_flags_T* flags = init_compiler_flags(contents, (char*)filepath, 0);
   compiler_result_T* result = fjb(flags);
+
+  if (!post_process)
+    return result->node;
 
   lexer_T* lexer = init_lexer(result->stdout, filepath);
   parser_T* parser = init_parser(lexer, flags);
