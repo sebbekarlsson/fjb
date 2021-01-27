@@ -32,6 +32,7 @@ fjb index.js
 - [ ] TypeScript support
 - [ ] Loading CSS
 - [ ] Lazy imports
+- [ ] Better formatted output. (kind of ugly right now)
 
 ## Example
 > Below is an example of some code that is **100%** supported.  
