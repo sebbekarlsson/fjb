@@ -556,6 +556,10 @@ char* gen_call(AST_T* ast, compiler_flags_T* flags)
     return gen_import(ast, flags);
   }
 
+  if (!ast->left && ast->name) {
+    str = str_append(&str, ast->name);
+  }
+
   str = str_append(&str, "(");
 
   for (unsigned int i = 0; i < ast->list_value->size; i++) {

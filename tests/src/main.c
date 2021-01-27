@@ -10,7 +10,7 @@ void test_es6()
 
   MSG();
 
-  AST_T* root = run_get_ast(filepath);
+  AST_T* root = run_get_ast(filepath, 1);
 
   assert_node_exists(root, AST_FUNCTION, "subtract", "test AST_FUNCTION exists");
 }
@@ -21,7 +21,7 @@ void test_simple()
 
   MSG();
 
-  AST_T* root = run_get_ast(filepath);
+  AST_T* root = run_get_ast(filepath, 1);
 
   assert_node_exists(root, AST_FUNCTION, "subtract", "test AST_FUNCTION exists");
 }
@@ -32,7 +32,7 @@ void test_with_lodash()
 
   MSG();
 
-  AST_T* root = run_get_ast(filepath);
+  AST_T* root = run_get_ast(filepath, 1);
 
   assert_node_exists(root, AST_ASSIGNMENT, "ceil", "test AST_ASSIGNMENT exists");
   assert_node_exists(root, AST_FUNCTION, "createRound", "test AST_FUNCTION exists");
@@ -44,7 +44,7 @@ void test_no_imports()
 
   MSG();
 
-  AST_T* root = run_get_ast(filepath);
+  AST_T* root = run_get_ast(filepath, 1);
 
   assert_node_exists(root, AST_FUNCTION, "hello", "test AST_FUNCTION exists");
 }
@@ -55,7 +55,7 @@ void test_with_assignment()
 
   MSG();
 
-  AST_T* root = run_get_ast(filepath);
+  AST_T* root = run_get_ast(filepath, 1);
 
   assert_node_exists(root, AST_ASSIGNMENT, "myfunc", "test arrow function assignment exists");
 }
@@ -66,7 +66,7 @@ void test_strings()
 
   MSG();
 
-  AST_T* root = run_get_ast(filepath);
+  AST_T* root = run_get_ast(filepath, 1);
 
   assert_node_exists(root, AST_STRING,
                      "*(?:'((?:\x5c\x5c\x5c\x5c.|[^\x5c\x5c\x5c\x5c'])*)'|\x5c\"((?:"
@@ -80,7 +80,7 @@ void test_regex()
 
   MSG();
 
-  AST_T* root = run_get_ast(filepath);
+  AST_T* root = run_get_ast(filepath, 1);
 
   assert_node_exists(root, AST_FUNCTION, "validateEmail", "test AST_FUNCTION exists.");
   assert_node_exists(root, AST_REGEX, "/\x5cS+@\x5cS+\x5c.\x5cS+/",
@@ -93,7 +93,7 @@ void test_class()
 
   MSG();
 
-  AST_T* root = run_get_ast(filepath);
+  AST_T* root = run_get_ast(filepath, 1);
   assert_node_exists(root, AST_CLASS, "Animal", "test AST_CLASS Animal exists.");
   assert_node_exists(root, AST_CLASS, "Dog", "test AST_CLASS Dog exists.");
 }
@@ -104,7 +104,7 @@ void test_alias_imports()
 
   MSG();
 
-  AST_T* root = run_get_ast(filepath);
+  AST_T* root = run_get_ast(filepath, 1);
   assert_node_exists(root, AST_FUNCTION, "mul", "test AST_FUNCTION mul exists.");
   assert_node_not_exists(root, AST_FUNCTION, "multiply",
                          "test AST_FUNCTION multiply does NOT exists.");
@@ -116,7 +116,7 @@ void test_wildcard_imports()
 
   MSG();
 
-  AST_T* root = run_get_ast(filepath);
+  AST_T* root = run_get_ast(filepath, 1);
   assert_node_exists(root, AST_ASSIGNMENT, "utils", "test AST_ASSIGNMENT utils exists.");
 }
 
@@ -126,8 +126,19 @@ void test_jsx()
 
   MSG();
 
-  AST_T* root = run_get_ast(filepath);
+  AST_T* root = run_get_ast(filepath, 1);
   assert_node_exists(root, AST_NAME, "document", "test AST_NAME document exists.");
+}
+
+void test_jsx_custom()
+{
+  const char* filepath = "./src/test_projects/jsx_custom/index.jsx";
+
+  MSG();
+
+  AST_T* root = run_get_ast(filepath, 1);
+  assert_node_exists(root, AST_NAME, "document", "test AST_NAME document exists.");
+  assert_node_exists(root, AST_NAME, "HeadTitle", "test AST_NAME HeadTitle exists.");
 }
 
 int main(int argc, char* argv[])
@@ -143,6 +154,7 @@ int main(int argc, char* argv[])
   test_alias_imports();
   test_wildcard_imports();
   test_jsx();
+  test_jsx_custom();
 
   return 0;
 }
