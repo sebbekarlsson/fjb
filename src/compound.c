@@ -1,6 +1,7 @@
 #include "include/compound.h"
 #include "include/AST.h"
 #include "include/resolve.h"
+#include "include/signals.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -12,6 +13,8 @@ typedef struct
   AST_T* parent;
   list_T* saved;
 } options_T;
+
+extern volatile fjb_signals_T* FJB_SIGNALS;
 
 static unsigned int resolve_basic_query(AST_T* ast, query_T data)
 {
@@ -36,8 +39,8 @@ static unsigned int resolve_deps_query(AST_T* ast, query_T data)
     return 0;
   if (data.type == AST_FUNCTION && !ast->name)
     return 0;
-  if (data.parent && ast->parent && ast->parent->type == AST_FUNCTION &&
-      (ast->parent != data.parent))
+  if (data.parent && ast->parent && (ast->parent != data.parent) &&
+      (ast->parent->type == AST_FUNCTION))
     return 0;
   if (ast->from_obj)
     return 0;
@@ -46,7 +49,7 @@ static unsigned int resolve_deps_query(AST_T* ast, query_T data)
 
 list_T* get_imported_symbols(AST_T* lookup, list_T* imports, list_T* search_index)
 {
-  list_T* list = NEW_STACK;
+  list_T* list = FJB_SIGNALS->imported_symbols;
 
   AST_T* resolved = 0;
 
@@ -81,8 +84,8 @@ unsigned int get_deps(AST_T* ast, options_T args, compiler_flags_T* flags)
 {
   if (!ast)
     return 0;
-  // if (!ast->parent && ast->type != AST_COMPOUND && ast->type != AST_SCOPE)
-  //  return 0;
+  if (!ast->parent && ast->type != AST_COMPOUND && ast->type != AST_SCOPE)
+    return 0;
 
   if (ast->left && ast->type != AST_CALL)
     get_deps(ast->left, args, flags);
@@ -96,6 +99,8 @@ unsigned int get_deps(AST_T* ast, options_T args, compiler_flags_T* flags)
   if (ast->next)
     get_deps(ast->next, args, flags);
   if (ast->value)
+    get_deps(ast->value, args, flags);
+  if (ast->condition)
     get_deps(ast->value, args, flags);
 
   if (ast->list_value && ast->type != AST_FUNCTION) {
@@ -139,12 +144,15 @@ unsigned int get_deps(AST_T* ast, options_T args, compiler_flags_T* flags)
     if (ptr->name == 0 || (args.saved && ptr_in_list(args.saved, ptr)) || ptr->from_obj ||
         ptr == ast || ptr == args.compound) continue;
 
+    if (ptr_in_list(FJB_SIGNALS->imported_symbols, ptr)) continue;
+
     query_T query; query.type = ptr->type; query.name = ptr->name;
 
     if (!resolve(args.compound, resolve_deps_query, query)) {
       if (args.saved) {
         list_push_at(args.saved, ptr, args.last_pushed ? args.last_pushed : ast);
         args.last_pushed = ptr;
+        list_push_safe(FJB_SIGNALS->imported_symbols, ptr);
         pushed += 1;
       }
     });
@@ -160,7 +168,8 @@ AST_T* new_compound(AST_T* lookup, compiler_flags_T* flags)
     return lookup;
 
   AST_T* compound = init_ast(AST_COMPOUND);
-  compound->list_value = get_imported_symbols(lookup, flags->imports, flags->search_index);
+  compound->list_value =
+    list_copy(get_imported_symbols(lookup, flags->imports, flags->search_index));
   compound->es_exports = flags->imports;
   gc_mark_list(flags->GC, compound->list_value);
 

@@ -23,9 +23,11 @@ AST_T* eval_jsx_element(visitor_T* visitor, AST_T* ast, list_T* stack)
 
   AST_T* def = 0;
 
+  list_T* search_index = list_merge(visitor->flags->search_index, stack);
+
   if (ast->name) {
     LOOP_NODES(
-      stack, i, child, char* name = ast_get_string(child);
+      search_index, i, child, char* name = ast_get_string(child);
 
       if (!name) continue;
 

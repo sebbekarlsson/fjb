@@ -234,7 +234,7 @@ AST_T* parser_parse_id(parser_T* parser, parser_options_T options)
   ast->parent = options.parent;
   ast->string_value = strdup(parser->token->value);
   ast->name = strdup(ast->string_value);
-  ast->from_module = strdup(parser->flags->filepath);
+  ast->from_module = parser->flags->filepath ? strdup(parser->flags->filepath) : 0;
 
   parser_eat_any(parser);
 
@@ -608,7 +608,6 @@ AST_T* parser_parse_array(parser_T* parser, parser_options_T options)
   AST_T* ast = init_ast_line(AST_ARRAY, parser->lexer->line);
   ast->parent = options.parent;
   ast->list_value = parse_array(parser, options);
-  ast->from_module = strdup(parser->flags->filepath);
 
   gc_mark(parser->flags->GC, ast);
 
@@ -1132,7 +1131,7 @@ AST_T* parser_parse_call(parser_T* parser, parser_options_T options)
   AST_T* ast_call = init_ast_line(AST_CALL, parser->lexer->line);
   ast_call->parent = options.parent;
   ast_call->list_value = parse_args(parser, options);
-  ast_call->from_module = strdup(parser->flags->filepath);
+  ast_call->from_module = parser->flags->filepath ? strdup(parser->flags->filepath) : 0;
 
   if (parser->token->type == TOKEN_ARROW_RIGHT) {
     parser_eat(parser, TOKEN_ARROW_RIGHT);

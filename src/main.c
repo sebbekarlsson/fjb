@@ -1,5 +1,6 @@
 #include "include/fjb.h"
 #include "include/io.h"
+#include "include/signals.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -14,7 +15,7 @@ unsigned int getarg(int argc, char* argv[], const char* key)
 
 int main(int argc, char* argv[])
 {
-
+  init_fjb_signals();
   char* filepath = argv[1];
   char* source = fjb_read_file(filepath);
   unsigned int should_dump = getarg(argc, argv, "-d");

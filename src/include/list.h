@@ -2,6 +2,14 @@
 #define FJB_LIST_H
 #include <stdlib.h>
 
+#define LOOP(list, C, NAME, WHAT)                                                                  \
+  if (list && list->items && list->size) {                                                         \
+    for (unsigned int C = 0; C < list->size; C++) {                                                \
+      void* NAME = (void*)list->items[C];                                                          \
+      WHAT;                                                                                        \
+    }                                                                                              \
+  }
+
 typedef struct LIST_STRUCT
 {
   void** items;
@@ -40,4 +48,5 @@ list_T* list_copy(list_T* a);
 void list_clear(list_T* list);
 
 void list_free_shallow(list_T* list);
+
 #endif

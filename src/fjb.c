@@ -3,8 +3,11 @@
 #include "include/gc.h"
 #include "include/gen.h"
 #include "include/io.h"
+#include "include/js/jsx_headers.js.h"
 #include "include/lexer.h"
+#include "include/list.h"
 #include "include/parser.h"
+#include "include/signals.h"
 #include "include/special_gen.h"
 #include "include/string_utils.h"
 #include "include/visitor.h"
@@ -13,13 +16,14 @@
 
 AST_T* NOOP;
 list_T* stack;
+extern volatile fjb_signals_T* FJB_SIGNALS;
 
 compiler_result_T* fjb(compiler_flags_T* flags)
 {
   if (!flags->source)
     return 0;
 
-  char* ext = get_filename_ext(flags->filepath);
+  char* ext = (char*)get_filename_ext(flags->filepath);
 
   if (strcasecmp(ext, ".json") == 0) {
     return special_gen_json(flags);
@@ -27,8 +31,6 @@ compiler_result_T* fjb(compiler_flags_T* flags)
 
   NOOP = init_ast(AST_NOOP);
   gc_mark(flags->GC, NOOP);
-
-  list_T* search_index = NEW_STACK;
 
   /* ==== Lexing ==== */
   lexer_T* lexer = init_lexer(flags->source, flags->filepath);
@@ -53,10 +55,17 @@ compiler_result_T* fjb(compiler_flags_T* flags)
   gc_mark_list(flags->GC, es_exports);
   AST_T* root_to_generate = new_compound(root, flags);
 
+  FJB_SIGNALS->root = root_to_generate;
+
   /* ==== Generate ==== */
   char* str = 0;
 
+  char* headers = fjb_get_headers(flags);
+  if (headers)
+    str = str_append(&str, headers);
+
   str = str_append(&str, "/* IMPORTED FROM `");
+
   str = str_append(&str, flags->filepath);
   str = str_append(&str, "` */\n");
   char* out = gen(root_to_generate, flags);
@@ -67,7 +76,9 @@ compiler_result_T* fjb(compiler_flags_T* flags)
   result->stdout = str;
   result->es_exports = flags->es_exports;
   result->node = root_to_generate;
-  result->filepath = strdup(flags->filepath);
+
+  if (flags->filepath)
+    result->filepath = strdup(flags->filepath);
 
   if (flags->should_dump) {
     char* dumped = visitor->flags->dumped_tree;
@@ -88,4 +99,15 @@ compiler_result_T* fjb(compiler_flags_T* flags)
   }
 
   return result;
+}
+
+char* fjb_get_headers(compiler_flags_T* flags)
+{
+  char* str = 0;
+  if (FJB_SIGNALS->is_using_jsx && !FJB_SIGNALS->has_included_jsx_headers) {
+    str = str_append(&str, (const char*)_tmp_jsx_headers_js);
+    FJB_SIGNALS->has_included_jsx_headers = 1;
+  }
+
+  return str;
 }

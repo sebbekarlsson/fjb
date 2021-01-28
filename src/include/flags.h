@@ -18,6 +18,8 @@ typedef struct FJB_COMPILER_FLAGS
   list_T* imports;
   unsigned int aliased_import;
 
+  unsigned int only_parse;
+
   list_T* search_index;
 } compiler_flags_T;
 

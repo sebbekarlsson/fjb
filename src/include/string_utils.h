@@ -31,6 +31,8 @@ char* remove_whitespace(char* source);
 
 char* get_indent(unsigned int size);
 
+char* str_get_after(char* source, char* after);
+
 char char_tolower(unsigned char ch);
 
 int strcasecmp(const char* s1, const char* s2);
