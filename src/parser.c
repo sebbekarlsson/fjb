@@ -412,13 +412,18 @@ AST_T* parser_parse_state(parser_T* parser, parser_options_T options)
   ast->token = token_clone(parser->token);
   ast->string_value = strdup(parser->token->value);
   ast->name = strdup(ast->string_value ? ast->string_value : ast->name);
+
   parser_eat(parser, parser->token->type);
 
   if (parser->token->type == TOKEN_DEFAULT)
     parser_eat(parser, parser->token->type);
 
-  if (parser->token->type != TOKEN_SEMI)
+  if (parser->token->type != TOKEN_SEMI) {
     ast->value = parser_parse_expr(parser, options);
+
+    if (ast->value && ast->token->type == TOKEN_EXPORT)
+      ast->value->exported = 1;
+  }
 
   gc_mark(parser->flags->GC, ast);
 

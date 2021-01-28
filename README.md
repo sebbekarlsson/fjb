@@ -46,6 +46,7 @@ fjb index.js
 2. Git
 
 ### Steps to Install
+#### Compiling it
 1. Clone down the repository
 2. Run:
 ```bash
@@ -54,11 +55,15 @@ fjb index.js
 > This step will generate a `fjb.out` executable file.  
 > You can start using this right away.
 
+#### Installing globally
 > To continue and install `fjb` globally:
-3. Run:
+Run:
 ```bash
-sudo make install
+make install
 ```
+> Also make sure you add `$HOME/.local/bin`
+> to your PATH.  
+> [https://unix.stackexchange.com/questions/26047/how-to-correctly-add-a-path-to-path](https://unix.stackexchange.com/questions/26047/how-to-correctly-add-a-path-to-path)
 
 ## Questions and Answers
 ### How serious is this?

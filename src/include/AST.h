@@ -9,6 +9,7 @@ typedef struct FJB_AST_STRUCT
   enum AST_TYPE type;
 
   struct FJB_AST_STRUCT* value;
+  struct FJB_AST_STRUCT* shadow_value;
   struct FJB_AST_STRUCT* body;
   struct FJB_AST_STRUCT* body2;
   struct FJB_AST_STRUCT* left;
@@ -66,6 +67,8 @@ void ast_init_parent_lists(AST_T* ast);
 unsigned int ast_is_in_list(AST_T* ast, list_T* list);
 
 char* _ast_to_str(AST_T* ast, int indent);
+
+char* ast_type_to_str(AST_T* ast);
 
 char* ast_binop_to_str(AST_T* ast, int indent);
 

@@ -64,11 +64,22 @@ char* gen_jsx_attributes(AST_T* ast, compiler_flags_T* flags)
 
 char* gen_jsx_call(AST_T* ast, compiler_flags_T* flags)
 {
+  char* value = 0;
+
   AST_T* call_ast = init_ast(AST_CALL);
   call_ast->name = strdup(ast->ptr->name);
   call_ast->list_value = list_copy(ast->options);
 
-  char* value = gen(call_ast, flags);
+  if ((ast->ptr && ast->ptr->type == AST_FUNCTION) ||
+      (ast->ptr && ast->ptr->value && ast->ptr->value->type == AST_FUNCTION)) {
+    AST_T* state = init_ast(AST_STATE);
+    state->string_value = strdup("new");
+    state->value = call_ast;
+
+    value = gen(state, flags);
+  } else {
+    value = gen(call_ast, flags);
+  }
 
   return value;
 }
@@ -81,12 +92,27 @@ char* gen_jsx_element(AST_T* ast, compiler_flags_T* flags)
   char* func_name = ast->ptr ? gen_jsx_call(ast, flags) : strdup("document.createElement");
   char* attr = gen_jsx_attributes(ast, flags);
   char* body = ast->body ? gen_jsx_body(ast->body, flags) : strdup("");
-  char* value =
-    calloc(TEMPLATE_LEN + strlen(name) + strlen(func_name) + strlen(attr) + strlen(body) + 1,
-           sizeof(char));
-  sprintf(value, TEMPLATE, func_name, name, attr, body);
+  char* call_args =
+    ast->options && ast->options->size ? gen_tuple(ast->options, flags) : strdup("");
+  char* value = calloc(TEMPLATE_LEN + strlen(name) + strlen(call_args) + strlen(func_name) +
+                         strlen(attr) + strlen(body) + 1,
+                       sizeof(char));
+
+  sprintf(value, TEMPLATE, func_name, name, attr, body, call_args);
 
   return value;
+}
+
+char* gen_jsx_template_value(AST_T* ast, compiler_flags_T* flags)
+{
+  char* value = 0;
+  if (ast->expr) {
+    char* exprstr = gen(ast->expr, flags);
+    value = str_append(&value, exprstr);
+    return value;
+  }
+
+  return strdup("");
 }
 
 char* gen_jsx(AST_T* ast, compiler_flags_T* flags)
@@ -94,6 +120,7 @@ char* gen_jsx(AST_T* ast, compiler_flags_T* flags)
   switch (ast->type) {
     case AST_JSX_ELEMENT: return gen_jsx_element(ast, flags); break;
     case AST_JSX_COMPOUND: return gen_jsx_body(ast, flags); break;
+    case AST_JSX_TEMPLATE_VALUE: return gen_jsx_template_value(ast, flags); break;
     case AST_JSX_TEMPLATE_STRING:
     case AST_JSX_TEXT: return gen_jsx_template_string(ast, flags); break;
     default: {

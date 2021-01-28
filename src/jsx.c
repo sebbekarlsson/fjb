@@ -57,9 +57,25 @@ AST_T* parse_jsx_compound(parser_T* parser, parser_options_T options)
   return ast;
 }
 
+AST_T* parse_jsx_attr_value(parser_T* parser, parser_options_T options)
+{
+
+  if (parser->token->type == TOKEN_LBRACE) {
+    AST_T* ast = init_ast(AST_JSX_TEMPLATE_VALUE);
+    ast->parent = options.parent;
+    parser_eat(parser, TOKEN_LBRACE);
+    ast->expr = parser_parse_expr(parser, options);
+    parser_eat(parser, TOKEN_RBRACE);
+    return ast;
+  }
+
+  return parser_parse_factor(parser, options);
+}
+
 AST_T* parse_jsx_attr(parser_T* parser, parser_options_T options)
 {
   AST_T* assignment = init_ast_line(AST_ASSIGNMENT, parser->lexer->line);
+  assignment->parent = options.parent;
   AST_T* left = parser_parse_id(parser, options);
 
   gc_mark(parser->flags->GC, assignment);
@@ -74,21 +90,7 @@ AST_T* parse_jsx_attr(parser_T* parser, parser_options_T options)
 
   if (parser->token->type == TOKEN_EQUALS) {
     parser_eat(parser, TOKEN_EQUALS);
-    assignment->value = parser_parse_factor(parser, options);
-
-    if (assignment->value &&
-        (assignment->value->type == AST_OBJECT || assignment->value->type == AST_SCOPE)) {
-      char* generated = gen(assignment->value, parser->flags);
-
-      if (generated) {
-        char* value = strdup("$");
-        value = str_append(&value, generated);
-        AST_T* jsx_node = init_ast(AST_TEMPLATE_STRING);
-        jsx_node->string_value = strdup(value);
-        assignment->value = jsx_node;
-        free(value);
-      }
-    }
+    assignment->value = parse_jsx_attr_value(parser, options);
   }
 
   assignment->left = left;

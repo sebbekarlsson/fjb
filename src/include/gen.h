@@ -3,6 +3,7 @@
 #include "AST.h"
 #include "flags.h"
 char* gen_spaced_list(list_T* list_value, compiler_flags_T* flags);
+char* gen_tuple(list_T* list_value, compiler_flags_T* flags);
 
 char* gen(AST_T* ast, compiler_flags_T* flags);
 char* gen_compound(AST_T* ast, compiler_flags_T* flags);

@@ -105,7 +105,7 @@ char* gen_spaced_list(list_T* list_value, compiler_flags_T* flags)
   return str;
 }
 
-static char* gen_tuple(list_T* list_value, compiler_flags_T* flags)
+char* gen_tuple(list_T* list_value, compiler_flags_T* flags)
 {
   char* str = 0;
 
@@ -198,6 +198,7 @@ char* gen(AST_T* ast, compiler_flags_T* flags)
     case AST_DO: body = gen_do(ast, flags); break;
     case AST_JSX_TEXT:
     case AST_JSX_TEMPLATE_STRING:
+    case AST_JSX_TEMPLATE_VALUE:
     case AST_JSX_ELEMENT: body = gen_jsx(ast, flags); break;
     case AST_NOOP: body = gen_noop(ast, flags); break;
     default: {
