@@ -556,3 +556,23 @@ char* ast_type_to_str(AST_T* ast)
     return 0;
   return (char*)AST_TYPE_STR[ast->type];
 }
+
+unsigned int ast_is_iterable(AST_T* ast)
+{
+  if (!ast)
+    return 0;
+
+  if (ast->type == AST_CALL && ast->name && strcmp(ast->name, "map") == 0)
+    return 1;
+  if (ast->type == AST_ARRAY || ast->type == AST_TUPLE)
+    return 1;
+
+  if (ast_is_iterable(ast->value))
+    return 1;
+  if (ast_is_iterable(ast->left))
+    return 1;
+  if (ast_is_iterable(ast->right))
+    return 1;
+
+  return 0;
+}

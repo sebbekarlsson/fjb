@@ -1,6 +1,8 @@
 #include "include/gen_jsx.h"
 #include "include/gen.h"
+#include "include/js.h"
 #include "include/js/jsx.js.h"
+#include "include/js/jsx_add_listener.js.h"
 #include "include/js/jsx_append.js.h"
 #include "include/js/jsx_attr.js.h"
 #include "include/js/jsx_close.js.h"
@@ -16,7 +18,35 @@ char* gen_jsx_template_string(AST_T* ast, compiler_flags_T* flags)
 
   str = str_append(&str, "document.createTextNode(");
   str = str_append(&str, m);
-  str = str_append(&str, ast->string_value);
+  str = str_append(&str, "${");
+
+  if (ast->string_value) {
+    str = str_append(&str, ast->string_value);
+  } else if (ast->expr) {
+    char* v = gen(ast->expr, flags);
+    str = str_append(&str, v);
+  }
+  str = str_append(&str, "}");
+  str = str_append(&str, m);
+  str = str_append(&str, ")");
+
+  return str;
+}
+
+char* gen_jsx_text(AST_T* ast, compiler_flags_T* flags)
+{
+  char* m = "\"";
+  char* str = 0;
+
+  str = str_append(&str, "document.createTextNode(");
+  str = str_append(&str, m);
+
+  if (ast->string_value) {
+    str = str_append(&str, ast->string_value);
+  } else if (ast->expr) {
+    char* v = gen(ast->expr, flags);
+    str = str_append(&str, v);
+  }
   str = str_append(&str, m);
   str = str_append(&str, ")");
 
@@ -31,7 +61,7 @@ char* gen_jsx_body(AST_T* ast, compiler_flags_T* flags)
     ast->list_value, i, child, char* childstr = gen_jsx(child, flags);
 
     if (childstr) {
-      str = str_append(&str, "parent.appendChild(");
+      str = str_append(&str, "__jsx_append(parent, ");
       str = str_append(&str, childstr);
       str = str_append(&str, ")");
     }
@@ -47,13 +77,24 @@ char* gen_jsx_attributes(AST_T* ast, compiler_flags_T* flags)
 
   const char* TEMPLATE = (const char*)_tmp_jsx_attr_js;
   unsigned int TEMPLATE_LEN = _tmp_jsx_attr_js_len;
+
+  const char* TEMPLATE_LISTENER = (const char*)_tmp_jsx_add_listener_js;
+  unsigned int TEMPLATE_LISTENER_LEN = _tmp_jsx_add_listener_js_len;
+
   LOOP_NODES(
     ast->options, i, child, char* name = ast_get_string(child); if (!name) continue;
     if (!child->value) continue;
 
+    const char* template = (const char*)TEMPLATE; unsigned int len = TEMPLATE_LEN;
+
+    if (is_js_event(name)) {
+      template = TEMPLATE_LISTENER;
+      len = TEMPLATE_LISTENER_LEN;
+    }
+
     char* value = gen(child->value, flags);
-    char* buff = calloc(strlen(name) + strlen(value) + TEMPLATE_LEN + 1, sizeof(char));
-    sprintf(buff, TEMPLATE, name, value);
+    char* buff = calloc(strlen(name) + strlen(value) + len + 1, sizeof(char));
+    sprintf(buff, template, name, value);
 
     str = str_append(&str, buff);
 
@@ -121,8 +162,8 @@ char* gen_jsx(AST_T* ast, compiler_flags_T* flags)
     case AST_JSX_ELEMENT: return gen_jsx_element(ast, flags); break;
     case AST_JSX_COMPOUND: return gen_jsx_body(ast, flags); break;
     case AST_JSX_TEMPLATE_VALUE: return gen_jsx_template_value(ast, flags); break;
-    case AST_JSX_TEMPLATE_STRING:
-    case AST_JSX_TEXT: return gen_jsx_template_string(ast, flags); break;
+    case AST_JSX_TEMPLATE_STRING: return gen_jsx_template_string(ast, flags); break;
+    case AST_JSX_TEXT: return gen_jsx_text(ast, flags); break;
     default: {
       printf("[Gen(JSX)]: Missing generator for `%d`\n", ast->type);
       exit(1);

@@ -6,10 +6,13 @@
 #include "include/jsx_eval.h"
 #include "include/node.h"
 #include "include/resolve.h"
+#include "include/signals.h"
 #include "include/string_utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+extern fjb_signals_T* FJB_SIGNALS;
 
 static AST_T* getptr_any(AST_T* ast, list_T* stack)
 {
@@ -114,21 +117,27 @@ AST_T* visitor_visit_import(visitor_T* visitor, AST_T* ast, list_T* stack)
     list_push(visitor->flags->imports, ast->list_value->items[i]);
   }
 
-  char* contents = fjb_read_file(final_file_to_read);
-  visitor->flags->filepath = strdup(final_file_to_read);
-  visitor->flags->aliased_import = ast->alias != 0;
-  visitor->flags->source = strdup(contents);
-  compiler_result_T* result = fjb(visitor->flags);
-  ast->compiled_value = strdup(result->stdout);
-  ast->es_exports = result->es_exports;
+  if (final_file_to_read) {
+    char* contents = fjb_read_file(final_file_to_read);
+    visitor->flags->filepath = strdup(final_file_to_read);
+    visitor->flags->aliased_import = ast->alias != 0;
+    visitor->flags->source = strdup(contents);
+    compiler_result_T* result = fjb(visitor->flags);
+    ast->compiled_value = strdup(result->stdout);
+    if (result->es_exports)
+      ast->es_exports = list_copy(result->es_exports);
+    // visitor->flags->filepath = 0;
+    visitor->flags->source = 0;
+    visitor->flags->aliased_import = 0;
 
-  if (result->dumped)
-    visitor->flags->dumped_tree = str_append(&visitor->flags->dumped_tree, result->dumped);
+    if (result->dumped)
+      visitor->flags->dumped_tree = str_append(&visitor->flags->dumped_tree, result->dumped);
 
-  free(final_file_to_read);
-  free(contents);
+    // free(final_file_to_read);
+    // free(contents);
 
-  compiler_result_free(result);
+    //    compiler_result_free(result);
+  }
 
   list_clear(visitor->flags->imports);
 

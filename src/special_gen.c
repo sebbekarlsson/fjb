@@ -42,7 +42,7 @@ compiler_result_T* special_gen_json(compiler_flags_T* flags)
 
   value = str_append(&value, ";");
 
-  compiler_result_T* result = init_compiler_result(value, flags->filepath);
+  compiler_result_T* result = init_compiler_result(value, strdup(flags->filepath));
 
   return result;
 }

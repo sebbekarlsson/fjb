@@ -320,3 +320,18 @@ int strcasecmp(const char* s1, const char* s2)
       return (0);
   return (char_tolower(*us1) - char_tolower(*--us2));
 }
+
+unsigned int str_contains(char* source, char* sub)
+{
+  return (strstr(source, sub) != 0);
+}
+
+char* str_get_after(char* source, char* after)
+{
+  if (!str_contains(source, after))
+    return source;
+
+  char* newstr = strdup(source);
+  char* tok = strtok(newstr, after);
+  return tok;
+}

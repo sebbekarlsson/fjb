@@ -494,13 +494,13 @@ token_T* lexer_parse_number(lexer_T* lexer)
   return ret_tok(lexer, init_token(str, type));
 }
 
-token_T* lexer_parse_any(lexer_T* lexer, char stop_char)
+token_T* lexer_parse_any(lexer_T* lexer, char stop_char, char stop_char2)
 {
   int type = TOKEN_RAW;
 
   char* value = 0;
 
-  while (lexer->c != stop_char && lexer->c != 0) {
+  while (lexer->c != stop_char && lexer->c != stop_char2 && lexer->c != 0) {
     if (lexer->c == '{') {
       value = str_append(&value, "$");
       type = TOKEN_TEMPLATE_STRING;

@@ -40,7 +40,7 @@ token_T* lexer_parse_regex(lexer_T* lexer);
 
 token_T* lexer_parse_number(lexer_T* lexer);
 
-token_T* lexer_parse_any(lexer_T* lexer, char stop_token);
+token_T* lexer_parse_any(lexer_T* lexer, char stop_char, char stop_char2);
 
 token_T* lexer_switch_id(lexer_T* lexer, token_T* token);
 

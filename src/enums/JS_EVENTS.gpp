@@ -1,0 +1,9 @@
+const char* JS_EVENTS[] = {
+  {{
+    map(jsEvents, (@
+      "{{ $0 }}",
+    @))
+  }}
+};
+
+unsigned int JS_EVENTS_LEN = {{ nrJsEvents }};

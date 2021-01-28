@@ -1,8 +1,11 @@
 #include "include/jsx.h"
-#include "include/gen.h"
+#include "include/js.h"
+#include "include/signals.h"
 #include "include/string_utils.h"
 #include "string.h"
 #include <stdio.h>
+
+extern volatile fjb_signals_T* FJB_SIGNALS;
 
 AST_T* parse_template(parser_T* parser, parser_options_T options)
 {
@@ -11,12 +14,10 @@ AST_T* parse_template(parser_T* parser, parser_options_T options)
   char* innerText = 0;
   token_T* tok = parser->token;
 
-  if (tok->type == TOKEN_LBRACE)
-    innerText = str_append(&innerText, "$");
-
   innerText = str_append(&innerText, tok->value);
-  if (parser->token->type == TOKEN_ID || parser->token->type == TOKEN_LBRACE) {
-    tok = lexer_parse_any(parser->lexer, '<');
+
+  if (parser->token->type == TOKEN_ID) {
+    tok = lexer_parse_any(parser->lexer, '<', '{');
     parser->token = tok;
     innerText = str_append(&innerText, tok->value);
 
@@ -43,9 +44,12 @@ AST_T* parse_jsx_compound(parser_T* parser, parser_options_T options)
   while (parser->lexer->c != '/' &&
          (parser->token->type == TOKEN_LT || parser->token->type == TOKEN_ID ||
           parser->token->type == TOKEN_LBRACE)) {
-    if (parser->token->type == TOKEN_ID || parser->token->type == TOKEN_LBRACE) {
+    if (parser->token->type == TOKEN_ID) {
       AST_T* template = parse_template(parser, options);
       list_push(ast->list_value, template);
+    } else if (parser->token->type == TOKEN_LBRACE) {
+      AST_T* node = parse_jsx_compute_block(parser, options);
+      list_push(ast->list_value, node);
     } else {
       AST_T* jsx = parse_jsx(parser, options);
       if (!jsx->parent)
@@ -66,6 +70,29 @@ AST_T* parse_jsx_attr_value(parser_T* parser, parser_options_T options)
     parser_eat(parser, TOKEN_LBRACE);
     ast->expr = parser_parse_expr(parser, options);
     parser_eat(parser, TOKEN_RBRACE);
+
+    return ast;
+  }
+
+  return parser_parse_factor(parser, options);
+}
+
+AST_T* parse_jsx_compute_block(parser_T* parser, parser_options_T options)
+{
+
+  if (parser->token->type == TOKEN_LBRACE) {
+    AST_T* ast = init_ast(AST_JSX_TEMPLATE_VALUE);
+    ast->parent = options.parent;
+    parser_eat(parser, TOKEN_LBRACE);
+    ast->expr = parser_parse_expr(parser, options);
+    parser_eat(parser, TOKEN_RBRACE);
+
+    if (ast->expr) {
+      if (ast->expr->type == AST_NAME) {
+        ast->type = AST_JSX_TEMPLATE_STRING;
+      }
+    }
+
     return ast;
   }
 
@@ -88,6 +115,13 @@ AST_T* parse_jsx_attr(parser_T* parser, parser_options_T options)
     parser_eat(parser, TOKEN_ID);
   }
 
+  if (left->name) {
+    char* after = str_get_after(left->name, "on");
+    if (after && is_js_event(after)) {
+      left->name = strdup(after);
+    }
+  }
+
   if (parser->token->type == TOKEN_EQUALS) {
     parser_eat(parser, TOKEN_EQUALS);
     assignment->value = parse_jsx_attr_value(parser, options);
@@ -103,6 +137,7 @@ AST_T* parse_jsx_attr(parser_T* parser, parser_options_T options)
 
 AST_T* parse_jsx(parser_T* parser, parser_options_T options)
 {
+  FJB_SIGNALS->is_using_jsx = 1;
   AST_T* ast = init_ast_line(AST_JSX_ELEMENT, parser->lexer->line);
   ast->parent = options.parent;
   ast->options = NEW_STACK;

@@ -9,7 +9,6 @@ typedef struct FJB_AST_STRUCT
   enum AST_TYPE type;
 
   struct FJB_AST_STRUCT* value;
-  struct FJB_AST_STRUCT* shadow_value;
   struct FJB_AST_STRUCT* body;
   struct FJB_AST_STRUCT* body2;
   struct FJB_AST_STRUCT* left;
@@ -94,6 +93,8 @@ char* ast_encode_strings(list_T* strings);
 char* ast_get_string(AST_T* ast);
 
 char* ast_get_string_copy(AST_T* ast);
+
+unsigned int ast_is_iterable(AST_T* ast);
 
 void list_free(gc_T* gc, list_T* list);
 
