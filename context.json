@@ -42,6 +42,7 @@
         "AST_JSX_ELEMENT",
         "AST_JSX_TEXT",
         "AST_JSX_TEMPLATE_STRING",
+        "AST_JSX_TEMPLATE_VALUE",
         "AST_TEMPLATE_STRING",
         "AST_RAW"
     ]

@@ -29,7 +29,7 @@ libfjb.a: $(objects_no_main)
 %.js.h: %.js
 	mkdir -p .tmp
 	$(GPP_PATH) $^ > .tmp/$(notdir $^)
-	xxd -i .tmp/$(notdir $^) > src/include/js/$(notdir $^.h)
+	xxd -i .tmp/$(notdir $^) | sed 's/\([0-9a-f]\)$$/\0, 0x00/' > src/include/js/$(notdir $^.h)
 
 %.h: %.gpp
 	ls
@@ -43,10 +43,10 @@ libjson.a:
 install:
 	make
 	make libfjb.a
-	mkdir -p /usr/local/include/fjb
-	cp -r ./src/include/* /usr/local/include/fjb/.
-	cp ./libfjb.a /usr/local/lib/.
-	cp ./fjb.out /usr/local/bin/fjb
+	mkdir -p $(HOME)/.local/include/fjb
+	cp -r ./src/include/* $(HOME)/.local/include/fjb/.
+	cp ./libfjb.a $(HOME)/.local/lib/.
+	cp ./fjb.out $(HOME)/.local/bin/fjb
 
 clean:
 	-rm *.out

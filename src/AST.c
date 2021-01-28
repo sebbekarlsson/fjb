@@ -549,3 +549,10 @@ char* ast_get_string_copy(AST_T* ast)
 
   return strdup(value);
 }
+
+char* ast_type_to_str(AST_T* ast)
+{
+  if (!ast)
+    return 0;
+  return (char*)AST_TYPE_STR[ast->type];
+}

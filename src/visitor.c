@@ -612,6 +612,7 @@ AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* stack)
     case AST_DO: ast = visitor_visit_do(visitor, ast, stack); break;
     case AST_NOOP: ast = visitor_visit_noop(visitor, ast, stack); break;
     case AST_TUPLE: ast = visitor_visit_tuple(visitor, ast, stack); break;
+    case AST_JSX_TEMPLATE_VALUE: return eval_jsx(visitor, ast, stack); break;
     case AST_JSX_COMPOUND: return eval_jsx(visitor, ast, stack); break;
     case AST_JSX_ELEMENT: return eval_jsx(visitor, ast, stack); break;
     default: {

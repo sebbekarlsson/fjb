@@ -36,7 +36,8 @@ static unsigned int resolve_deps_query(AST_T* ast, query_T data)
     return 0;
   if (data.type == AST_FUNCTION && !ast->name)
     return 0;
-  if (data.parent && ast->parent && (ast->parent != data.parent))
+  if (data.parent && ast->parent && ast->parent->type == AST_FUNCTION &&
+      (ast->parent != data.parent))
     return 0;
   if (ast->from_obj)
     return 0;
@@ -80,8 +81,8 @@ unsigned int get_deps(AST_T* ast, options_T args, compiler_flags_T* flags)
 {
   if (!ast)
     return 0;
-  if (!ast->parent && ast->type != AST_COMPOUND)
-    return 0;
+  // if (!ast->parent && ast->type != AST_COMPOUND && ast->type != AST_SCOPE)
+  //  return 0;
 
   if (ast->left && ast->type != AST_CALL)
     get_deps(ast->left, args, flags);
@@ -99,6 +100,10 @@ unsigned int get_deps(AST_T* ast, options_T args, compiler_flags_T* flags)
 
   if (ast->list_value && ast->type != AST_FUNCTION) {
     LOOP_NODES(ast->list_value, i, child, get_deps(child, args, flags););
+  }
+
+  if (ast->options) {
+    LOOP_NODES(ast->options, i, child, get_deps(child, args, flags););
   }
 
   list_T* pointers = NEW_STACK;
