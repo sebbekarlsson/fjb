@@ -5,6 +5,9 @@
 
 char* package_get(const char* path, const char* key)
 {
+  if (!file_exists((char*)path))
+    return 0;
+
   char* full_path = 0;
   full_path = str_append(&full_path, path);
   full_path = str_append(&full_path, "/");

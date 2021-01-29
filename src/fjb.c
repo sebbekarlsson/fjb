@@ -25,9 +25,9 @@ compiler_result_T* fjb(compiler_flags_T* flags)
 
   char* ext = (char*)get_filename_ext(flags->filepath);
 
-  if (strcasecmp(ext, ".json") == 0 || strcasecmp(ext, ".css") == 0) {
-    return special_gen(flags, ext);
-  }
+  compiler_result_T* special = special_gen(flags, ext);
+  if (special)
+    return special;
 
   NOOP = init_ast(AST_NOOP);
   gc_mark(flags->GC, NOOP);
@@ -46,13 +46,9 @@ compiler_result_T* fjb(compiler_flags_T* flags)
 
   /* ==== Evaluate ==== */
   visitor_T* visitor = init_visitor(parser, flags);
-  visitor->pre_loaded_symbols = NEW_STACK;
-  gc_mark_list(flags->GC, visitor->pre_loaded_symbols);
   root = visitor_visit(visitor, root, stack);
 
   /* ==== Tree-shake ==== */
-  list_T* es_exports = NEW_STACK;
-  gc_mark_list(flags->GC, es_exports);
   AST_T* root_to_generate = new_compound(root, flags);
 
   FJB_SIGNALS->root = root_to_generate;
@@ -64,17 +60,16 @@ compiler_result_T* fjb(compiler_flags_T* flags)
   if (headers)
     str = str_append(&str, headers);
 
-  str = str_append(&str, "/* IMPORTED FROM `");
+  str = str_append(&str, "/* IMPORT `");
 
   str = str_append(&str, flags->filepath);
-  str = str_append(&str, "` */\n");
+  str = str_append(&str, "` */ ");
   char* out = gen(root_to_generate, flags);
   str = str_append(&str, out);
   free(out);
 
   compiler_result_T* result = calloc(1, sizeof(compiler_result_T));
   result->stdout = str;
-  result->es_exports = flags->es_exports;
   result->node = root_to_generate;
 
   if (flags->filepath)

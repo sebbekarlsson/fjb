@@ -124,8 +124,6 @@ AST_T* visitor_visit_import(visitor_T* visitor, AST_T* ast, list_T* stack)
     visitor->flags->source = strdup(contents);
     compiler_result_T* result = fjb(visitor->flags);
     ast->compiled_value = strdup(result->stdout);
-    if (result->es_exports)
-      ast->es_exports = list_copy(result->es_exports);
     // visitor->flags->filepath = 0;
     visitor->flags->source = 0;
     visitor->flags->aliased_import = 0;
@@ -165,8 +163,7 @@ AST_T* visitor_visit_assignment(visitor_T* visitor, AST_T* ast, list_T* stack)
 
     AST_T* assignment = init_assignment(name, rightptr);
 
-    list_push_safe(stack, assignment);
-    // printf("%s\n", ast_to_str(assignment));
+    list_push(stack, assignment);
 
     if (leftptr && rightptr) {
       if (leftptr->type == AST_OBJECT && leftptr->list_value) {
@@ -180,8 +177,6 @@ AST_T* visitor_visit_assignment(visitor_T* visitor, AST_T* ast, list_T* stack)
       }
     }
   }
-
-  // list_push_safe(stack, ast);
 
   return ast;
 }
@@ -326,12 +321,12 @@ AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* stack)
   if (ast->list_value) {
     for (unsigned int i = 0; i < ast->list_value->size; i++) {
       AST_T* child = (AST_T*)ast->list_value->items[i];
-      list_push_safe(stack, child);
+      list_push(stack, child);
     }
   }
 
   if (ast->name) {
-    list_push_safe(stack, ast);
+    list_push(stack, ast);
   }
 
   if (ast->body)
@@ -379,7 +374,8 @@ AST_T* visitor_visit_compound(visitor_T* visitor, AST_T* ast, list_T* stack)
 
       ast->list_value->items[i] = visitor_visit(visitor, child, stack);
 
-      if (child->type == AST_STATE && child->token && child->token->type == TOKEN_RETURN) {
+      if (child->value && child->type == AST_STATE && child->token &&
+          child->token->type == TOKEN_RETURN) {
         ast->ptr = child->value;
       }
     }
@@ -515,7 +511,6 @@ AST_T* visitor_visit_call(visitor_T* visitor, AST_T* ast, list_T* stack)
         ast->compiled_value = ast->compiled_value;
         ast->node = result->node;
         ast->ptr = result->node;
-        ast->es_exports = result->es_exports;
         ast->left = 0;
         free(contents);
         compiler_result_free(result);
@@ -526,7 +521,7 @@ AST_T* visitor_visit_call(visitor_T* visitor, AST_T* ast, list_T* stack)
     }
   }
 
-  list_push_safe(stack, ast);
+  list_push(stack, ast);
 
   return ast;
 }

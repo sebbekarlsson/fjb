@@ -289,8 +289,7 @@ AST_T* parser_parse_string(parser_T* parser, parser_options_T options)
   AST_T* ast = init_ast_line(AST_STRING, parser->lexer->line);
   ast->token = token_clone(parser->token);
 
-  ast->string_value = calloc(strlen(parser->token->value) + 1, sizeof(char));
-  strcpy(ast->string_value, parser->token->value);
+  ast->string_value = strdup(parser->token->value);
   parser_eat(parser, TOKEN_STRING);
   ast->name = strdup(ast->string_value);
 
@@ -303,8 +302,7 @@ AST_T* parser_parse_hex(parser_T* parser, parser_options_T options)
 {
   AST_T* ast = init_ast_line(AST_HEX, parser->lexer->line);
 
-  ast->string_value = calloc(strlen(parser->token->value) + 1, sizeof(char));
-  strcpy(ast->string_value, parser->token->value);
+  ast->string_value = strdup(parser->token->value);
   parser_eat(parser, TOKEN_HEX);
 
   gc_mark(parser->flags->GC, ast);
@@ -653,8 +651,10 @@ AST_T* parser_parse_object(parser_T* parser, parser_options_T options)
     for (unsigned int i = 0; i < ast->list_value->size; i++) {
       AST_T* child = (AST_T*)ast->list_value->items[i];
 
-      if (child->type == AST_COLON_ASSIGNMENT || (child->type == AST_NAME && !child->flags))
+      if (child->type == AST_COLON_ASSIGNMENT || (child->type == AST_NAME && !child->flags)) {
         is_object = 1;
+        break;
+      }
     }
   } else {
     is_object = 1;
@@ -1166,9 +1166,8 @@ AST_T* parser_parse_call(parser_T* parser, parser_options_T options)
 
 void parser_eat(parser_T* parser, int token_type)
 {
-  if (parser->token->type == token_type) {
-    if (parser->token)
-      token_free(parser->token);
+  if (parser->token && parser->token->type == token_type) {
+    token_free(parser->token);
     parser->token = lexer_next(parser->lexer);
   } else {
     printf("[Parser] (%s):%d: Unexpected token `%s` (%d), was expecting `%s`\n",

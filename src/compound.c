@@ -117,16 +117,13 @@ unsigned int get_deps(AST_T* ast, options_T args, compiler_flags_T* flags)
     query_T query;
     query.name = ast->name;
     query.parent = args.parent;
-    // query.ignore = NEW_STACK;
-    // list_push_safe(query.ignore, ast);
 
     int types[] = { AST_ASSIGNMENT, AST_FUNCTION };
     size_t nr_types = 2;
 
     for (unsigned int i = 0; i < nr_types; i++) {
       query.type = types[i];
-      AST_T* ptr = ast_query(flags->search_index, resolve_deps_query,
-                             query); // resolve(args.lookup, resolve_deps_query, query);
+      AST_T* ptr = ast_query(flags->search_index, resolve_deps_query, query);
 
       if (ptr) {
         list_push(pointers, ptr);
@@ -170,7 +167,6 @@ AST_T* new_compound(AST_T* lookup, compiler_flags_T* flags)
   AST_T* compound = init_ast(AST_COMPOUND);
   compound->list_value =
     list_copy(get_imported_symbols(lookup, flags->imports, flags->search_index));
-  compound->es_exports = flags->imports;
   gc_mark_list(flags->GC, compound->list_value);
 
   AST_T* parent = 0;

@@ -13,7 +13,6 @@
 typedef struct FJB_VISITOR_STRUCT
 {
   parser_T* parser;
-  list_T* pre_loaded_symbols;
   compiler_flags_T* flags;
 } visitor_T;
 
