@@ -25,7 +25,7 @@
 ```
 "CommonJS", "AMD", "System", "UMD", "ES6", "ES2015" or "ESNext"
 ```
-> FJB does not implement this concept. open_mouth:  
+> FJB does not implement this concept.  
 > Instead, FJB adapts the code automatically through static analysis.  
 > FJB aims to generate code that works everywhere (when possible).  
 > A bundler should be smart enough so that the developer can focus on other things. :brain:
