@@ -3,48 +3,58 @@ import jinja2
 import os
 import datetime
 
-BENCHMARKS = [
+PWD = os.getcwd()
+
+ESBUILD_PATH = "/benchmark/node_modules/.bin/esbuild"
+ESBUILD_ARGS = ' --bundle --outfile=./dist.js'
+FJB_PATH = "/fjb.out"
+FJB_ARGS = ' > ./dist.js'
+
+
+RUNS = [
     {
-        "title": "Importing `ceil` from lodash, with tree shaking. (FJB)",
-        "exec": os.getcwd() + "/fjb.out",
-        "path": os.getcwd() + '/tests/src/test_projects/with_lodash/index.js',
-        "args": " > ./dist.js"
+        'title': 'FJB',
+        'exec': PWD + FJB_PATH,
+        "args": FJB_ARGS
     },
     {
-        "title": "Importing `ceil` from lodash, with tree shaking. (ESBUILD)",
-        "exec": os.getcwd() +
-        "/benchmark/node_modules/.bin/esbuild",
-        "path": os.getcwd() + '/tests/src/test_projects/with_lodash/index.js',
-        "args": " --bundle --outfile=./dist.js"
+        'title': 'esbuild',
+        'exec': PWD + ESBUILD_PATH,
+        "args": ESBUILD_ARGS
     },
-    {
-        "title": "Simple project with es6 imports (FJB)",
-        "exec": os.getcwd() + "/fjb.out",
-        "path": os.getcwd() + '/tests/src/test_projects/es6/index.js',
-        "args": " > ./dist.js"
-    },
-    {
-        "title": "Simple project with es6 imports (ESBUILD)",
-        "exec": os.getcwd() + "/benchmark/node_modules/.bin/esbuild",
-        "path": os.getcwd() + '/tests/src/test_projects/es6/index.js',
-        "args": " --bundle --outfile=./dist.js"
-    }
 ]
 
 
-def run_entry(exe, path, args):
-    timebefore = datetime.datetime.now()
+def create_mark(title, path, runs=RUNS):
+    return {
+        "title": title,
+        "path": PWD + path,
+        "runs": runs or RUNS
+    }
 
-    process = subprocess.Popen(
-        "{exe} {fpath} {args}".format(exe=exe, fpath=path, args=args),
-        stdout=subprocess.PIPE,
-        shell=True
+
+BENCHMARKS = [
+    create_mark(
+        "Importing ES6 modules",
+        '/tests/src/test_projects/es6/index.js'
+    ),
+    create_mark(
+        "Importing aliased ES6 modules",
+        '/tests/src/test_projects/alias_imports/index.js'
+    ),
+    create_mark(
+        "Importing CSS",
+        '/tests/src/test_projects/css_import/index.js'
+    ),
+    create_mark(
+        "Importing JSON",
+        '/tests/src/test_projects/json_import/index.js'
+    ),
+    create_mark(
+        "Importing `ceil` from lodash, with tree shaking.",
+        '/tests/src/test_projects/with_lodash/index.js'
     )
-    process.communicate()
-
-    diff = (datetime.datetime.now() - timebefore)
-
-    return str(diff)
+]
 
 
 def get_sysinfo():
@@ -57,50 +67,53 @@ def get_sysinfo():
 
 
 def get_filesize(filename):
+    return str(os.path.getsize(filename)) + ' bytes'
+
+
+def run_entry(mark, entry):
+    timebefore = datetime.datetime.now()
+
+    cmd = "{exe} {path} {args}".format(
+            exe=entry['exec'], path=mark['path'], args=entry['args'])
+
     process = subprocess.Popen(
-        "du -h {}".format(filename),
+        cmd,
         stdout=subprocess.PIPE,
         shell=True
     )
-    return process.communicate()[0].decode()
+    process.communicate()
 
+    diff = str(datetime.datetime.now() - timebefore)
 
-def run_benchmark(mark):
     return {
-        'mark': mark, 'result': run_entry(
-            mark['exec'], mark['path'], mark['args']),
-        'cmd': '{exe} {fpath}'.format(
-            exe=os.path.basename(mark['exec']),
-            fpath=os.path.basename(mark['path']),
-        ),
-        'source': open(mark['path']).read(),
-        'outsize': get_filesize(os.getcwd() + '/dist.js')
+        'time': diff,
+        'size': get_filesize(PWD + '/dist.js'),
+        'cmd': cmd,
+        **entry
     }
 
 
+def run_benchmark(mark):
+    return list(map(lambda x: run_entry(mark, x), mark['runs']))
+
+
 def run_benchmarks(marks):
-    return map(run_benchmark, marks)
+    return map(
+        lambda x: dict(list(x.items()) + list(dict(
+            runs=run_benchmark(x),
+            source=open(x['path']).read(),
+            sysinfo=get_sysinfo(),
+        ).items())),
+        marks
+    )
 
 
 def generate(results):
-    sysinfo = get_sysinfo()
+    template = jinja2.Template(open(
+        PWD + '/benchmark/templates/mark.md').read())
 
-    contents = ''
-
-    for res in results:
-        template = jinja2.Template(
-            open(os.getcwd() + "/benchmark/templates/mark.md").read()
-        )
-
-        contents += template.render(
-            sysinfo=sysinfo,
-            result=res['result'],
-            mark=res['mark'],
-            cmd=res['cmd'],
-            source=res['source'],
-            outsize=res['outsize']
-        ) + '\n\n'
-
+    marks = list(results)
+    contents = template.render(marks=marks, now=str(datetime.datetime.now()))
     open(os.getcwd() + '/benchmarks.md', 'w+').write(contents)
 
 
