@@ -39,6 +39,9 @@ fjb index.js
 > (Without any plugins or configuration)
 <img width='400px' src='img/code.png' style='display: block;'/>
 
+## Benchmarks
+> To see benchmarks, have a look at [benchmarks.md](benchmarks.md)
+
 ## Installing
 ### Dependencies
 > To build `fjb` you will need the following:
