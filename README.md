@@ -112,6 +112,17 @@ make install
 ### Should I use it?
 > I will not encourage anyone to use it, but feel free to do it.
 
+### Does it work on Linux?
+> Yes
+
+### Does it work on Windows?
+> Probably not, but feel free to make a pull-request with the required changes
+> for it to work.
+
+### Does it work on MacOS?
+> Probably.
+> I haven't tried it, but I would definitely think so.
+
 ### Can I contribute?
 > Yes you can. Simply fork it and start making pull-requests.
 
