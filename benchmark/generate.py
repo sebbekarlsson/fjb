@@ -5,16 +5,28 @@ import datetime
 
 BENCHMARKS = [
     {
-        "title": "Importing `ceil` from lodash, with tree shaking.",
+        "title": "Importing `ceil` from lodash, with tree shaking. (FJB)",
         "exec": os.getcwd() + "/fjb.out",
         "path": os.getcwd() + '/tests/src/test_projects/with_lodash/index.js',
         "args": " > ./dist.js"
     },
     {
-        "title": "Importing `ceil` from lodash, with tree shaking.",
+        "title": "Importing `ceil` from lodash, with tree shaking. (ESBUILD)",
         "exec": os.getcwd() +
         "/benchmark/node_modules/.bin/esbuild",
         "path": os.getcwd() + '/tests/src/test_projects/with_lodash/index.js',
+        "args": " --bundle --outfile=./dist.js"
+    },
+    {
+        "title": "Simple project with es6 imports (FJB)",
+        "exec": os.getcwd() + "/fjb.out",
+        "path": os.getcwd() + '/tests/src/test_projects/es6/index.js',
+        "args": " > ./dist.js"
+    },
+    {
+        "title": "Simple project with es6 imports (ESBUILD)",
+        "exec": os.getcwd() + "/benchmark/node_modules/.bin/esbuild",
+        "path": os.getcwd() + '/tests/src/test_projects/es6/index.js',
         "args": " --bundle --outfile=./dist.js"
     }
 ]

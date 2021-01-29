@@ -1,14 +1,8 @@
-# {{ mark.title }} ({{ cmd }})
+# {{ mark.title }}
 > Code executed:
 ```tsx
 {{ source }}
 ```
-## Executed on
-
-```
-{{ sysinfo }}
-```
-
 ## Result
 ### Output size
 > The size of the output is:
@@ -19,4 +13,9 @@
 > The command `{{ cmd }}` finished in:
 ```
 {{ result }}
+```
+
+### Executed on
+```
+{{ sysinfo }}
 ```
