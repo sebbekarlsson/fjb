@@ -1,1 +1,1 @@
-var %s = (function(){
+var %s=(function(){

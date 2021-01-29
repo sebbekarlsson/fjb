@@ -12,6 +12,7 @@ AST_T* resolve(AST_T* ast, unsigned int (*query)(AST_T* ast, query_T data), quer
 
   if ((x = resolve(ast->left, query, data)) != 0)
     return x;
+  // This shouldn't be needed... (I think)
   if ((x = resolve(ast->right, query, data)) != 0)
     return x;
   if ((x = resolve(ast->body, query, data)) != 0)

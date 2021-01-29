@@ -23,8 +23,6 @@ char* float_to_str(float x);
 
 unsigned int is_special(char c);
 
-unsigned int first_char_is_special(char* str);
-
 char* resolve_import(char* basepath, char* filepath, unsigned int node_modules);
 
 char* remove_whitespace(char* source);

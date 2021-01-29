@@ -1,4 +1,1 @@
-%s(function(){
-  let parent = %s("%s");
-  %s
-})()
+%s(function(){let parent = %s("%s");%s})()
