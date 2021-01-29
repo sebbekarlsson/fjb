@@ -58,6 +58,10 @@ fjb index.js
 > (Without any plugins or configuration)
 <img width='400px' src='img/code.png' style='display: block;'/>
 
+> For more examples, have a look at:
+* [./examples](./examples)
+* [./tests/src/test\_projects](./tests/src/test_projects)
+
 ## Benchmarks :rocket:
 > To see benchmarks, have a look at [benchmarks.md](benchmarks.md) :fire:
 
@@ -116,3 +120,28 @@ make install
 > This is a feature I plan to implement.  
 > If you want some other behaviour right now, simply just change the
 > source code.
+
+### In which way to you plan to implement plugins?
+> I'm thinking about shared library files, such as `.so`, `.a`, `.dll` ... etc.
+
+### Will you add support for writing plugins in Javascript?
+> No. I don't think Javascript belongs in a bundler.  
+> The reason why most bundlers today are slow, is because they are written in Javascript.
+
+### What if I find a bug?
+> If you find a bug, please report it here: [https://github.com/sebbekarlsson/fjb/issues](https://github.com/sebbekarlsson/fjb/issues)
+
+### When will TypeScript support be added?
+> The process of implementing this will come soon,  
+> it's important that we have a stable foundation first.
+
+### What license is FJB under?
+> GPL-3.0, [LICENSE.md](LICENSE.md)
+
+### I'm having problems installing FJB
+> Feel free to create an issue here, and I'll be able to help you.
+
+### Can I become a collaborator?
+> I would prefer if you make pull-requests through forking at first.  
+> Once I've seen that you've made valuable contributions, you might be able to
+> be added as a collaborator.
