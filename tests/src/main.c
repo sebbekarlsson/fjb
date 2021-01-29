@@ -167,9 +167,19 @@ void test_json_import()
   assert_node_not_exists(root, AST_ARRAY, 0, "test AST_ARRAY exists.");
 }
 
+void test_css_import()
+{
+  init_fjb_signals();
+  const char* filepath = "./src/test_projects/css_import/index.js";
+
+  MSG();
+
+  AST_T* root = run_get_ast(filepath, 1);
+  assert_node_not_exists(root, AST_TEMPLATE_STRING, 0, "test AST_TEMPLATE_STRING exists.");
+}
+
 int main(int argc, char* argv[])
 {
-
   test_es6();
   test_simple();
   test_with_lodash();
@@ -183,6 +193,7 @@ int main(int argc, char* argv[])
   test_jsx();
   test_jsx_custom();
   test_json_import();
+  test_css_import();
 
   return 0;
 }

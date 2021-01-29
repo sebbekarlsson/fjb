@@ -1,24 +1,45 @@
-# {{ mark.title }}
-> Code executed:
-```tsx
-{{ source }}
-```
-## Result
-### Output size
+# Benchmarks
+> These benchmarks were generated at **{{ now }}**
+{% macro renderRun(run) %}
+<details>
+  <summary>{{ run.title }} - time: {{ run.time }}, output size: {{ run.size }}</summary>
+
+#### Output size
 > The size of the output is:
 ```
-{{ outsize }}
+{{ run.size }}
 ```
-### Time
-> The command `{{ cmd }}` finished in:
+#### Time
+> The command:
 ```
-{{ result }}
+{{ run.cmd }}
+````
+> finished in:
+```
+{{ run.time }}
+```
+</details>
+{% endmacro %}
+
+
+
+{% for mark in marks %}
+<details>
+  <summary>{{ mark.title }}</summary>
+
+## What's being executed
+> Code executed:
+```tsx
+{{ mark.source }}
 ```
 
-### Executed on
-<details>
-  <summary>Click to expand</summary>
-  <pre>
-    {{ sysinfo }}
-  </pre>
+{% for run in mark.runs %}
+  {{ renderRun(run) }}
+{% endfor %}
+
+#### Executed on
+```
+{{ mark.sysinfo }}
+```
 </details>
+{% endfor %}
