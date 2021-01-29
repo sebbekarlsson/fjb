@@ -39,8 +39,8 @@ fjb index.js
 > (Without any plugins or configuration)
 <img width='400px' src='img/code.png' style='display: block;'/>
 
-## Benchmarks
-> To see benchmarks, have a look at [benchmarks.md](benchmarks.md)
+## Benchmarks :rocket:
+> To see benchmarks, have a look at [benchmarks.md](benchmarks.md) :fire:
 
 ## Installing
 ### Dependencies
@@ -48,7 +48,7 @@ fjb index.js
 1. A C compiler (I would suggest gcc)
 2. Git
 
-### Steps to Install
+### Steps to Install :wrench:
 #### Compiling it
 1. Clone down the repository
 2. Run:
@@ -56,7 +56,7 @@ fjb index.js
 ./build.sh
 ```
 > This step will generate a `fjb.out` executable file.  
-> You can start using this right away.
+> You can start using this right away. :tophat:
 
 #### Installing globally
 > To continue and install `fjb` globally:
@@ -68,7 +68,7 @@ make install
 > to your PATH.  
 > [https://unix.stackexchange.com/questions/26047/how-to-correctly-add-a-path-to-path](https://unix.stackexchange.com/questions/26047/how-to-correctly-add-a-path-to-path)
 
-## Questions and Answers
+## Questions and Answers :question:
 ### How serious is this?
 > Not sure, it's just a hobby project at this point.
 
