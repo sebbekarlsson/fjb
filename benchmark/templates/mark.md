@@ -16,6 +16,9 @@
 ```
 
 ### Executed on
-```
-{{ sysinfo }}
-```
+<details>
+  <summary>Click to expand</summary>
+  <pre>
+    {{ sysinfo }}
+  </pre>
+</details>
