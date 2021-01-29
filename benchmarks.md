@@ -17,12 +17,14 @@ console.log(ceil(25.443));
 ### Time
 > The command `fjb.out index.js` finished in:
 ```
-0:00:00.329719
+0:00:00.323510
 ```
 
 ### Executed on
-```
-Architecture:                    x86_64
+<details>
+  <summary>Click to expand</summary>
+  <pre>
+    Architecture:                    x86_64
 CPU op-mode(s):                  32-bit, 64-bit
 Byte Order:                      Little Endian
 Address sizes:                   39 bits physical, 48 bits virtual
@@ -37,7 +39,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         4262.549
+CPU MHz:                         4289.925
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -58,7 +60,8 @@ Vulnerability Srbds:             Mitigation; TSX disabled
 Vulnerability Tsx async abort:   Mitigation; TSX disabled
 Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities
 
-```
+  </pre>
+</details>
 
 # Importing `ceil` from lodash, with tree shaking. (ESBUILD)
 > Code executed:
@@ -79,12 +82,14 @@ console.log(ceil(25.443));
 ### Time
 > The command `esbuild index.js` finished in:
 ```
-0:00:00.017025
+0:00:00.016523
 ```
 
 ### Executed on
-```
-Architecture:                    x86_64
+<details>
+  <summary>Click to expand</summary>
+  <pre>
+    Architecture:                    x86_64
 CPU op-mode(s):                  32-bit, 64-bit
 Byte Order:                      Little Endian
 Address sizes:                   39 bits physical, 48 bits virtual
@@ -99,7 +104,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         4262.549
+CPU MHz:                         4289.925
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -120,7 +125,8 @@ Vulnerability Srbds:             Mitigation; TSX disabled
 Vulnerability Tsx async abort:   Mitigation; TSX disabled
 Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities
 
-```
+  </pre>
+</details>
 
 # Simple project with es6 imports (FJB)
 > Code executed:
@@ -144,12 +150,14 @@ console.log(r);
 ### Time
 > The command `fjb.out index.js` finished in:
 ```
-0:00:00.001356
+0:00:00.001030
 ```
 
 ### Executed on
-```
-Architecture:                    x86_64
+<details>
+  <summary>Click to expand</summary>
+  <pre>
+    Architecture:                    x86_64
 CPU op-mode(s):                  32-bit, 64-bit
 Byte Order:                      Little Endian
 Address sizes:                   39 bits physical, 48 bits virtual
@@ -164,7 +172,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         4262.549
+CPU MHz:                         4289.925
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -185,7 +193,8 @@ Vulnerability Srbds:             Mitigation; TSX disabled
 Vulnerability Tsx async abort:   Mitigation; TSX disabled
 Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities
 
-```
+  </pre>
+</details>
 
 # Simple project with es6 imports (ESBUILD)
 > Code executed:
@@ -209,12 +218,14 @@ console.log(r);
 ### Time
 > The command `esbuild index.js` finished in:
 ```
-0:00:00.002855
+0:00:00.003910
 ```
 
 ### Executed on
-```
-Architecture:                    x86_64
+<details>
+  <summary>Click to expand</summary>
+  <pre>
+    Architecture:                    x86_64
 CPU op-mode(s):                  32-bit, 64-bit
 Byte Order:                      Little Endian
 Address sizes:                   39 bits physical, 48 bits virtual
@@ -229,7 +240,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         4262.549
+CPU MHz:                         4289.925
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -250,5 +261,6 @@ Vulnerability Srbds:             Mitigation; TSX disabled
 Vulnerability Tsx async abort:   Mitigation; TSX disabled
 Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities
 
-```
+  </pre>
+</details>
 
