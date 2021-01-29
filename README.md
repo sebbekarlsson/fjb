@@ -69,6 +69,9 @@ make install
 > [https://unix.stackexchange.com/questions/26047/how-to-correctly-add-a-path-to-path](https://unix.stackexchange.com/questions/26047/how-to-correctly-add-a-path-to-path)
 
 ## Questions and Answers :question:
+### How fast is it?
+> Have a look at [benchmarks.md](benchmarks.md) :fire:
+
 ### How serious is this?
 > Not sure, it's just a hobby project at this point.
 
