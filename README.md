@@ -9,7 +9,26 @@
 ## What?
 > It is what it says it is.  
 > However, this bundler aims to be a monolithic does-it-all type of bundler;
-> with zero configuration needed.
+> with zero configuration needed. _(however, optional configuration will be supported)_  
+
+## Philosophy
+1. A bundler should not need excessive attention.
+2. A bundler should not get in the way of a developers workflow.
+3. A bundler should be fast.
+4. A bundler should not be written in Javascript / Node.
+5. Commonly used features among JS developers should be supported out of the box.
+6. The output of the bundler should work everywhere. (to an extent which is possible of course)
+
+### More About the Philosophy
+#### Output formats
+> Most bundlers allows you to select an output format of the code, such as:
+```
+"CommonJS", "AMD", "System", "UMD", "ES6", "ES2015" or "ESNext"
+```
+> FJB does not implement this concept.: open\_mouth:  
+> Instead, FJB adapts the code automatically through static analysis.  
+> FJB aims to generate code that works everywhere (when possible).  
+> A bundler should be smart enough so that the developer can focus on other things. :brain:
 
 ## How does one use it?
 ```bash
