@@ -23,6 +23,7 @@ fjb index.js
 - [x] Wildcard imports
 - [x] JSX support
 - [x] Importing JSON
+- [x] Importing CSS
 - [x] Removing dead code (Tree shaking)
 - [x] Supports package.json
 - [x] Importing _anything_, even when it's not exported, no matter how deeply nested it is
@@ -30,7 +31,6 @@ fjb index.js
 ### Planned Features
 - [ ] Plugin support
 - [ ] TypeScript support
-- [ ] Loading CSS
 - [ ] Lazy imports
 - [ ] Better formatted output. (kind of ugly right now)
 

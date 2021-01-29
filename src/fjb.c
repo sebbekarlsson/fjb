@@ -25,8 +25,8 @@ compiler_result_T* fjb(compiler_flags_T* flags)
 
   char* ext = (char*)get_filename_ext(flags->filepath);
 
-  if (strcasecmp(ext, ".json") == 0) {
-    return special_gen_json(flags);
+  if (strcasecmp(ext, ".json") == 0 || strcasecmp(ext, ".css") == 0) {
+    return special_gen(flags, ext);
   }
 
   NOOP = init_ast(AST_NOOP);
