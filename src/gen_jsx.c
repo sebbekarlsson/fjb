@@ -61,12 +61,12 @@ char* gen_jsx_body(AST_T* ast, compiler_flags_T* flags)
     ast->list_value, i, child, char* childstr = gen_jsx(child, flags);
 
     if (childstr) {
-      str = str_append(&str, "__jsx_append(parent, ");
+      str = str_append(&str, "__jsx_append(parent,");
       str = str_append(&str, childstr);
       str = str_append(&str, ")");
     }
 
-    if (i < ast->list_value->size) { str = str_append(&str, "\n"); });
+    if (i < ast->list_value->size) { str = str_append(&str, ";"); });
 
   return str ? str : strdup("");
 }
@@ -98,7 +98,7 @@ char* gen_jsx_attributes(AST_T* ast, compiler_flags_T* flags)
 
     str = str_append(&str, buff);
 
-    if (i < ast->list_value->size - 1) { str = str_append(&str, "\n"); });
+    /* if (i < ast->list_value->size - 1) { str = str_append(&str, ""); }*/);
 
   return str ? str : strdup("");
 }

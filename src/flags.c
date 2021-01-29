@@ -7,7 +7,6 @@ compiler_flags_T* init_compiler_flags(char* source, char* filepath, unsigned int
   flags->source = strdup(source);
   flags->filepath = strdup(filepath);
   flags->should_dump = should_dump;
-  flags->es_exports = NEW_STACK;
   flags->imports = NEW_STACK;
   flags->search_index = NEW_STACK;
 

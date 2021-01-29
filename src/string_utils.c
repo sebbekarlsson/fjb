@@ -103,7 +103,9 @@ char* remove_char(char* str, char find)
 {
   char* newstr = calloc(1, sizeof(char));
 
-  for (int i = 0; i < strlen(str); i++) {
+  unsigned int len = strlen(str);
+
+  for (int i = 0; i < len; i++) {
     if (str[i] != find) {
       newstr = realloc(newstr, (strlen(newstr) + 2) * sizeof(char));
       char* chstr = charstr(str[i]);
@@ -151,18 +153,6 @@ unsigned int is_special(char c)
   return strchr(specials, c) != (void*)0;
 }
 
-unsigned int first_char_is_special(char* str)
-{
-  if (!str)
-    return 0;
-
-  unsigned int length = strlen(str);
-  if (!length)
-    return 0;
-
-  return is_special(str[0]);
-}
-
 int is_dir(const char* path)
 {
   struct stat statbuf;
@@ -173,6 +163,9 @@ int is_dir(const char* path)
 
 char* strip_ext(char* filepath)
 {
+  if (!filepath)
+    return 0;
+
   char* fname = strdup(filepath);
 
   char* end = fname + strlen(fname);
