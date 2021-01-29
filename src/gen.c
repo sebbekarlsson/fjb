@@ -119,7 +119,7 @@ char* gen_tuple(list_T* list_value, compiler_flags_T* flags)
 
     if (i < living->size - 1 && child->type != AST_NOOP && child->type != AST_UNDEFINED &&
         child_str)
-      str = str_append(&str, ", ");
+      str = str_append(&str, ",");
 
     free(child_str);
   }
@@ -145,7 +145,7 @@ static char* gen_semi_tuple(list_T* list_value, compiler_flags_T* flags)
     free(child_str);
   }
 
-  return str ? str : strdup("/* empty semi tuple */");
+  return str ? str : strdup("");
 }
 
 char* gen(AST_T* ast, compiler_flags_T* flags)
@@ -387,12 +387,11 @@ char* gen_assignment(AST_T* ast, compiler_flags_T* flags)
   if ((ast->parent && ast->parent->type == AST_FUNCTION && flags->imports && ast->name &&
        ast->flags && get_node_by_name(flags->imports, ast->name)) ||
       ast->exported) {
-    str = str_append(&str, "\n");
-    str = str_append(&str, "this.");
+    str = str_append(&str, ";this.");
     str = str_append(&str, ast->name);
-    str = str_append(&str, "= ");
+    str = str_append(&str, "=");
     str = str_append(&str, ast->name);
-    str = str_append(&str, ";\n");
+    str = str_append(&str, ";");
   }
 
   return str ? str : strdup("");
@@ -446,7 +445,7 @@ char* gen_while(AST_T* ast, compiler_flags_T* flags)
 char* gen_for(AST_T* ast, compiler_flags_T* flags)
 {
   char* str = 0;
-  str = str_append(&str, "for ");
+  str = str_append(&str, "for");
   char* args_str = gen_semi_args(ast->list_value, flags);
   str = str_append(&str, args_str);
   free(args_str);
@@ -492,12 +491,13 @@ char* gen_import(AST_T* ast, compiler_flags_T* flags)
     return 0;
 
   char* head_str = 0;
-  char* encoding = ast->alias        ? ast->alias
-                   : ast->list_value ? ast_encode_strings(ast->list_value)
-                                     : 0;
+  char* encoding = ast->alias ? ast->alias : 0;
 
-  if (!encoding)
-    encoding = strdup("tmp");
+  if (!encoding) {
+    char buff[156];
+    sprintf(buff, "_%p", ast);
+    encoding = strdup(buff);
+  }
 
   if (ast->type == AST_IMPORT && ast->list_value) {
     if (encoding) {
@@ -515,10 +515,7 @@ char* gen_import(AST_T* ast, compiler_flags_T* flags)
   if (head_str) {
     str = str_append(&str, head_str);
     str = str_append(&str, ast->compiled_value);
-    str = str_append(&str, "\n");
-
-    str = str_append(&str, "return this;\n");
-    str = str_append(&str, "}).bind(this)()\n");
+    str = str_append(&str, ";return this;}).bind(this)()\n");
     free(head_str);
 
     if (ast->type == AST_IMPORT && ast->list_value && !ast->alias) {
@@ -531,7 +528,7 @@ char* gen_import(AST_T* ast, compiler_flags_T* flags)
         if (!name)
           continue;
 
-        const char* template = "let %s = %s.%s\n";
+        const char* template = "let %s=%s.%s;";
         char* defstr =
           calloc(strlen(template) + strlen(encoding) + (strlen(name) * 2) + 1, sizeof(char));
         sprintf(defstr, template, name, encoding, name);
@@ -553,7 +550,7 @@ char* gen_import(AST_T* ast, compiler_flags_T* flags)
 
 char* gen_undefined(AST_T* ast, compiler_flags_T* flags)
 {
-  return strdup("/* undefined */");
+  return strdup("");
 }
 
 char* gen_call(AST_T* ast, compiler_flags_T* flags)
@@ -619,14 +616,11 @@ char* gen_function(AST_T* ast, compiler_flags_T* flags)
   str = str_append(&str, "}");
 
   if (name && !ast->anon) {
-    str = str_append(&str, "\n");
-    str = str_append(&str, "try {");
     str = str_append(&str, "this.");
     str = str_append(&str, name);
-    str = str_append(&str, "= ");
+    str = str_append(&str, "=");
     str = str_append(&str, name);
-    str = str_append(&str, ";\n");
-    str = str_append(&str, "} catch(e){}");
+    str = str_append(&str, ";");
   }
 
   return str;
@@ -674,7 +668,7 @@ char* gen_signature(AST_T* ast, compiler_flags_T* flags)
     }
   }
 
-  return str ? str : strdup("/* empty function */");
+  return str ? str : strdup("");
 }
 
 char* gen_name(AST_T* ast, compiler_flags_T* flags)
@@ -715,9 +709,13 @@ char* gen_binop(AST_T* ast, compiler_flags_T* flags)
   char* str = 0;
 
   if (ast->token) {
-    str = str_append(&str, " ");
-    str = str_append(&str, ast->token->value);
-    str = str_append(&str, " ");
+    if (ast->token->type == TOKEN_DOT) {
+      str = str_append(&str, ast->token->value);
+    } else {
+      str = str_append(&str, " ");
+      str = str_append(&str, ast->token->value);
+      str = str_append(&str, " ");
+    }
   }
 
   return str;
@@ -820,7 +818,7 @@ char* gen_class(AST_T* ast, compiler_flags_T* flags)
     }
   }
 
-  str = str_append(&str, " {");
+  str = str_append(&str, "{");
 
   if (ast->body) {
     char* body_str = gen(ast->body, flags);
@@ -909,8 +907,6 @@ char* gen_ternary(AST_T* ast, compiler_flags_T* flags)
   str = str_append(&str, "?");
   str = str_append(&str, valuestr);
 
-  // str = str_append(&str, ":");
-
   free(valuestr);
 
   return str;
@@ -918,7 +914,7 @@ char* gen_ternary(AST_T* ast, compiler_flags_T* flags)
 
 char* gen_do(AST_T* ast, compiler_flags_T* flags)
 {
-  char* str = strdup("do {");
+  char* str = strdup("do{");
   if (ast->body) {
     char* bodystr = gen(ast->body, flags);
     str = str_append(&str, bodystr);

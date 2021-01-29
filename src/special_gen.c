@@ -101,6 +101,5 @@ compiler_result_T* special_gen(compiler_flags_T* flags, char* ext)
     return special_gen_css(flags);
   }
 
-  printf("[Error]: Cannot load files with extension `%s`", ext);
-  exit(1);
+  return 0;
 }

@@ -1,1 +1,1 @@
-this.ref.addEventListener("%s", %s);
+this.ref.addEventListener("%s",%s);
