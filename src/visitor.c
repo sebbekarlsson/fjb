@@ -165,8 +165,9 @@ AST_T* visitor_visit_assignment(visitor_T* visitor, AST_T* ast, list_T* stack)
 
     list_push(stack, assignment);
 
-    if (assignment->name)
+    if (assignment->name) {
       map_set(visitor->map, assignment->name, assignment);
+    }
 
     if (leftptr && rightptr) {
       if (leftptr->type == AST_OBJECT && leftptr->list_value) {

@@ -60,7 +60,21 @@ list_T* get_imported_symbols(AST_T* lookup, list_T* imports, list_T* search_inde
     for (unsigned int k = 0; k < nr_types; k++) {
       data.type = types[k];
       data.name = child->name;
-      resolved = ast_query(search_index, resolve_basic_query, data);
+
+      if (!child->name)
+        continue;
+
+      if (types[k] == AST_FUNCTION) {
+        resolved = (AST_T*)map_get_value(FJB_ENV->functions, child->name);
+      } else {
+        resolved = (AST_T*)map_get_value(FJB_ENV->assignments, child->name);
+      }
+
+      if (resolved && resolved->type != types[k])
+        resolved = 0;
+
+      // if (!resolved)
+      //  resolved = ast_query(search_index, resolve_basic_query, data);
 
       if (resolved && !resolved->is_resolved) {
         /**
@@ -98,7 +112,8 @@ unsigned int get_deps(AST_T* ast, options_T args, fjb_env_T* env)
   get_deps(ast->value, args, env);
   get_deps(ast->condition, args, env);
 
-  if (ast->list_value && ast->type != AST_FUNCTION) {
+  if (ast->list_value && ast->type != AST_FUNCTION && ast->type != AST_IMPORT &&
+      ast->type != AST_ARROW_DEFINITION && ast->type != AST_SIGNATURE) {
     LOOP_NODES(ast->list_value, i, child, get_deps(child, args, env););
   }
 
@@ -118,6 +133,27 @@ unsigned int get_deps(AST_T* ast, options_T args, fjb_env_T* env)
 
     for (unsigned int i = 0; i < nr_types; i++) {
       query.type = types[i];
+
+      // TODO: make this work
+      /*if (types[i] == AST_FUNCTION)
+      {
+        ptr = (AST_T*) map_get_value(FJB_ENV->functions, ast->name);
+      }
+      else
+      {
+        ptr = (AST_T*) map_get_value(FJB_ENV->assignments, ast->name);
+      }
+
+      if (ptr && ptr->type != types[i]) ptr = 0;
+
+      if (ptr)
+      {
+        if (query.parent && ptr->parent && (ptr->parent != query.parent) &&
+          (ptr->parent->type == AST_FUNCTION))
+            continue;
+      }*/
+
+      // if (!ptr)
       ptr = ast_query(env->search_index, resolve_deps_query, query);
 
       if (ptr) {
@@ -145,15 +181,15 @@ unsigned int get_deps(AST_T* ast, options_T args, fjb_env_T* env)
   query.type = ptr->type;
   query.name = ptr->name;
 
-  // if (!resolve(args.compound, resolve_deps_query, query)) {
-  if (args.saved) {
-    list_push_at(args.saved, ptr, args.last_pushed ? args.last_pushed : ast);
-    args.last_pushed = ptr;
-    ptr->is_resolved = 1;
-    list_push_safe(FJB_ENV->imported_symbols, ptr);
-    pushed += 1;
+  if (!resolve(args.compound, resolve_deps_query, query)) {
+    if (args.saved) {
+      list_push_at(args.saved, ptr, args.last_pushed ? args.last_pushed : ast);
+      args.last_pushed = ptr;
+      ptr->is_resolved = 1;
+      list_push_safe(FJB_ENV->imported_symbols, ptr);
+      pushed += 1;
+    }
   }
-  //}
 
   return pushed;
 }

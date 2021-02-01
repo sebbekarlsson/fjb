@@ -1,5 +1,6 @@
 #ifndef FJB_ENV_H
 #define FJB_ENV_H
+#include "../../external/hashmap/src/include/map.h"
 #include "AST.h"
 #include "list.h"
 typedef struct FJB_ENV_STRUCT
@@ -16,6 +17,8 @@ typedef struct FJB_ENV_STRUCT
   list_T* imported_symbols;
   list_T* import_nodes;
   list_T* search_index;
+  map_T* functions;
+  map_T* assignments;
   list_T* imports;
   list_T* es_exports;
 
