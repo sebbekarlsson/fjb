@@ -16,10 +16,11 @@ char* str_append(char** source, const char* piece)
     return src;
 
   if (!src) {
-    src = calloc((strlen(piece) + 1) * sizeof(char), sizeof(char));
+    src = calloc((strlen(piece) + 1), sizeof(char));
   } else {
     src = realloc(src, (strlen(src) + strlen(piece) + 1) * sizeof(char));
   }
+
   strcat(src, piece);
 
   return src;

@@ -50,6 +50,8 @@ typedef struct FJB_AST_STRUCT
   unsigned int exported;
   int line;
 
+  unsigned int is_resolved;
+
   list_T* parent_lists;
 
 } AST_T;
@@ -110,9 +112,11 @@ void ast_free(AST_T* ast);
   }
 
 #define LOOP_NODES_FIXED(list, C, S, NAME, WHAT)                                                   \
-  for (unsigned int C = 0; C < S; C++) {                                                           \
-    AST_T* NAME = (AST_T*)list->items[C];                                                          \
-    WHAT;                                                                                          \
+  if (list && list->items && list->size) {                                                         \
+    for (unsigned int C = 0; C < S; C++) {                                                         \
+      AST_T* NAME = (AST_T*)list->items[C];                                                        \
+      WHAT;                                                                                        \
+    }                                                                                              \
   }
 
 #endif

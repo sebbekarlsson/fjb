@@ -5,7 +5,6 @@
 typedef struct FJB_COMPILER_RESULT
 {
   char* stdout;
-  char* dumped;
   char* filepath;
   AST_T* node;
 } compiler_result_T;

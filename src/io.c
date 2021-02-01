@@ -17,12 +17,26 @@ char* fjb_read_file(const char* filename)
     return 0;
   }
 
-  char* buffer = (char*)calloc(1, sizeof(char));
+  unsigned int chunk_size = 256;
+
+  char* buffer = (char*)calloc(chunk_size, sizeof(char));
+  unsigned int bufflen = chunk_size;
+  unsigned int size_left = chunk_size;
   buffer[0] = '\0';
 
   while ((read = getline(&line, &len, fp)) != -1) {
-    buffer = (char*)realloc(buffer, (strlen(buffer) + strlen(line) + 1) * sizeof(char));
+    unsigned int linelen = strlen(line);
+
+    if (linelen > size_left) {
+      unsigned int more_space = (linelen - size_left) + chunk_size;
+
+      buffer = (char*)realloc(buffer, (bufflen + linelen + 1 + (more_space)) * sizeof(char));
+      bufflen += (bufflen + linelen);
+      size_left += more_space;
+    }
+
     strcat(buffer, line);
+    size_left -= linelen;
   }
 
   fclose(fp);

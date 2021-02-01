@@ -12,6 +12,8 @@
 
 #define MSG() printf("\t%s\n", msg)
 
+extern fjb_env_T* FJB_ENV;
+
 unsigned int node_query(AST_T* ast, query_T query)
 {
   char* name = ast_get_string(ast);
@@ -63,14 +65,16 @@ void assert_node_not_exists(AST_T* root, int type, char* name, const char* msg)
 AST_T* run_get_ast(const char* filepath, unsigned int post_process)
 {
   char* contents = fjb_read_file(filepath);
-  compiler_flags_T* flags = init_compiler_flags(contents, (char*)filepath, 0);
-  compiler_result_T* result = fjb(flags);
+  fjb_set_source(contents);
+  fjb_set_filepath((char*)filepath);
+
+  compiler_result_T* result = fjb();
 
   if (!post_process)
     return result->node;
 
   lexer_T* lexer = init_lexer(result->stdout, filepath);
-  parser_T* parser = init_parser(lexer, flags);
+  parser_T* parser = init_parser(lexer, FJB_ENV);
 
   parser_options_T options = EMPTY_PARSER_OPTIONS;
   AST_T* root = parser_parse(parser, options);
