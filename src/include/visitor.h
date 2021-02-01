@@ -1,7 +1,8 @@
 #ifndef FJB_VISITOR_H
 #define FJB_VISITOR_H
+#include "../../external/hashmap/src/include/map.h"
 #include "AST.h"
-#include "flags.h"
+#include "env.h"
 #include "gc.h"
 #include "list.h"
 #include "parser.h"
@@ -13,10 +14,10 @@
 typedef struct FJB_VISITOR_STRUCT
 {
   parser_T* parser;
-  compiler_flags_T* flags;
+  map_T* map;
 } visitor_T;
 
-visitor_T* init_visitor(parser_T* parser, compiler_flags_T* flags);
+visitor_T* init_visitor(parser_T* parser);
 
 AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* stack);
 

@@ -195,3 +195,7 @@ src/include/js/*
 /lab
 
 dist.js
+
+callgrind.out*
+
+dist.css

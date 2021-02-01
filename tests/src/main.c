@@ -1,5 +1,5 @@
 #include "../../src/include/AST.h"
-#include "../../src/include/signals.h"
+#include "../../src/include/env.h"
 #include "include/test_utils.h"
 #include <stdio.h>
 
@@ -7,7 +7,7 @@
 
 void test_es6()
 {
-  init_fjb_signals();
+  init_fjb_env();
   const char* filepath = "./src/test_projects/es6/index.js";
 
   MSG();
@@ -19,7 +19,7 @@ void test_es6()
 
 void test_simple()
 {
-  init_fjb_signals();
+  init_fjb_env();
   const char* filepath = "./src/test_projects/simple/index.js";
 
   MSG();
@@ -31,7 +31,7 @@ void test_simple()
 
 void test_with_lodash()
 {
-  init_fjb_signals();
+  init_fjb_env();
   const char* filepath = "./src/test_projects/with_lodash/index.js";
 
   MSG();
@@ -44,7 +44,7 @@ void test_with_lodash()
 
 void test_no_imports()
 {
-  init_fjb_signals();
+  init_fjb_env();
   const char* filepath = "./src/test_projects/noimports/index.js";
 
   MSG();
@@ -56,7 +56,7 @@ void test_no_imports()
 
 void test_with_assignment()
 {
-  init_fjb_signals();
+  init_fjb_env();
   const char* filepath = "./src/test_projects/with_assignments/index.js";
 
   MSG();
@@ -68,7 +68,7 @@ void test_with_assignment()
 
 void test_strings()
 {
-  init_fjb_signals();
+  init_fjb_env();
   const char* filepath = "./src/test_projects/strings/index.js";
 
   MSG();
@@ -83,7 +83,7 @@ void test_strings()
 
 void test_regex()
 {
-  init_fjb_signals();
+  init_fjb_env();
   const char* filepath = "./src/test_projects/regex/index.js";
 
   MSG();
@@ -97,7 +97,7 @@ void test_regex()
 
 void test_class()
 {
-  init_fjb_signals();
+  init_fjb_env();
   const char* filepath = "./src/test_projects/class/index.js";
 
   MSG();
@@ -109,7 +109,7 @@ void test_class()
 
 void test_alias_imports()
 {
-  init_fjb_signals();
+  init_fjb_env();
   const char* filepath = "./src/test_projects/alias_imports/index.js";
 
   MSG();
@@ -122,7 +122,7 @@ void test_alias_imports()
 
 void test_wildcard_imports()
 {
-  init_fjb_signals();
+  init_fjb_env();
   const char* filepath = "./src/test_projects/wildcard_imports/index.js";
 
   MSG();
@@ -133,7 +133,7 @@ void test_wildcard_imports()
 
 void test_jsx()
 {
-  init_fjb_signals();
+  init_fjb_env();
   const char* filepath = "./src/test_projects/jsx/index.jsx";
 
   MSG();
@@ -144,7 +144,7 @@ void test_jsx()
 
 void test_jsx_custom()
 {
-  init_fjb_signals();
+  init_fjb_env();
   const char* filepath = "./src/test_projects/jsx_custom/index.jsx";
 
   MSG();
@@ -156,7 +156,7 @@ void test_jsx_custom()
 
 void test_json_import()
 {
-  init_fjb_signals();
+  init_fjb_env();
   const char* filepath = "./src/test_projects/json_import/index.js";
 
   MSG();
@@ -169,7 +169,7 @@ void test_json_import()
 
 void test_css_import()
 {
-  init_fjb_signals();
+  init_fjb_env();
   const char* filepath = "./src/test_projects/css_import/index.js";
 
   MSG();

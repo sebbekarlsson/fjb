@@ -1,7 +1,7 @@
 exec = fjb.out
 sources = $(wildcard src/*.c)
 objects = $(sources:.c=.o)
-flags = -I./external/libjson/src/include -g -Wall -lm -ldl -fPIC -rdynamic -L./ -ljson
+flags = -I./external/libjson/src/include -I./external/hashmap/src/include -lm -ldl -fPIC -rdynamic -L./ -lhashmap -ljson
 
 objects_no_main = $(filter-out src/main.o, $(objects))
 
@@ -14,11 +14,11 @@ gppheaders = $(gppfiles:.gpp=.h)
 GPP_PATH=$(or $(shell test -f ./gpp.out && echo ./gpp.out), gpp)
 
 #ifdef DEBUG
-flags += -D DEBUG
+flags += -D DEBUG -pg -Wall -g
 #endif
 
-$(exec): $(jsheaders) $(gppheaders) $(objects) libjson.a
-	gcc $(objects) $(flags) -o $(exec)
+$(exec): $(jsheaders) $(gppheaders) $(objects) libjson.a libhashmap.a
+	gcc $(objects) $(flags) -g -o $(exec)
 
 libfjb.a: $(objects_no_main)
 	ar rcs $@ $^
@@ -38,7 +38,10 @@ libfjb.a: $(objects_no_main)
 	#xxd -i .tmp/$(notdir $^) > src/include/js/$(notdir $^.h)
  
 libjson.a:
-	cd external/libjson ; make ; mv ./libjson.a ../../.
+	cd external/libjson ; make clean ; make ; mv ./libjson.a ../../.
+
+libhashmap.a:
+	cd external/hashmap ; make clean ; make ; mv ./libhashmap.a ../../.
 
 install:
 	make

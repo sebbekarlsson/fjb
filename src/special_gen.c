@@ -4,21 +4,21 @@
 #include <stdio.h>
 #include <string.h>
 
-compiler_result_T* special_gen_json(compiler_flags_T* flags)
+compiler_result_T* special_gen_json(fjb_env_T* env)
 {
-  if (!(flags->imports && flags->imports->size))
-    return init_compiler_result(flags->source, flags->filepath);
+  if (!(env->imports && env->imports->size))
+    return init_compiler_result(env->source, env->filepath);
 
   char* value = 0;
-  char* str = strdup(flags->source);
+  char* str = strdup(env->source);
 
-  AST_T* imp = (AST_T*)flags->imports->items[0];
+  AST_T* imp = (AST_T*)env->imports->items[0];
   char* imp_name = ast_get_string(imp);
 
   AST_T* json_ast = init_ast(AST_RAW);
   json_ast->string_value = str;
 
-  if (!flags->aliased_import) {
+  if (!env->aliased_import) {
     AST_T* assignment = init_ast(AST_ASSIGNMENT);
     assignment->flags = NEW_STACK;
     assignment->left = init_ast(AST_NAME);
@@ -32,37 +32,37 @@ compiler_result_T* special_gen_json(compiler_flags_T* flags)
 
     assignment->exported = 1;
 
-    value = gen(assignment, flags);
-  } else if (flags->aliased_import) {
+    value = gen(assignment, env);
+  } else if (env->aliased_import) {
     AST_T* state = init_ast(AST_STATE);
     state->value = json_ast;
     state->string_value = strdup("return");
 
-    value = gen(state, flags);
+    value = gen(state, env);
   }
 
   value = str_append(&value, ";");
 
-  compiler_result_T* result = init_compiler_result(value, strdup(flags->filepath));
+  compiler_result_T* result = init_compiler_result(value, strdup(env->filepath));
 
   return result;
 }
 
-compiler_result_T* special_gen_css(compiler_flags_T* flags)
+compiler_result_T* special_gen_css(fjb_env_T* env)
 {
-  if (!(flags->imports && flags->imports->size))
-    return init_compiler_result(flags->source, flags->filepath);
+  if (!(env->imports && env->imports->size))
+    return init_compiler_result(env->source, env->filepath);
 
   char* value = 0;
-  char* str = strdup(flags->source);
+  char* str = strdup(env->source);
 
-  AST_T* imp = (AST_T*)flags->imports->items[0];
+  AST_T* imp = (AST_T*)env->imports->items[0];
   char* imp_name = ast_get_string(imp);
 
   AST_T* css_ast = init_ast(AST_TEMPLATE_STRING);
   css_ast->string_value = str;
 
-  if (!flags->aliased_import) {
+  if (!env->aliased_import) {
     AST_T* assignment = init_ast(AST_ASSIGNMENT);
     assignment->flags = NEW_STACK;
     assignment->left = init_ast(AST_NAME);
@@ -76,29 +76,29 @@ compiler_result_T* special_gen_css(compiler_flags_T* flags)
 
     assignment->exported = 1;
 
-    value = gen(assignment, flags);
-  } else if (flags->aliased_import) {
+    value = gen(assignment, env);
+  } else if (env->aliased_import) {
     AST_T* state = init_ast(AST_STATE);
     state->value = css_ast;
     state->string_value = strdup("return");
 
-    value = gen(state, flags);
+    value = gen(state, env);
   }
 
   value = str_append(&value, ";");
 
-  compiler_result_T* result = init_compiler_result(value, strdup(flags->filepath));
+  compiler_result_T* result = init_compiler_result(value, strdup(env->filepath));
 
   return result;
 }
 
-compiler_result_T* special_gen(compiler_flags_T* flags, char* ext)
+compiler_result_T* special_gen(fjb_env_T* env, char* ext)
 {
   if (strcasecmp(ext, ".json") == 0) {
-    return special_gen_json(flags);
+    return special_gen_json(env);
   }
   if (strcasecmp(ext, ".css") == 0) {
-    return special_gen_css(flags);
+    return special_gen_css(env);
   }
 
   return 0;

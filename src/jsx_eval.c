@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 
+extern fjb_env_T* FJB_ENV;
+
 AST_T* eval_jsx_template_value(visitor_T* visitor, AST_T* ast, list_T* stack)
 {
   if (ast->expr) {
@@ -23,7 +25,7 @@ AST_T* eval_jsx_element(visitor_T* visitor, AST_T* ast, list_T* stack)
 
   AST_T* def = 0;
 
-  list_T* search_index = list_merge(visitor->flags->search_index, stack);
+  list_T* search_index = list_merge(FJB_ENV->search_index, stack);
 
   if (ast->name) {
     LOOP_NODES(

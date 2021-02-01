@@ -1,11 +1,11 @@
 #include "include/jsx.h"
+#include "include/env.h"
 #include "include/js.h"
-#include "include/signals.h"
 #include "include/string_utils.h"
 #include "string.h"
 #include <stdio.h>
 
-extern volatile fjb_signals_T* FJB_SIGNALS;
+extern fjb_env_T* FJB_ENV;
 
 AST_T* parse_template(parser_T* parser, parser_options_T options)
 {
@@ -105,7 +105,7 @@ AST_T* parse_jsx_attr(parser_T* parser, parser_options_T options)
   assignment->parent = options.parent;
   AST_T* left = parser_parse_id(parser, options);
 
-  gc_mark(parser->flags->GC, assignment);
+  gc_mark(parser->env->GC, assignment);
 
   while (left && left->name && parser->token->type == TOKEN_MINUS) {
     left->name = str_append(&left->name, "-");
@@ -137,7 +137,7 @@ AST_T* parse_jsx_attr(parser_T* parser, parser_options_T options)
 
 AST_T* parse_jsx(parser_T* parser, parser_options_T options)
 {
-  FJB_SIGNALS->is_using_jsx = 1;
+  FJB_ENV->is_using_jsx = 1;
   AST_T* ast = init_ast_line(AST_JSX_ELEMENT, parser->lexer->line);
   ast->parent = options.parent;
   ast->options = NEW_STACK;

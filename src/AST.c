@@ -486,7 +486,7 @@ AST_T* get_node_by_name(list_T* list, char* name)
     if (!child_name)
       continue;
 
-    if (strcmp(child_name, name) == 0)
+    if (child_name == name || (strcmp(child_name, name) == 0))
       return child;
   });
 
@@ -526,15 +526,15 @@ char* ast_get_string(AST_T* ast)
   if (!ast)
     return 0;
 
-  if (!ast->name && !ast->string_value && !ast->alias)
-    return 0;
-
   if (ast->alias)
     return ast->alias;
-  if (ast->string_value)
-    return ast->string_value;
+
   if (ast->name)
     return ast->name;
+
+  if (ast->string_value)
+    return ast->string_value;
+
   return 0;
 }
 

@@ -1,6 +1,6 @@
+#include "include/env.h"
 #include "include/fjb.h"
 #include "include/io.h"
-#include "include/signals.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -15,21 +15,22 @@ unsigned int getarg(int argc, char* argv[], const char* key)
 
 int main(int argc, char* argv[])
 {
-  init_fjb_signals();
+  init_fjb_env();
+
   char* filepath = argv[1];
   char* source = fjb_read_file(filepath);
   unsigned int should_dump = getarg(argc, argv, "-d");
 
-  compiler_flags_T* flags = init_compiler_flags(source, filepath, should_dump);
+  fjb_set_source(source);
+  fjb_set_filepath(filepath);
 
-  compiler_result_T* result = fjb(flags);
+  compiler_result_T* result = fjb();
 
-  printf("%s\n", result->dumped ? result->dumped : result->stdout);
-
-  gc_sweep(flags->GC);
-  gc_free(flags->GC);
+  printf("%s\n", result->stdout);
 
   compiler_result_free(result);
+
+  destroy_fjb_env();
 
   return 0;
 }

@@ -1,5 +1,6 @@
 #include "include/fjb.h"
 #include "include/compound.h"
+#include "include/env.h"
 #include "include/gc.h"
 #include "include/gen.h"
 #include "include/io.h"
@@ -7,7 +8,6 @@
 #include "include/lexer.h"
 #include "include/list.h"
 #include "include/parser.h"
-#include "include/signals.h"
 #include "include/special_gen.h"
 #include "include/string_utils.h"
 #include "include/visitor.h"
@@ -16,25 +16,25 @@
 
 AST_T* NOOP;
 list_T* stack;
-extern volatile fjb_signals_T* FJB_SIGNALS;
+extern fjb_env_T* FJB_ENV;
 
-compiler_result_T* fjb(compiler_flags_T* flags)
+compiler_result_T* fjb()
 {
-  if (!flags->source)
+  if (!FJB_ENV->source)
     return 0;
 
-  char* ext = (char*)get_filename_ext(flags->filepath);
+  char* ext = (char*)get_filename_ext(FJB_ENV->filepath);
 
-  compiler_result_T* special = special_gen(flags, ext);
+  compiler_result_T* special = special_gen(FJB_ENV, ext);
   if (special)
     return special;
 
   NOOP = init_ast(AST_NOOP);
-  gc_mark(flags->GC, NOOP);
+  gc_mark(FJB_ENV->GC, NOOP);
 
   /* ==== Lexing ==== */
-  lexer_T* lexer = init_lexer(flags->source, flags->filepath);
-  parser_T* parser = init_parser(lexer, flags);
+  lexer_T* lexer = init_lexer(FJB_ENV->source, FJB_ENV->filepath);
+  parser_T* parser = init_parser(lexer, FJB_ENV);
 
   /* ==== Parsing ==== */
   parser_options_T options = EMPTY_PARSER_OPTIONS;
@@ -45,26 +45,26 @@ compiler_result_T* fjb(compiler_flags_T* flags)
   }
 
   /* ==== Evaluate ==== */
-  visitor_T* visitor = init_visitor(parser, flags);
+  visitor_T* visitor = init_visitor(parser);
   root = visitor_visit(visitor, root, stack);
 
   /* ==== Tree-shake ==== */
-  AST_T* root_to_generate = new_compound(root, flags);
+  AST_T* root_to_generate = new_compound(root, FJB_ENV);
 
-  FJB_SIGNALS->root = root_to_generate;
+  FJB_ENV->root = root_to_generate;
 
   /* ==== Generate ==== */
   char* str = 0;
 
-  char* headers = fjb_get_headers(flags);
+  char* headers = fjb_get_headers(FJB_ENV);
   if (headers)
     str = str_append(&str, headers);
 
   str = str_append(&str, "/* IMPORT `");
 
-  str = str_append(&str, flags->filepath);
+  str = str_append(&str, FJB_ENV->filepath);
   str = str_append(&str, "` */ ");
-  char* out = gen(root_to_generate, flags);
+  char* out = gen(root_to_generate, FJB_ENV);
   str = str_append(&str, out);
   free(out);
 
@@ -72,17 +72,8 @@ compiler_result_T* fjb(compiler_flags_T* flags)
   result->stdout = str;
   result->node = root_to_generate;
 
-  if (flags->filepath)
-    result->filepath = strdup(flags->filepath);
-
-  if (flags->should_dump) {
-    char* dumped = visitor->flags->dumped_tree;
-    char* newdump = _ast_to_str(result->node, 0);
-
-    dumped = str_append(&dumped, newdump);
-
-    result->dumped = dumped;
-  }
+  if (FJB_ENV->filepath)
+    result->filepath = strdup(FJB_ENV->filepath);
 
   lexer_free(lexer);
   parser_free(parser);
@@ -90,18 +81,18 @@ compiler_result_T* fjb(compiler_flags_T* flags)
 
   if (root_to_generate != root) {
     root_to_generate->list_value = 0;
-    gc_mark(flags->GC, root_to_generate);
+    gc_mark(FJB_ENV->GC, root_to_generate);
   }
 
   return result;
 }
 
-char* fjb_get_headers(compiler_flags_T* flags)
+char* fjb_get_headers(fjb_env_T* env)
 {
   char* str = 0;
-  if (FJB_SIGNALS->is_using_jsx && !FJB_SIGNALS->has_included_jsx_headers) {
+  if (FJB_ENV->is_using_jsx && !FJB_ENV->has_included_jsx_headers) {
     str = str_append(&str, (const char*)_tmp_jsx_headers_js);
-    FJB_SIGNALS->has_included_jsx_headers = 1;
+    FJB_ENV->has_included_jsx_headers = 1;
   }
 
   return str;

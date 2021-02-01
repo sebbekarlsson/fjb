@@ -192,9 +192,10 @@ list_T* list_merge(list_T* a, list_T* b)
 list_T* list_copy(list_T* a)
 {
   list_T* b = init_list(a->item_size);
-  list_T* new_list = list_merge(b, a);
-  list_free_shallow(b);
-  return new_list;
+  for (unsigned int i = 0; i < a->size; i++)
+    list_push(b, a->items[i]);
+
+  return b;
 }
 
 void list_clear(list_T* list)
