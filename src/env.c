@@ -12,6 +12,8 @@ void init_fjb_env()
   FJB_ENV->filepath = 0;
   FJB_ENV->imports = NEW_STACK;
   FJB_ENV->search_index = NEW_STACK;
+  FJB_ENV->functions = NEW_MAP();
+  FJB_ENV->assignments = NEW_MAP();
 
   FJB_ENV->GC = init_gc();
 
