@@ -416,25 +416,17 @@ AST_T* init_assignment(char* name, AST_T* value)
   return ast;
 }
 
-list_T* ast_get_pointers(AST_T* ast)
+void ast_get_pointers(list_T* list, AST_T* ast)
 {
-  list_T* list = init_list(sizeof(AST_T*));
-
   if (!ast)
-    return list;
+    return;
 
   AST_T* ptr = ast->ptr;
 
-  while (ptr && !ptr_in_list(list, ptr)) {
-    if (ptr) {
-      list_push(list, ptr);
+  if (ptr)
+    list_push(list, ptr);
 
-      if (ptr)
-        ptr = ptr->ptr;
-    }
-  }
-
-  return list;
+  ast_get_pointers(list, ptr);
 }
 
 AST_T* ast_get_final_ptr(AST_T* ast)
@@ -446,34 +438,6 @@ AST_T* ast_get_final_ptr(AST_T* ast)
   if (ast->ptr)
     return ast->ptr;
   return ast;
-}
-
-AST_T* ast_search_pointer(AST_T* ast, int type)
-{
-  if (ast->type == type)
-    return ast;
-  list_T* pointers = ast_get_pointers(ast);
-
-  AST_T* ptr = 0;
-
-  for (unsigned int i = 0; i < pointers->size; i++) {
-    AST_T* child = pointers->items[i];
-    if (!child)
-      continue;
-
-    if (child->type == type) {
-      ptr = child;
-      break;
-    }
-  }
-
-  if (pointers) {
-    if (pointers->items)
-      free(pointers->items);
-    free(pointers);
-  }
-
-  return ptr;
 }
 
 AST_T* get_node_by_name(list_T* list, char* name)
