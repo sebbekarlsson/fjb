@@ -10,8 +10,8 @@ void init_fjb_env()
   FJB_ENV = calloc(1, sizeof(struct FJB_ENV_STRUCT));
   FJB_ENV->source = 0;
   FJB_ENV->filepath = 0;
-  FJB_ENV->imports = NEW_STACK;
   FJB_ENV->search_index = NEW_STACK;
+  FJB_ENV->imports = NEW_MAP();
   FJB_ENV->functions = NEW_MAP();
   FJB_ENV->assignments = NEW_MAP();
 
@@ -42,10 +42,6 @@ void init_fjb_env()
 
   FJB_ENV->module = module;
   FJB_ENV->exports = exports;
-
-  FJB_ENV->imports = NEW_STACK;
-  FJB_ENV->imported_symbols = NEW_STACK;
-  FJB_ENV->import_nodes = NEW_STACK;
 }
 
 void destroy_fjb_env()

@@ -1,12 +1,15 @@
 #include "include/visitor.h"
+#include "include/compound.h"
 #include "include/env.h"
 #include "include/fjb.h"
 #include "include/gc.h"
 #include "include/gen.h"
+#include "include/imported.h"
 #include "include/io.h"
 #include "include/jsx_eval.h"
 #include "include/node.h"
 #include "include/resolve.h"
+#include "include/special_gen.h"
 #include "include/string_utils.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,7 +29,9 @@ static AST_T* getptr_any(AST_T* ast, visitor_T* visitor, list_T* stack)
 
   if (!ptr) {
     ptr = (AST_T*)map_get_value(visitor->map, ast->name);
-    // ptr = get_node_by_name(stack, ast->name);
+
+    // if (!ptr || ptr == ast)
+    //  ptr = get_node_by_name(stack, ast->name);
   }
 
   if (ptr) {
@@ -117,26 +122,66 @@ AST_T* visitor_visit_string(visitor_T* visitor, AST_T* ast, list_T* stack)
 
 AST_T* visitor_visit_import(visitor_T* visitor, AST_T* ast, list_T* stack)
 {
+
+  list_T* imports_before = NEW_STACK;
+  char* prev_filepath = strdup(FJB_ENV->filepath);
+  char* prev_source = FJB_ENV->source;
+
   char* final_file_to_read = resolve_import((FJB_ENV->filepath), ast->string_value, 0);
+  if (!final_file_to_read)
+    return ast;
 
   for (unsigned int i = 0; i < ast->list_value->size; i++) {
-    list_push(FJB_ENV->imports, ast->list_value->items[i]);
+    AST_T* id = ast->list_value->items[i];
+    char* name = id->name;
+    char* alias = id->alias;
+    map_set(FJB_ENV->imports, name, init_imported(name, alias, 0));
   }
 
-  if (final_file_to_read) {
-    char* contents = fjb_read_file(final_file_to_read);
-    fjb_set_source(contents);
-    fjb_set_filepath(final_file_to_read);
-    fjb_set_aliased_import(ast->alias != 0);
+  fjb_set_filepath(final_file_to_read);
+  char* contents = fjb_read_file(final_file_to_read);
+  fjb_set_source(contents);
+  fjb_set_aliased_import(ast->alias != 0);
 
-    compiler_result_T* result = fjb();
-    ast->compiled_value = strdup(result->stdout);
+  char* ext = (char*)get_filename_ext(FJB_ENV->filepath);
+  compiler_result_T* special = special_gen(FJB_ENV, ext, ast->list_value);
 
-    fjb_set_source(0);
-    fjb_set_aliased_import(0);
+  compiler_result_T* result = special ? special : fjb();
+  ast->headers = result->headers;
+  ast->compiled_value = strdup(result->stdout);
+
+  if (result->node && !special) {
+    AST_T* dot = new_compound(result->node, FJB_ENV);
+
+    ast->node = dot;
+    ast->compiled_value = dot->list_value ? gen(dot, FJB_ENV) : ast->compiled_value;
   }
 
-  list_clear(FJB_ENV->imports);
+  fjb_set_filepath(prev_filepath);
+  fjb_set_source(prev_source);
+  fjb_set_aliased_import(0);
+
+  for (unsigned int i = 0; i < ast->list_value->size; i++) {
+    AST_T* id = ast->list_value->items[i];
+    char* name = ast_get_string(id);
+    map_unset(FJB_ENV->imports, id->name);
+  }
+
+  /* char** keys;
+   unsigned int nrkeys;
+   map_get_keys(FJB_ENV->imports,  &keys, &nrkeys);
+   for (unsigned int i = 0; i < nrkeys; i++) {
+     char* key = keys[i];
+     if (!key) continue;
+
+     imported_T* imp = map_get_value(FJB_ENV->imports, key);
+     if (!imp) continue;
+     if (!imp->ast) continue;
+
+     map_unset(FJB_ENV->imports, key);
+   }*/
+
+  // list_clear(FJB_ENV->imports);
 
   return ast;
 }
@@ -182,13 +227,26 @@ AST_T* visitor_visit_assignment(visitor_T* visitor, AST_T* ast, list_T* stack)
     }
   }
 
+  if (ast->name) {
+    imported_T* im = (imported_T*)map_get_value(FJB_ENV->imports, ast->name);
+
+    if (im) {
+      im->ast = ast;
+    }
+  }
+
+  if (ast->name)
+    map_set(FJB_ENV->assignments, ast->name, ast);
+
+  // list_push(FJB_ENV->search_index, ast);
+
   return ast;
 }
 
 AST_T* visitor_visit_state(visitor_T* visitor, AST_T* ast, list_T* stack)
 {
   if (ast->value) {
-    visitor_visit(visitor, ast->value, stack);
+    ast->value = visitor_visit(visitor, ast->value, stack);
   }
 
   return ast;
@@ -339,6 +397,14 @@ AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* stack)
   if (ast->name) {
     map_set(visitor->map, ast->name, ast);
     list_push(stack, ast);
+    // list_push(FJB_ENV->search_index, ast);
+    map_set(FJB_ENV->functions, ast->name, ast);
+
+    imported_T* im = (imported_T*)map_get_value(FJB_ENV->imports, ast->name);
+
+    if (im) {
+      im->ast = ast;
+    }
   }
 
   if (ast->body)
@@ -360,6 +426,9 @@ AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* stack)
         map_unset(visitor->map, child->name);
     }
   }
+
+  if (ast->name)
+    map_set(FJB_ENV->functions, ast->name, ast);
 
   return ast;
 }
@@ -423,9 +492,9 @@ AST_T* visitor_visit_name(visitor_T* visitor, AST_T* ast, list_T* stack)
 
   ast->ptr = getptr(ast, stack, visitor);
 
-  if (ast->name && !ast->ptr) {
-    ast->ptr = getptr_any(ast, visitor, stack);
-  }
+  // if (ast->name && !ast->ptr) {
+  //  ast->ptr = getptr_any(ast, visitor, stack);
+  //}
 
   return ast;
 }
@@ -443,6 +512,14 @@ AST_T* visitor_visit_arrow_definition(visitor_T* visitor, AST_T* ast, list_T* st
   if (ast->list_value)
     ast->list_value = visit_array(visitor, ast->list_value, stack);
 
+  if (ast->name) {
+    imported_T* im = (imported_T*)map_get_value(FJB_ENV->imports, ast->name);
+
+    if (im) {
+      im->ast = ast;
+    }
+  }
+
   return ast;
 }
 
@@ -458,6 +535,14 @@ AST_T* visitor_visit_colon_assignment(visitor_T* visitor, AST_T* ast, list_T* st
     ast->label_value = visitor_visit(visitor, ast->label_value, stack);
   if (ast->expr)
     ast->expr = visitor_visit(visitor, ast->expr, stack);
+
+  if (ast->name) {
+    imported_T* im = (imported_T*)map_get_value(FJB_ENV->imports, ast->name);
+
+    if (im) {
+      im->ast = ast;
+    }
+  }
 
   return ast;
 }
@@ -634,7 +719,7 @@ AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* stack)
   }
 
   if (ast->next)
-    visitor_visit(visitor, ast->next, stack);
+    ast->next = visitor_visit(visitor, ast->next, stack);
 
   return ast;
 }

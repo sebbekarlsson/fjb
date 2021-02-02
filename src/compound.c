@@ -1,5 +1,7 @@
 #include "include/compound.h"
+#include "../external/hashmap/src/include/map.h"
 #include "include/AST.h"
+#include "include/imported.h"
 #include "include/resolve.h"
 #include <stdio.h>
 #include <string.h>
@@ -46,42 +48,55 @@ static unsigned int resolve_deps_query(AST_T* ast, query_T data)
   return resolve_basic_query(ast, data);
 }
 
-list_T* get_imported_symbols(AST_T* lookup, list_T* imports, list_T* search_index)
+list_T* get_imported_symbols(AST_T* lookup, list_T* search_index)
 {
-  list_T* list = FJB_ENV->imported_symbols;
-
+  list_T* list = NEW_STACK;
   AST_T* resolved = 0;
 
   int types[] = { AST_ASSIGNMENT, AST_FUNCTION };
   size_t nr_types = 2;
   query_T data;
 
-  LOOP_NODES(imports, i, child, {
+  char** keys;
+  unsigned int len;
+  map_get_keys(FJB_ENV->imports, &keys, &len);
+
+  for (unsigned int i = 0; i < len; i++) {
+    char* key = keys[i];
+    if (!key)
+      continue;
+    AST_T* child = 0;
+    imported_T* imp = (imported_T*)map_get_value(FJB_ENV->imports, key);
+    if (!imp)
+      continue;
+
     for (unsigned int k = 0; k < nr_types; k++) {
       data.type = types[k];
-      data.name = child->name;
+      data.name = key;
 
-      if (!child->name)
-        continue;
+      // if (imp->ast) resolved = imp->ast;
 
-      if (types[k] == AST_FUNCTION) {
-        resolved = (AST_T*)map_get_value(FJB_ENV->functions, child->name);
-      } else {
-        resolved = (AST_T*)map_get_value(FJB_ENV->assignments, child->name);
+      if (!resolved) {
+        if (types[k] == AST_FUNCTION) {
+          resolved = (AST_T*)map_get_value(FJB_ENV->functions, key);
+        } else if (types[k] == AST_ASSIGNMENT) {
+          resolved = (AST_T*)map_get_value(FJB_ENV->assignments, key);
+        }
       }
 
-      if (resolved && resolved->type != types[k])
-        resolved = 0;
-
-      // if (!resolved)
-      //  resolved = ast_query(search_index, resolve_basic_query, data);
+      if (!resolved)
+        resolved = ast_query(search_index, resolve_basic_query, data);
 
       if (resolved && !resolved->is_resolved) {
         /**
          * Copy alias from the import, to the resolved symbol.
          */
-        if (child->alias) {
-          resolved->alias = strdup(child->alias);
+        if (imp && imp->alias) {
+          resolved->alias = strdup(imp->alias);
+        }
+
+        if (imp) {
+          // imp->ast = resolved;
         }
 
         resolved->is_resolved = 1;
@@ -89,7 +104,7 @@ list_T* get_imported_symbols(AST_T* lookup, list_T* imports, list_T* search_inde
         break;
       }
     }
-  });
+  }
 
   return list;
 }
@@ -107,6 +122,7 @@ unsigned int get_deps(AST_T* ast, options_T args, fjb_env_T* env)
     get_deps(ast->right, args, env);
 
   get_deps(ast->expr, args, env);
+  // get_deps(ast->node, args, env);
   get_deps(ast->body, args, env);
   get_deps(ast->next, args, env);
   get_deps(ast->value, args, env);
@@ -135,26 +151,24 @@ unsigned int get_deps(AST_T* ast, options_T args, fjb_env_T* env)
       query.type = types[i];
 
       // TODO: make this work
-      /*if (types[i] == AST_FUNCTION)
-      {
-        ptr = (AST_T*) map_get_value(FJB_ENV->functions, ast->name);
-      }
-      else
-      {
-        ptr = (AST_T*) map_get_value(FJB_ENV->assignments, ast->name);
+      if (types[i] == AST_FUNCTION) {
+        ptr = (AST_T*)map_get_value(FJB_ENV->functions, ast->name);
+      } else {
+        ptr = (AST_T*)map_get_value(FJB_ENV->assignments, ast->name);
+        if (ptr && !ptr->flags)
+          ptr = 0;
       }
 
-      if (ptr && ptr->type != types[i]) ptr = 0;
+      // if (ptr && ptr->type != types[i]) ptr = 0;
 
-      if (ptr)
-      {
+      if (ptr) {
         if (query.parent && ptr->parent && (ptr->parent != query.parent) &&
-          (ptr->parent->type == AST_FUNCTION))
-            continue;
-      }*/
+            (ptr->parent->type == AST_FUNCTION))
+          continue;
+      }
 
-      // if (!ptr)
-      ptr = ast_query(env->search_index, resolve_deps_query, query);
+      if (!ptr)
+        ptr = ast_query(env->search_index, resolve_deps_query, query);
 
       if (ptr) {
         break;
@@ -174,8 +188,8 @@ unsigned int get_deps(AST_T* ast, options_T args, fjb_env_T* env)
       ptr == ast || ptr == args.compound)
     return pushed;
 
-  if (ptr_in_list(FJB_ENV->imported_symbols, ptr))
-    return pushed;
+  // if (ptr_in_list(FJB_ENV->imported_symbols, ptr))
+  //  return pushed;
 
   query_T query;
   query.type = ptr->type;
@@ -186,7 +200,7 @@ unsigned int get_deps(AST_T* ast, options_T args, fjb_env_T* env)
       list_push_at(args.saved, ptr, args.last_pushed ? args.last_pushed : ast);
       args.last_pushed = ptr;
       ptr->is_resolved = 1;
-      list_push_safe(FJB_ENV->imported_symbols, ptr);
+      //  list_push_safe(FJB_ENV->imported_symbols, ptr);
       pushed += 1;
     }
   }
@@ -196,17 +210,19 @@ unsigned int get_deps(AST_T* ast, options_T args, fjb_env_T* env)
 
 AST_T* new_compound(AST_T* lookup, fjb_env_T* env)
 {
-  if (!env->imports->size)
+  if (FJB_ENV->level <= 0)
     return lookup;
 
   AST_T* compound = init_ast(AST_COMPOUND);
-  compound->list_value = list_copy(get_imported_symbols(lookup, env->imports, env->search_index));
-  gc_mark_list(env->GC, compound->list_value);
+  list_T* syms = get_imported_symbols(lookup, env->search_index);
+  list_T* imported_symbols = syms ? list_copy(syms) : NEW_STACK;
+  compound->list_value = imported_symbols;
+  // gc_mark_list(env->GC, compound->list_value);
 
   AST_T* parent = 0;
 
-  if (compound->list_value && compound->list_value->size)
-    parent = ((AST_T*)compound->list_value->items[0])->parent;
+  if (imported_symbols && imported_symbols->size)
+    parent = ((AST_T*)imported_symbols->items[0])->parent;
 
   options_T args;
   args.lookup = lookup;
@@ -227,12 +243,12 @@ AST_T* new_compound(AST_T* lookup, fjb_env_T* env)
       break;
   }
 
-  list_T* all_symbols = list_merge(args.saved, compound->list_value);
+  list_T* all_symbols = args.saved; // list_merge( compound->list_value,args.saved);
 
-  list_T* copied = list_copy(lookup->list_value);
+  list_T* copied = lookup && lookup->list_value ? list_copy(lookup->list_value) : NEW_STACK;
   compound->list_value = all_symbols->size ? all_symbols : copied;
 
-  gc_mark_list(env->GC, copied);
+  // gc_mark_list(env->GC, copied);
   gc_mark_list(env->GC, all_symbols);
 
   return compound;

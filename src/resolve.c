@@ -15,6 +15,8 @@ AST_T* resolve(AST_T* ast, unsigned int (*query)(AST_T* ast, query_T data), quer
   // This shouldn't be needed... (I think)
   // if ((x = resolve(ast->right, query, data)) != 0)
   //  return x;
+  // if ((x = resolve(ast->node, query, data)) != 0)
+  //  return x;
   if ((x = resolve(ast->body, query, data)) != 0)
     return x;
   if ((x = resolve(ast->expr, query, data)) != 0)
