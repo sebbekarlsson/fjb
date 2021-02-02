@@ -23,12 +23,7 @@ compiler_result_T* fjb()
   if (!FJB_ENV->source)
     return 0;
 
-  char* ext = (char*)get_filename_ext(FJB_ENV->filepath);
-
-  compiler_result_T* special = special_gen(FJB_ENV, ext);
-  if (special)
-    return special;
-
+  unsigned int old_level = FJB_ENV->level;
   NOOP = init_ast(AST_NOOP);
   gc_mark(FJB_ENV->GC, NOOP);
 
@@ -51,26 +46,25 @@ compiler_result_T* fjb()
   /* ==== Tree-shake ==== */
   AST_T* root_to_generate = new_compound(root, FJB_ENV);
 
-  FJB_ENV->root = root_to_generate;
-
   /* ==== Generate ==== */
-  char* str = 0;
-
-  char* headers = fjb_get_headers(FJB_ENV);
-  if (headers)
-    str = str_append(&str, headers);
+  char* str = strdup("");
 
   str = str_append(&str, "/* IMPORT `");
-
   str = str_append(&str, FJB_ENV->filepath);
   str = str_append(&str, "` */ ");
   char* out = gen(root_to_generate, FJB_ENV);
-  str = str_append(&str, out);
-  free(out);
+
+  if (out) {
+    str = str_append(&str, out);
+    free(out);
+  }
 
   compiler_result_T* result = calloc(1, sizeof(compiler_result_T));
   result->stdout = str;
-  result->node = root_to_generate;
+  FJB_ENV->output = str;
+  result->headers = fjb_get_headers(FJB_ENV);
+  result->node = root;
+  FJB_ENV->root = root_to_generate;
 
   if (FJB_ENV->filepath)
     result->filepath = strdup(FJB_ENV->filepath);
@@ -84,6 +78,8 @@ compiler_result_T* fjb()
     gc_mark(FJB_ENV->GC, root_to_generate);
   }
 
+  FJB_ENV->level += 1;
+
   return result;
 }
 
@@ -96,4 +92,9 @@ char* fjb_get_headers(fjb_env_T* env)
   }
 
   return str;
+}
+
+void fjb_set_only_parse(unsigned int only_parse)
+{
+  FJB_ENV->only_parse = 1;
 }

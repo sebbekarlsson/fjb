@@ -1,5 +1,7 @@
 #include "include/gen_jsx.h"
+#include "include/env.h"
 #include "include/gen.h"
+#include "include/imported.h"
 #include "include/js.h"
 #include "include/js/jsx.js.h"
 #include "include/js/jsx_add_listener.js.h"
@@ -10,6 +12,8 @@
 #include "include/string_utils.h"
 #include <stdio.h>
 #include <string.h>
+
+extern fjb_env_T* FJB_ENV;
 
 char* gen_jsx_template_string(AST_T* ast, fjb_env_T* env)
 {
@@ -163,6 +167,8 @@ char* gen_jsx(AST_T* ast, fjb_env_T* env)
     case AST_JSX_TEMPLATE_VALUE: return gen_jsx_template_value(ast, env); break;
     case AST_JSX_TEMPLATE_STRING: return gen_jsx_template_string(ast, env); break;
     case AST_JSX_TEXT: return gen_jsx_text(ast, env); break;
+    case AST_CALL:
+    case AST_STATE: return gen(ast, env); break;
     default: {
       printf("[Gen(JSX)]: Missing generator for `%d`\n", ast->type);
       exit(1);

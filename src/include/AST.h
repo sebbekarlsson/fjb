@@ -24,6 +24,7 @@ typedef struct FJB_AST_STRUCT
   struct FJB_AST_STRUCT* parent;
   struct FJB_AST_STRUCT* next;
   struct FJB_AST_STRUCT* node;
+  struct FJB_AST_STRUCT* ast;
   struct FJB_AST_STRUCT* condition;
   token_T* token;
 
@@ -35,6 +36,7 @@ typedef struct FJB_AST_STRUCT
   char* compiled_value;
   char* from_module;
   char* innerText;
+  char* headers;
 
   list_T* list_value;
   list_T* options;
@@ -74,7 +76,7 @@ char* ast_binop_to_str(AST_T* ast, int indent);
 
 #define ast_to_str(ast) _ast_to_str(ast, indent)
 
-list_T* ast_get_pointers(AST_T* ast);
+void ast_get_pointers(list_T* list, AST_T* ast);
 
 AST_T* get_node_by_name(list_T* list, char* name);
 

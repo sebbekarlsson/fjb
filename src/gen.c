@@ -385,7 +385,7 @@ char* gen_assignment(AST_T* ast, fjb_env_T* env)
   }
 
   if ((ast->parent && ast->parent->type == AST_FUNCTION && env->imports && ast->name &&
-       ast->flags && get_node_by_name(env->imports, ast->name)) ||
+       ast->flags) ||
       ast->exported) {
     str = str_append(&str, ";this.");
     str = str_append(&str, ast->name);
@@ -466,6 +466,9 @@ char* gen_compound(AST_T* ast, fjb_env_T* env)
 
   list_T* living = ast->list_value;
 
+  if (!living)
+    return strdup("");
+
   for (unsigned int i = 0; i < living->size; i++) {
     AST_T* child_ast = (AST_T*)living->items[i];
 
@@ -487,8 +490,8 @@ char* gen_compound(AST_T* ast, fjb_env_T* env)
 
 char* gen_import(AST_T* ast, fjb_env_T* env)
 {
-  if (!ast->compiled_value)
-    return 0;
+  // if (!ast->compiled_value && !ast->node)
+  //   return 0;
 
   char* head_str = 0;
   char* encoding = ast->alias ? ast->alias : 0;
@@ -513,8 +516,13 @@ char* gen_import(AST_T* ast, fjb_env_T* env)
   char* str = 0;
 
   if (head_str) {
+    if (ast->headers)
+      head_str = str_append(&head_str, ast->headers);
     str = str_append(&str, head_str);
-    str = str_append(&str, ast->compiled_value);
+    char* k = ast->node ? gen(ast->node, env) : ast->compiled_value;
+
+    if (k)
+      str = str_append(&str, k);
     str = str_append(&str, ";return this;}).bind(this)()\n");
     free(head_str);
 
