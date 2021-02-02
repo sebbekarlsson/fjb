@@ -14,7 +14,7 @@ gppheaders = $(gppfiles:.gpp=.h)
 GPP_PATH=$(or $(shell test -f ./gpp.out && echo ./gpp.out), gpp)
 
 ifdef DEBUG
-flags += -D DEBUG -pg -Wall -g
+#flags += -D DEBUG -pg -Wall -g
 endif
 
 $(exec): $(jsheaders) $(gppheaders) $(objects) libjson.a libhashmap.a

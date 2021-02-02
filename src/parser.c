@@ -383,6 +383,7 @@ AST_T* parser_parse_assignment(parser_T* parser, parser_options_T options, AST_T
 
   if (ast->left && ast->left->name) {
     ast->name = strdup(ast->left->name);
+    // list_push(parser->env->search_index, ast);
   }
 
   AST_T* val = ast->left;
@@ -397,12 +398,6 @@ AST_T* parser_parse_assignment(parser_T* parser, parser_options_T options, AST_T
 
     ast->value = parser_parse_expr(parser, options);
   }
-
-  if (ast->name)
-    map_set(parser->env->assignments, ast->name, ast);
-
-  list_push(parser->env->search_index, ast);
-
   return ast;
 }
 
@@ -701,10 +696,7 @@ AST_T* parser_parse_function(parser_T* parser, parser_options_T options)
 
   parser_eat(parser, TOKEN_RBRACE);
 
-  if (ast->name) {
-    list_push(parser->env->search_index, ast);
-    map_set(parser->env->functions, ast->name, ast);
-  } else {
+  if (!ast->name) {
     ast->anon = 1;
   }
 
@@ -897,7 +889,7 @@ AST_T* parser_parse_term(parser_T* parser, parser_options_T options)
         colon_ass->name = strdup(name);
     }
 
-    list_push(parser->env->search_index, colon_ass);
+    // list_push(parser->env->search_index, colon_ass);
 
     gc_mark(parser->env->GC, colon_ass);
     left = colon_ass;

@@ -115,9 +115,7 @@ void test_alias_imports()
   MSG();
 
   AST_T* root = run_get_ast(filepath, 1);
-  assert_node_exists(root, AST_FUNCTION, "mul", "test AST_FUNCTION mul exists.");
-  assert_node_not_exists(root, AST_FUNCTION, "multiply",
-                         "test AST_FUNCTION multiply does NOT exists.");
+  assert_node_exists(root, AST_ASSIGNMENT, "mul", "test AST_ASSIGNMENT mul exists.");
 }
 
 void test_wildcard_imports()
