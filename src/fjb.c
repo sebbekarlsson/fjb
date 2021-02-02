@@ -49,12 +49,7 @@ compiler_result_T* fjb()
   /* ==== Generate ==== */
   char* str = strdup("");
 
-  char* headers = fjb_get_headers(FJB_ENV);
-  if (headers)
-    str = str_append(&str, headers);
-
   str = str_append(&str, "/* IMPORT `");
-
   str = str_append(&str, FJB_ENV->filepath);
   str = str_append(&str, "` */ ");
   char* out = gen(root_to_generate, FJB_ENV);
@@ -67,7 +62,7 @@ compiler_result_T* fjb()
   compiler_result_T* result = calloc(1, sizeof(compiler_result_T));
   result->stdout = str;
   FJB_ENV->output = str;
-  result->headers = headers;
+  result->headers = fjb_get_headers(FJB_ENV);
   result->node = root;
   FJB_ENV->root = root_to_generate;
 
