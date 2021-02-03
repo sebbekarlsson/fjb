@@ -7,6 +7,9 @@ PWD = os.getcwd()
 
 ESBUILD_PATH = "/benchmark/node_modules/.bin/esbuild"
 ESBUILD_ARGS = ' --bundle --outfile=./dist.js'
+PARCEL_PATH = '/benchmark/node_modules/.bin/parcel build'
+PARCEL_DIST = '/dist/index.js'
+PARCEL_ARGS = ''
 FJB_PATH = "/fjb.out"
 FJB_ARGS = ' > ./dist.js'
 
@@ -21,6 +24,12 @@ RUNS = [
         'title': 'esbuild',
         'exec': PWD + ESBUILD_PATH,
         "args": ESBUILD_ARGS
+    },
+    {
+        'title': 'parcel',
+        'exec': PWD + PARCEL_PATH,
+        "args": PARCEL_ARGS,
+        'dist': PARCEL_DIST
     },
 ]
 
@@ -73,6 +82,8 @@ def get_filesize(filename):
 def run_entry(mark, entry):
     timebefore = datetime.datetime.now()
 
+    print(entry)
+
     cmd = "{exe} {path} {args}".format(
             exe=entry['exec'], path=mark['path'], args=entry['args'])
 
@@ -87,7 +98,7 @@ def run_entry(mark, entry):
 
     return {
         'time': diff,
-        'size': get_filesize(PWD + '/dist.js'),
+        'size': get_filesize(PWD + entry.get('dist', '/dist.js')),
         'cmd': cmd,
         **entry
     }
