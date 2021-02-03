@@ -6,6 +6,7 @@
 #include "include/io.h"
 #include "include/jsx_eval.h"
 #include "include/node.h"
+#include "include/plugin.h"
 #include "include/resolve.h"
 #include "include/string_utils.h"
 #include <stdio.h>
@@ -594,6 +595,8 @@ AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* stack)
     exit(1);
   }
 
+  ast = fjb_call_all_hooks(HOOK_BEFORE_EVAL, ast, FJB_ENV);
+
   switch (ast->type) {
     case AST_ARRAY: ast = visitor_visit_array(visitor, ast, stack); break;
     case AST_HEX: ast = visitor_visit_hex(visitor, ast, stack); break;
@@ -626,15 +629,17 @@ AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* stack)
     case AST_DO: ast = visitor_visit_do(visitor, ast, stack); break;
     case AST_NOOP: ast = visitor_visit_noop(visitor, ast, stack); break;
     case AST_TUPLE: ast = visitor_visit_tuple(visitor, ast, stack); break;
-    case AST_JSX_TEMPLATE_VALUE: return eval_jsx(visitor, ast, stack); break;
-    case AST_JSX_COMPOUND: return eval_jsx(visitor, ast, stack); break;
-    case AST_JSX_ELEMENT: return eval_jsx(visitor, ast, stack); break;
+    case AST_JSX_TEMPLATE_VALUE: ast = eval_jsx(visitor, ast, stack); break;
+    case AST_JSX_COMPOUND: ast = eval_jsx(visitor, ast, stack); break;
+    case AST_JSX_ELEMENT: ast = eval_jsx(visitor, ast, stack); break;
     default: {
     } break;
   }
 
   if (ast->next)
     visitor_visit(visitor, ast->next, stack);
+
+  ast = fjb_call_all_hooks(HOOK_AFTER_EVAL, ast, FJB_ENV);
 
   return ast;
 }

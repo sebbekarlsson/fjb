@@ -1,7 +1,7 @@
 exec = fjb.out
 sources = $(wildcard src/*.c)
 objects = $(sources:.c=.o)
-flags = -I./external/libjson/src/include -I./external/hashmap/src/include -lm -ldl -fPIC -rdynamic -L./ -lhashmap -ljson
+flags = -I$$HOME/.local/include -lm -ldl -fPIC -rdynamic -L$$HOME/.local/lib -lhashmap -ljson
 
 objects_no_main = $(filter-out src/main.o, $(objects))
 
@@ -38,10 +38,10 @@ libfjb.a: $(objects_no_main)
 	#xxd -i .tmp/$(notdir $^) > src/include/js/$(notdir $^.h)
  
 libjson.a:
-	cd external/libjson ; make clean ; make ; mv ./libjson.a ../../.
+	cd external/libjson ; make clean ; make ; make install; mv ./libjson.a ../../.
 
 libhashmap.a:
-	cd external/hashmap ; make clean ; make ; mv ./libhashmap.a ../../.
+	cd external/hashmap ; make clean ; make ; make install ; mv ./libhashmap.a ../../.
 
 install:
 	make

@@ -43,12 +43,12 @@ fjb index.js
 - [x] JSX support
 - [x] Importing JSON
 - [x] Importing CSS
+- [x] [Plugin support](PLUGINS.md)
 - [x] Removing dead code (Tree shaking)
 - [x] Supports package.json
 - [x] Importing _anything_, even when it's not exported, no matter how deeply nested it is
 
 ### Planned Features
-- [ ] Plugin support
 - [ ] TypeScript support
 - [ ] Lazy imports
 - [ ] Better formatted output. (kind of ugly right now)
@@ -127,10 +127,7 @@ make install
 > Yes you can. Simply fork it and start making pull-requests.
 
 ### How do I create a plugin for it?
-> It's not possible at this point.  
-> This is a feature I plan to implement.  
-> If you want some other behaviour right now, simply just change the
-> source code.
+> Have a look at this [guide](PLUGINS.md)
 
 ### In which way to you plan to implement plugins?
 > I'm thinking about shared library files, such as `.so`, `.a`, `.dll` ... etc.

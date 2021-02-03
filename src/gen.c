@@ -4,6 +4,7 @@
 #include "include/js/head_import.js.h"
 #include "include/js/head_require.js.h"
 #include "include/package.h"
+#include "include/plugin.h"
 #include "include/string_utils.h"
 #include <ctype.h>
 #include <stdio.h>
@@ -155,6 +156,8 @@ char* gen(AST_T* ast, fjb_env_T* env)
     exit(1);
   }
 
+  ast = fjb_call_all_hooks(HOOK_BEFORE_GENERATE, ast, env);
+
   char* body = 0;
   char* str = 0;
 
@@ -275,6 +278,8 @@ char* gen(AST_T* ast, fjb_env_T* env)
       free(nextstr);
     }
   }
+
+  str = fjb_call_all_hooks(HOOK_AFTER_GENERATE, str, env);
 
   return str;
 }
