@@ -10,6 +10,9 @@ ESBUILD_ARGS = ' --bundle --outfile=./dist.js'
 PARCEL_PATH = '/benchmark/node_modules/.bin/parcel build'
 PARCEL_DIST = '/dist/index.js'
 PARCEL_ARGS = ''
+POI_PATH = '/benchmark/node_modules/.bin/poi'
+POI_DIST = '/dist/assets/js/index.js'
+POI_ARGS = ''
 FJB_PATH = "/fjb.out"
 FJB_ARGS = ' > ./dist.js'
 
@@ -30,6 +33,12 @@ RUNS = [
         'exec': PWD + PARCEL_PATH,
         "args": PARCEL_ARGS,
         'dist': PARCEL_DIST
+    },
+    {
+        'title': 'poi',
+        'exec': PWD + POI_PATH,
+        "args": POI_ARGS,
+        'dist': POI_DIST
     },
 ]
 
@@ -111,7 +120,7 @@ def run_benchmark(mark):
 def run_benchmarks(marks):
     return map(
         lambda x: dict(list(x.items()) + list(dict(
-            runs=run_benchmark(x),
+            runs=sorted(run_benchmark(x), key=lambda x: x['time']),
             source=open(x['path']).read(),
             sysinfo=get_sysinfo(),
         ).items())),

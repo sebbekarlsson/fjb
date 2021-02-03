@@ -5,6 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "esbuild": "^0.8.36",
-    "parcel": "^1.12.4"
+    "parcel": "^1.12.4",
+    "poi": "^12.10.3"
   }
 }
