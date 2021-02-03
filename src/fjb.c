@@ -8,6 +8,7 @@
 #include "include/lexer.h"
 #include "include/list.h"
 #include "include/parser.h"
+#include "include/plugin.h"
 #include "include/special_gen.h"
 #include "include/string_utils.h"
 #include "include/visitor.h"
@@ -79,6 +80,8 @@ compiler_result_T* fjb()
   }
 
   FJB_ENV->level += 1;
+
+  result = fjb_call_all_hooks(HOOK_BEFORE_COMPILE, result, FJB_ENV);
 
   return result;
 }
