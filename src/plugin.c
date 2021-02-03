@@ -1,0 +1,74 @@
+#include "include/plugin.h"
+#include "include/io.h"
+#include "include/string_utils.h"
+#include <dirent.h>
+#include <dlfcn.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
+extern fjb_env_T* FJB_ENV;
+
+const char PLUGIN_DIR[] = ".plugins/";
+
+void register_plugin_hook(plugin_hook hook)
+{
+  list_push(FJB_ENV->hooks, hook);
+}
+
+void* call_plugin_hook(plugin_hook hook, int action, void* ptr, fjb_env_T* env)
+{
+  return hook(action, ptr, env);
+}
+
+void load_hooks_from_directory(const char* directory)
+{
+  if (!file_exists((char*)directory))
+    return;
+
+  struct dirent* dp;
+  DIR* dfd;
+
+  char* dir;
+
+  if ((dfd = opendir(directory)) == NULL) {
+    fprintf(stderr, "Can't open %s\n", dir);
+    return;
+  }
+
+  char filename_qfd[100];
+  char new_name_qfd[100];
+
+  while ((dp = readdir(dfd)) != NULL) {
+    struct stat stbuf;
+    sprintf(filename_qfd, "%s/%s", dir, dp->d_name);
+
+    if ((stbuf.st_mode & S_IFMT) == S_IFDIR) {
+      continue;
+    } else {
+      const char* ext = get_filename_ext(dp->d_name);
+      if (strcmp(ext, ".so") != 0)
+        continue;
+
+      char buff[256];
+      sprintf(buff, "%s%s", directory, dp->d_name);
+
+      printf("%s\n", buff);
+      void* handle = dlopen(buff, RTLD_NOW);
+
+      if (handle) {
+        plugin_hook hook = dlsym(handle, "hook");
+        register_plugin_hook(hook);
+      } else {
+        printf("Failed to load plugin `%s`\n", buff);
+      }
+    }
+  }
+}
+
+void load_plugins()
+{
+  load_hooks_from_directory(PLUGIN_DIR);
+}

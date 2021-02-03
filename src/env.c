@@ -1,4 +1,5 @@
 #include "include/env.h"
+#include "include/plugin.h"
 #include "include/string_utils.h"
 #include <stdlib.h>
 #include <string.h>
@@ -11,6 +12,7 @@ void init_fjb_env()
   FJB_ENV->source = 0;
   FJB_ENV->filepath = 0;
   FJB_ENV->search_index = NEW_STACK;
+  FJB_ENV->hooks = init_list(sizeof(plugin_hook));
   FJB_ENV->imports = NEW_MAP();
   FJB_ENV->functions = NEW_MAP();
   FJB_ENV->assignments = NEW_MAP();
@@ -63,4 +65,22 @@ void fjb_set_source(char* source)
 void fjb_set_filepath(char* filepath)
 {
   FJB_ENV->filepath = filepath ? strdup(filepath) : 0;
+}
+
+list_T* fjb_get_hooks()
+{
+  return FJB_ENV->hooks;
+}
+
+void* fjb_call_all_hooks(int type, void* ptr, fjb_env_T* env)
+{
+  for (unsigned int i = 0; i < FJB_ENV->hooks->size; i++) {
+    plugin_hook hook = (plugin_hook)FJB_ENV->hooks->items[i];
+    if (!hook)
+      continue;
+
+    ptr = hook(type, ptr, env);
+  }
+
+  return ptr;
 }
