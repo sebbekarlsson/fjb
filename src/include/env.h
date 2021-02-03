@@ -1,8 +1,8 @@
 #ifndef FJB_ENV_H
 #define FJB_ENV_H
-#include "../../external/hashmap/src/include/map.h"
 #include "AST.h"
 #include "list.h"
+#include <hashmap/map.h>
 typedef struct FJB_ENV_STRUCT
 {
   unsigned int is_using_jsx;
@@ -26,6 +26,8 @@ typedef struct FJB_ENV_STRUCT
   char* filepath;
   char* dumped_tree;
 
+  list_T* hooks;
+
   gc_T* GC;
 } fjb_env_T;
 
@@ -38,4 +40,10 @@ void fjb_set_source(char* source);
 void fjb_set_filepath(char* filepath);
 
 void fjb_set_aliased_import(unsigned int aliased_import);
+
+void fjb_set_only_parse(unsigned int only_parse);
+
+list_T* fjb_get_hooks();
+
+void* fjb_call_all_hooks(int type, void* ptr, fjb_env_T* env);
 #endif
