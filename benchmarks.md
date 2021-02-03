@@ -1,5 +1,5 @@
 # Benchmarks
-> These benchmarks were generated at **2021-02-03 22:18:43.230408**
+> These benchmarks were generated at **2021-02-03 23:17:17.423769**
 
 
 
@@ -24,7 +24,7 @@ console.log(r);
 
   
 <details>
-  <summary>FJB - time: 0:00:00.001376, output size: 303 bytes</summary>
+  <summary>FJB - time: 0:00:00.001320, output size: 303 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -38,14 +38,14 @@ console.log(r);
 ````
 > finished in:
 ```
-0:00:00.001376
+0:00:00.001320
 ```
 </details>
 
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.036558, output size: 232 bytes</summary>
+  <summary>esbuild - time: 0:00:00.003395, output size: 232 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -59,7 +59,28 @@ console.log(r);
 ````
 > finished in:
 ```
-0:00:00.036558
+0:00:00.003395
+```
+</details>
+
+
+  
+<details>
+  <summary>parcel - time: 0:00:00.499562, output size: 1488 bytes</summary>
+
+#### Output size
+> The size of the output is:
+```
+1488 bytes
+```
+#### Time
+> The command:
+```
+/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/es6/index.js 
+````
+> finished in:
+```
+0:00:00.499562
 ```
 </details>
 
@@ -82,7 +103,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         1000.366
+CPU MHz:                         4132.264
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -124,7 +145,7 @@ console.log(r);
 
   
 <details>
-  <summary>FJB - time: 0:00:00.001272, output size: 262 bytes</summary>
+  <summary>FJB - time: 0:00:00.001186, output size: 262 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -138,14 +159,14 @@ console.log(r);
 ````
 > finished in:
 ```
-0:00:00.001272
+0:00:00.001186
 ```
 </details>
 
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.003731, output size: 214 bytes</summary>
+  <summary>esbuild - time: 0:00:00.002787, output size: 214 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -159,7 +180,28 @@ console.log(r);
 ````
 > finished in:
 ```
-0:00:00.003731
+0:00:00.002787
+```
+</details>
+
+
+  
+<details>
+  <summary>parcel - time: 0:00:00.493344, output size: 1383 bytes</summary>
+
+#### Output size
+> The size of the output is:
+```
+1383 bytes
+```
+#### Time
+> The command:
+```
+/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/alias_imports/index.js 
+````
+> finished in:
+```
+0:00:00.493344
 ```
 </details>
 
@@ -182,7 +224,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         2265.139
+CPU MHz:                         4038.681
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -224,7 +266,7 @@ document.head.appendChild(cssEl);
 
   
 <details>
-  <summary>FJB - time: 0:00:00.001183, output size: 477 bytes</summary>
+  <summary>FJB - time: 0:00:00.001090, output size: 477 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -238,14 +280,14 @@ document.head.appendChild(cssEl);
 ````
 > finished in:
 ```
-0:00:00.001183
+0:00:00.001090
 ```
 </details>
 
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.002803, output size: 249 bytes</summary>
+  <summary>esbuild - time: 0:00:00.002914, output size: 249 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -259,7 +301,28 @@ document.head.appendChild(cssEl);
 ````
 > finished in:
 ```
-0:00:00.002803
+0:00:00.002914
+```
+</details>
+
+
+  
+<details>
+  <summary>parcel - time: 0:00:00.517088, output size: 1383 bytes</summary>
+
+#### Output size
+> The size of the output is:
+```
+1383 bytes
+```
+#### Time
+> The command:
+```
+/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/css_import/index.js 
+````
+> finished in:
+```
+0:00:00.517088
 ```
 </details>
 
@@ -282,7 +345,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         4324.137
+CPU MHz:                         4160.795
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -321,7 +384,7 @@ console.log(people[0].first_name);
 
   
 <details>
-  <summary>FJB - time: 0:00:00.001288, output size: 1188 bytes</summary>
+  <summary>FJB - time: 0:00:00.001076, output size: 1188 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -335,14 +398,14 @@ console.log(people[0].first_name);
 ````
 > finished in:
 ```
-0:00:00.001288
+0:00:00.001076
 ```
 </details>
 
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.003200, output size: 1003 bytes</summary>
+  <summary>esbuild - time: 0:00:00.002928, output size: 1003 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -356,7 +419,28 @@ console.log(people[0].first_name);
 ````
 > finished in:
 ```
-0:00:00.003200
+0:00:00.002928
+```
+</details>
+
+
+  
+<details>
+  <summary>parcel - time: 0:00:00.502697, output size: 1822 bytes</summary>
+
+#### Output size
+> The size of the output is:
+```
+1822 bytes
+```
+#### Time
+> The command:
+```
+/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/json_import/index.js 
+````
+> finished in:
+```
+0:00:00.502697
 ```
 </details>
 
@@ -379,7 +463,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         3082.758
+CPU MHz:                         4313.816
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -419,7 +503,7 @@ console.log(ceil(25.443));
 
   
 <details>
-  <summary>FJB - time: 0:00:00.156296, output size: 2278 bytes</summary>
+  <summary>FJB - time: 0:00:00.160052, output size: 2278 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -433,14 +517,14 @@ console.log(ceil(25.443));
 ````
 > finished in:
 ```
-0:00:00.156296
+0:00:00.160052
 ```
 </details>
 
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.017251, output size: 222632 bytes</summary>
+  <summary>esbuild - time: 0:00:00.017182, output size: 222632 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -454,7 +538,28 @@ console.log(ceil(25.443));
 ````
 > finished in:
 ```
-0:00:00.017251
+0:00:00.017182
+```
+</details>
+
+
+  
+<details>
+  <summary>parcel - time: 0:00:02.932166, output size: 94714 bytes</summary>
+
+#### Output size
+> The size of the output is:
+```
+94714 bytes
+```
+#### Time
+> The command:
+```
+/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/with_lodash/index.js 
+````
+> finished in:
+```
+0:00:02.932166
 ```
 </details>
 
@@ -477,7 +582,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         4361.457
+CPU MHz:                         4108.842
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00

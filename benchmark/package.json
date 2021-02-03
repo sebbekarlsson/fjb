@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "esbuild": "^0.8.36"
+    "esbuild": "^0.8.36",
+    "parcel": "^1.12.4"
   }
 }

@@ -129,9 +129,6 @@ make install
 ### How do I create a plugin for it?
 > Have a look at this [guide](PLUGINS.md)
 
-### In which way to you plan to implement plugins?
-> I'm thinking about shared library files, such as `.so`, `.a`, `.dll` ... etc.
-
 ### Will you add support for writing plugins in Javascript?
 > No. I don't think Javascript belongs in a bundler.  
 > The reason why most bundlers today are slow, is because they are written in Javascript.
