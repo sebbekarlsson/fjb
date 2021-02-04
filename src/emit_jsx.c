@@ -1,6 +1,6 @@
-#include "include/gen_jsx.h"
+#include "include/emit_jsx.h"
+#include "include/emit.h"
 #include "include/env.h"
-#include "include/gen.h"
 #include "include/imported.h"
 #include "include/js.h"
 #include "include/js/jsx.js.h"
@@ -15,7 +15,7 @@
 
 extern fjb_env_T* FJB_ENV;
 
-char* gen_jsx_template_string(AST_T* ast, fjb_env_T* env)
+char* emit_jsx_template_string(AST_T* ast, fjb_env_T* env)
 {
   char* m = "`";
   char* str = 0;
@@ -27,7 +27,7 @@ char* gen_jsx_template_string(AST_T* ast, fjb_env_T* env)
   if (ast->string_value) {
     str = str_append(&str, ast->string_value);
   } else if (ast->expr) {
-    char* v = gen(ast->expr, env);
+    char* v = emit(ast->expr, env);
     str = str_append(&str, v);
   }
   str = str_append(&str, "}");
@@ -37,7 +37,7 @@ char* gen_jsx_template_string(AST_T* ast, fjb_env_T* env)
   return str;
 }
 
-char* gen_jsx_text(AST_T* ast, fjb_env_T* env)
+char* emit_jsx_text(AST_T* ast, fjb_env_T* env)
 {
   char* m = "\"";
   char* str = 0;
@@ -48,7 +48,7 @@ char* gen_jsx_text(AST_T* ast, fjb_env_T* env)
   if (ast->string_value) {
     str = str_append(&str, ast->string_value);
   } else if (ast->expr) {
-    char* v = gen(ast->expr, env);
+    char* v = emit(ast->expr, env);
     str = str_append(&str, v);
   }
   str = str_append(&str, m);
@@ -57,17 +57,18 @@ char* gen_jsx_text(AST_T* ast, fjb_env_T* env)
   return str;
 }
 
-char* gen_jsx_body(AST_T* ast, fjb_env_T* env)
+char* emit_jsx_body(AST_T* ast, fjb_env_T* env)
 {
   char* str = 0;
 
   LOOP_NODES(
-    ast->list_value, i, child, char* childstr = gen_jsx(child, env);
+    ast->list_value, i, child, char* childstr = emit_jsx(child, env);
 
     if (childstr) {
       str = str_append(&str, "__jsx_append(parent,");
       str = str_append(&str, childstr);
       str = str_append(&str, ")");
+      free(childstr);
     }
 
     if (i < ast->list_value->size) { str = str_append(&str, ";"); });
@@ -75,7 +76,7 @@ char* gen_jsx_body(AST_T* ast, fjb_env_T* env)
   return str ? str : strdup("");
 }
 
-char* gen_jsx_attributes(AST_T* ast, fjb_env_T* env)
+char* emit_jsx_attributes(AST_T* ast, fjb_env_T* env)
 {
   char* str = 0;
 
@@ -96,7 +97,7 @@ char* gen_jsx_attributes(AST_T* ast, fjb_env_T* env)
       len = TEMPLATE_LISTENER_LEN;
     }
 
-    char* value = gen(child->value, env);
+    char* value = emit(child->value, env);
     char* buff = calloc(strlen(name) + strlen(value) + len + 1, sizeof(char));
     sprintf(buff, template, name, value);
 
@@ -107,13 +108,16 @@ char* gen_jsx_attributes(AST_T* ast, fjb_env_T* env)
   return str ? str : strdup("");
 }
 
-char* gen_jsx_call(AST_T* ast, fjb_env_T* env)
+char* emit_jsx_call(AST_T* ast, fjb_env_T* env)
 {
   char* value = 0;
 
   AST_T* call_ast = init_ast(AST_CALL);
-  call_ast->name = strdup(ast->ptr->name);
+  call_ast->left = init_ast(AST_NAME);
+  call_ast->left->name = ast->ptr && ast->ptr->name ? strdup(ast->ptr->name) : 0;
+  call_ast->name = ast->ptr && ast->ptr->name ? strdup(ast->ptr->name) : 0;
   call_ast->list_value = list_copy(ast->options);
+  gc_mark(env->GC, call_ast);
 
   if ((ast->ptr && ast->ptr->type == AST_FUNCTION) ||
       (ast->ptr && ast->ptr->value && ast->ptr->value->type == AST_FUNCTION)) {
@@ -121,23 +125,23 @@ char* gen_jsx_call(AST_T* ast, fjb_env_T* env)
     state->string_value = strdup("new");
     state->value = call_ast;
 
-    value = gen(state, env);
+    value = emit(state, env);
   } else {
-    value = gen(call_ast, env);
+    value = emit(call_ast, env);
   }
 
   return value;
 }
 
-char* gen_jsx_element(AST_T* ast, fjb_env_T* env)
+char* emit_jsx_element(AST_T* ast, fjb_env_T* env)
 {
   const char* TEMPLATE = (const char*)(ast->ptr ? _tmp_jsx_ptr_js : _tmp_jsx_js);
   unsigned int TEMPLATE_LEN = ast->ptr ? _tmp_jsx_ptr_js_len : _tmp_jsx_js_len;
   char* name = ast_get_string(ast);
-  char* func_name = ast->ptr ? gen_jsx_call(ast, env) : strdup("document.createElement");
-  char* attr = gen_jsx_attributes(ast, env);
-  char* body = ast->body ? gen_jsx_body(ast->body, env) : strdup("");
-  char* call_args = ast->options && ast->options->size ? gen_tuple(ast->options, env) : strdup("");
+  char* func_name = ast->ptr ? emit_jsx_call(ast, env) : strdup("document.createElement");
+  char* attr = emit_jsx_attributes(ast, env);
+  char* body = ast->body ? emit_jsx_body(ast->body, env) : strdup("");
+  char* call_args = ast->options && ast->options->size ? emit_tuple(ast->options, env) : strdup("");
   char* value = calloc(TEMPLATE_LEN + strlen(name) + strlen(call_args) + strlen(func_name) +
                          strlen(attr) + strlen(body) + 1,
                        sizeof(char));
@@ -147,11 +151,11 @@ char* gen_jsx_element(AST_T* ast, fjb_env_T* env)
   return value;
 }
 
-char* gen_jsx_template_value(AST_T* ast, fjb_env_T* env)
+char* emit_jsx_template_value(AST_T* ast, fjb_env_T* env)
 {
   char* value = 0;
   if (ast->expr) {
-    char* exprstr = gen(ast->expr, env);
+    char* exprstr = emit(ast->expr, env);
     value = str_append(&value, exprstr);
     return value;
   }
@@ -159,18 +163,18 @@ char* gen_jsx_template_value(AST_T* ast, fjb_env_T* env)
   return strdup("");
 }
 
-char* gen_jsx(AST_T* ast, fjb_env_T* env)
+char* emit_jsx(AST_T* ast, fjb_env_T* env)
 {
   switch (ast->type) {
-    case AST_JSX_ELEMENT: return gen_jsx_element(ast, env); break;
-    case AST_JSX_COMPOUND: return gen_jsx_body(ast, env); break;
-    case AST_JSX_TEMPLATE_VALUE: return gen_jsx_template_value(ast, env); break;
-    case AST_JSX_TEMPLATE_STRING: return gen_jsx_template_string(ast, env); break;
-    case AST_JSX_TEXT: return gen_jsx_text(ast, env); break;
+    case AST_JSX_ELEMENT: return emit_jsx_element(ast, env); break;
+    case AST_JSX_COMPOUND: return emit_jsx_body(ast, env); break;
+    case AST_JSX_TEMPLATE_VALUE: return emit_jsx_template_value(ast, env); break;
+    case AST_JSX_TEMPLATE_STRING: return emit_jsx_template_string(ast, env); break;
+    case AST_JSX_TEXT: return emit_jsx_text(ast, env); break;
     case AST_CALL:
-    case AST_STATE: return gen(ast, env); break;
+    case AST_STATE: return emit(ast, env); break;
     default: {
-      printf("[Gen(JSX)]: Missing generator for `%d`\n", ast->type);
+      printf("[Gen(JSX)]: Missing emiterator for `%d`\n", ast->type);
       exit(1);
     } break;
   }

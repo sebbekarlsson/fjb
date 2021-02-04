@@ -1,6 +1,6 @@
-#include "include/special_gen.h"
+#include "include/emit_hooks.h"
+#include "include/emit.h"
 #include "include/env.h"
-#include "include/gen.h"
 #include "include/imported.h"
 #include "include/string_utils.h"
 #include <stdio.h>
@@ -8,7 +8,7 @@
 
 extern fjb_env_T* FJB_ENV;
 
-compiler_result_T* special_gen_json(fjb_env_T* env, list_T* imports)
+compiler_result_T* emit_hooks_json(fjb_env_T* env, list_T* imports)
 {
   if (imports && !imports->size)
     return init_compiler_result(env->source, env->filepath);
@@ -26,6 +26,7 @@ compiler_result_T* special_gen_json(fjb_env_T* env, list_T* imports)
   json_ast->string_value = str;
 
   if (!env->aliased_import) {
+    gc_mark(env->GC, json_ast);
     AST_T* assignment = init_ast(AST_ASSIGNMENT);
     assignment->flags = NEW_STACK;
     assignment->left = init_ast(AST_NAME);
@@ -43,16 +44,18 @@ compiler_result_T* special_gen_json(fjb_env_T* env, list_T* imports)
     map_set(FJB_ENV->assignments, assignment->name, assignment);
     list_push(FJB_ENV->search_index, assignment);
 
-    value = gen(assignment, env);
+    value = emit(assignment, env);
   } else if (env->aliased_import) {
     AST_T* state = init_ast(AST_STATE);
     state->value = json_ast;
     state->string_value = strdup("return");
 
-    value = gen(state, env);
+    value = emit(state, env);
+    gc_mark(env->GC, state);
   }
 
-  value = str_append(&value, ";");
+  if (value)
+    value = str_append(&value, ";");
 
   compiler_result_T* result = init_compiler_result(value, strdup(env->filepath));
   result->node = json_ast;
@@ -60,7 +63,7 @@ compiler_result_T* special_gen_json(fjb_env_T* env, list_T* imports)
   return result;
 }
 
-compiler_result_T* special_gen_css(fjb_env_T* env, list_T* imports)
+compiler_result_T* emit_hooks_css(fjb_env_T* env, list_T* imports)
 {
   if (imports && !imports->size)
     return init_compiler_result(env->source, env->filepath);
@@ -91,13 +94,13 @@ compiler_result_T* special_gen_css(fjb_env_T* env, list_T* imports)
 
     assignment->exported = 1;
 
-    value = gen(assignment, env);
+    value = emit(assignment, env);
   } else if (env->aliased_import) {
     AST_T* state = init_ast(AST_STATE);
     state->value = css_ast;
     state->string_value = strdup("return");
 
-    value = gen(state, env);
+    value = emit(state, env);
   }
 
   value = str_append(&value, ";");
@@ -108,13 +111,13 @@ compiler_result_T* special_gen_css(fjb_env_T* env, list_T* imports)
   return result;
 }
 
-compiler_result_T* special_gen(fjb_env_T* env, char* ext, list_T* imports)
+compiler_result_T* emit_hooks(fjb_env_T* env, char* ext, list_T* imports)
 {
   if (strcasecmp(ext, ".json") == 0) {
-    return special_gen_json(env, imports);
+    return emit_hooks_json(env, imports);
   }
   if (strcasecmp(ext, ".css") == 0) {
-    return special_gen_css(env, imports);
+    return emit_hooks_css(env, imports);
   }
 
   return 0;

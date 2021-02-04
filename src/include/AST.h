@@ -68,13 +68,9 @@ void ast_init_parent_lists(AST_T* ast);
 
 unsigned int ast_is_in_list(AST_T* ast, list_T* list);
 
-char* _ast_to_str(AST_T* ast, int indent);
-
 char* ast_type_to_str(AST_T* ast);
 
 char* ast_binop_to_str(AST_T* ast, int indent);
-
-#define ast_to_str(ast) _ast_to_str(ast, indent)
 
 void ast_get_pointers(list_T* list, AST_T* ast);
 
