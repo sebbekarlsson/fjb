@@ -1,10 +1,10 @@
 #include "include/test_utils.h"
-#include "../../src/include/fjb.h"
-#include "../../src/include/io.h"
-#include "../../src/include/lexer.h"
-#include "../../src/include/parser.h"
-#include "../../src/include/resolve.h"
-#include "../../src/include/string_utils.h"
+#include <fjb/fjb.h>
+#include <fjb/io.h>
+#include <fjb/lexer.h>
+#include <fjb/parser.h>
+#include <fjb/resolve.h>
+#include <fjb/string_utils.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -73,6 +73,7 @@ AST_T* run_get_ast(const char* filepath, unsigned int post_process)
   if (!post_process)
     return result->node;
 
+  fjb_set_source(result->stdout);
   lexer_T* lexer = init_lexer(result->stdout, filepath);
   parser_T* parser = init_parser(lexer, FJB_ENV);
 

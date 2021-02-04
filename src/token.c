@@ -58,7 +58,7 @@ char* token_type_to_str(int type)
     case TOKEN_GT: return strdup("TOKEN_GT");
     case TOKEN_GT_EQUALS: return strdup("TOKEN_GT_EQUALS");
     case TOKEN_ARROW_RIGHT: return strdup("TOKEN_ARROW_RIGHT");
-    case TOKEN_SHIFT_RIGHT_UNSIGNED: return strdup("TOKEN_SHIFT_RIGHT_UNSIGNED");
+    case TOKEN_BITWISE_SHIFT_RIGHT_UNSIGNED: return strdup("TOKEN_BITWISE_SHIFT_RIGHT_UNSIGNED");
     case TOKEN_SHIFT_RIGHT_UNSIGNED_EQUALS: return strdup("TOKEN_SHIFT_RIGHT_UNSIGNED_EQUALS");
     case TOKEN_PIPE_EQUALS: return strdup("TOKEN_PIPE_EQUALS");
     case TOKEN_AND_EQUALS: return strdup("TOKEN_AND_EQUALS");

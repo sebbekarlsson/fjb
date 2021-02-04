@@ -1,8 +1,8 @@
 const char* JS_EVENTS[] = {
   {{
-    map(jsEvents, (@
-      "{{ $0 }}",
-    @))
+    join(map(jsEvents, (@
+      "{{ $0 }}"
+    @)), ",")
   }}
 };
 

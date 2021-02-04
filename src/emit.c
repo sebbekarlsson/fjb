@@ -409,23 +409,28 @@ char* emit_assignment(AST_T* ast, fjb_env_T* env)
   if (ast->value) {
     valuestr = emit(ast->value, env);
   } else {
-    valuestr = strdup(" ");
+    return strdup(" ");
   }
 
-  if ((ast->parent && ast->parent->type == AST_FUNCTION && env->imports && ast->name &&
-       ast->flags) ||
-      ast->exported) {
-    TEMPLATE(expose_def, expose_str, strlen(ast->name) * 2, ast->name, ast->name);
-  } else {
-    expose_str = strdup(" ");
+  if (ast->not_exported == 0) {
+    if ((ast->parent && ast->parent->type == AST_FUNCTION && env->imports && ast->name &&
+         ast->flags) ||
+        ast->exported) {
+      TEMPLATE(expose_def, expose_str, strlen(ast->name) * 2, ast->name, ast->name);
+    } else {
+      expose_str = strdup(" ");
+    }
   }
+
+  if (!expose_str)
+    expose_str = strdup(" ");
+  if (!valuestr)
+    valuestr = strdup(" ");
 
   TEMPLATE(assignment, str, strlen(valuestr) + strlen(expose_str), valuestr, expose_str);
 
   if (valuestr)
     free(valuestr);
-  if (expose_str)
-    free(expose_str);
 
   return str;
 }
@@ -646,7 +651,7 @@ char* emit_function(AST_T* ast, fjb_env_T* env)
              args_str,
              body_str);
   } else {
-    if (name && !ast->anon) {
+    if (name && !ast->anon && ast->not_exported == 0) {
       TEMPLATE(expose_def, expose_str, (strlen(name) * 2) + 16, name, name);
     } else {
       expose_str = strdup(" ");
@@ -675,10 +680,10 @@ char* emit_function(AST_T* ast, fjb_env_T* env)
 
 char* emit_scope(AST_T* ast, fjb_env_T* env)
 {
-  char* args_str = emit_semi_tuple(ast->list_value, env);
+  char* body_str = ast->body ? emit(ast->body, env) : strdup("");
 
   char* str;
-  TEMPLATE(braced, str, strlen(args_str), args_str);
+  TEMPLATE(braced, str, strlen(body_str), body_str);
 
   return str;
 }
@@ -786,7 +791,7 @@ char* emit_block_linked_list(AST_T* ast, fjb_env_T* env)
 
     if (bodystr) {
       TEMPLATE(braced, bod, strlen(bodystr), bodystr);
-      str_append(&str, bod);
+      str = str_append(&str, bod);
     }
   }
 

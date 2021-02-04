@@ -71,6 +71,10 @@ BENCHMARKS = [
     create_mark(
         "Importing `ceil` from lodash, with tree shaking.",
         '/tests/src/test_projects/with_lodash/index.js'
+    ),
+    create_mark(
+        "Require `jquery`",
+        '/tests/src/test_projects/with_jquery/index.js'
     )
 ]
 
