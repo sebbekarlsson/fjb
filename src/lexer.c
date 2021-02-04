@@ -212,15 +212,21 @@ token_T* lexer_next(lexer_T* lexer)
         return lexer_advance_token(lexer, tok);
       }
       if (lexer_peek(lexer, 1) == '>' && lexer_peek(lexer, 2) == '=') {
-        token_T* tok = lexer_advance_token(lexer, init_token(strdup(">>="), TOKEN_SHIFT_RIGHT));
+        token_T* tok = lexer_advance_token(
+          lexer, init_token(strdup(">>="), TOKEN_UNSIGNED_SHIFT_RIGHT_ASSIGNMENT));
         lexer_advance(lexer);
         return lexer_advance_token(lexer, tok);
       }
       if (lexer_peek(lexer, 1) == '>' && lexer_peek(lexer, 2) == '>') {
         token_T* tok =
-          lexer_advance_token(lexer, init_token(strdup(">>>"), TOKEN_SHIFT_RIGHT_UNSIGNED));
+          lexer_advance_token(lexer, init_token(strdup(">>>"), TOKEN_BITWISE_SHIFT_RIGHT_UNSIGNED));
         lexer_advance(lexer);
         return lexer_advance_token(lexer, tok);
+      }
+      if (lexer_peek(lexer, 1) == '>') {
+        token_T* tok = lexer_advance_token(lexer, init_token(strdup(">>"), TOKEN_SHIFT_RIGHT));
+        lexer_advance(lexer);
+        return tok;
       }
       if (lexer_peek(lexer, 1) == '=') {
         token_T* tok = lexer_advance_token(lexer, init_token(strdup(">="), TOKEN_GT_EQUALS));
@@ -282,6 +288,10 @@ token_T* lexer_next(lexer_T* lexer)
     }
 
     if (lexer->c == '/') {
+      if (lexer_peek(lexer, 1) == '=') {
+        token_T* tok = lexer_advance_token(lexer, init_token(strdup("/="), TOKEN_DIV_EQUALS));
+        return lexer_advance_token(lexer, tok);
+      }
       while (lexer_peek(lexer, 1) == '/' || lexer_peek(lexer, 1) == '*') {
         lexer_skip_comment(lexer);
         lexer_skip_whitespace(lexer);

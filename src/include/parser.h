@@ -16,6 +16,7 @@ typedef struct FJB_PARSER_OPTIONS_STRUCT
 {
   int stop_token;
   AST_T* parent;
+  unsigned int not_exported;
 } parser_options_T;
 
 #define EMPTY_PARSER_OPTIONS                                                                       \

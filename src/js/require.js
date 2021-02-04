@@ -1,2 +1,2 @@
 %s
-(function(){%s}).apply(this)
+(function(){%s})

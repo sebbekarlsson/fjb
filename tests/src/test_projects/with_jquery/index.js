@@ -1,1 +1,3 @@
-const jquery = require('./jquery');
+const $ = require('./jquery');
+
+console.log($);

@@ -1,18 +1,17 @@
-typedef enum AST_TYPE
+enum AST_TYPE
 {
   {{
-    map(astEnums, (@
-      {{ $0 }},
+    join(map(astEnums, (@
+      {{ $0 }}
 
-    @))
+    @)), ",")
   }}
 };
 
 static const char * AST_TYPE_STR[] = {
   {{
-    map(astEnums, (@
-      "{{ $0 }}",
-
-    @))
+    join(map(astEnums, (@
+      "{{ $0 }}"
+    @)), ",")
   }}
 };

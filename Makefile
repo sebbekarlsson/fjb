@@ -32,7 +32,6 @@ libfjb.a: $(objects_no_main)
 	xxd -i .tmp/$(notdir $^) | sed 's/\([0-9a-f]\)$$/\0, 0x00/' > src/include/js/$(notdir $^.h)
 
 %.h: %.gpp
-	ls
 	mkdir -p ./src/include/enums
 	$(GPP_PATH) $^ > ./src/include/enums/$(notdir $^.h)
 	#xxd -i .tmp/$(notdir $^) > src/include/js/$(notdir $^.h)

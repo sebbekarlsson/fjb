@@ -1,6 +1,6 @@
-#include "../../src/include/AST.h"
-#include "../../src/include/env.h"
 #include "include/test_utils.h"
+#include <fjb/AST.h>
+#include <fjb/env.h>
 #include <stdio.h>
 
 #define MSG() printf(BOLDWHITE "Testing: %s\n" RESET, filepath)
@@ -15,6 +15,7 @@ void test_es6()
   AST_T* root = run_get_ast(filepath, 1);
 
   assert_node_exists(root, AST_FUNCTION, "subtract", "test AST_FUNCTION exists");
+  destroy_fjb_env();
 }
 
 void test_simple()
@@ -27,6 +28,7 @@ void test_simple()
   AST_T* root = run_get_ast(filepath, 1);
 
   assert_node_exists(root, AST_FUNCTION, "subtract", "test AST_FUNCTION exists");
+  destroy_fjb_env();
 }
 
 void test_with_lodash()
@@ -40,6 +42,20 @@ void test_with_lodash()
 
   // assert_node_exists(root, AST_ASSIGNMENT, "ceil", "test AST_ASSIGNMENT exists");
   assert_node_exists(root, AST_FUNCTION, "createRound", "test AST_FUNCTION exists");
+  destroy_fjb_env();
+}
+
+void test_with_jquery()
+{
+  init_fjb_env();
+  const char* filepath = "./src/test_projects/with_jquery/index.js";
+
+  MSG();
+
+  AST_T* root = run_get_ast(filepath, 0);
+
+  assert_node_exists(root, AST_ASSIGNMENT, "$", "test AST_ASSIGNMENT exists");
+  destroy_fjb_env();
 }
 
 void test_no_imports()
@@ -52,6 +68,7 @@ void test_no_imports()
   AST_T* root = run_get_ast(filepath, 1);
 
   assert_node_exists(root, AST_FUNCTION, "hello", "test AST_FUNCTION exists");
+  destroy_fjb_env();
 }
 
 void test_with_assignment()
@@ -61,9 +78,10 @@ void test_with_assignment()
 
   MSG();
 
-  AST_T* root = run_get_ast(filepath, 1);
+  AST_T* root = run_get_ast(filepath, 0);
 
   assert_node_exists(root, AST_ASSIGNMENT, "myfunc", "test arrow function assignment exists");
+  destroy_fjb_env();
 }
 
 void test_strings()
@@ -79,6 +97,7 @@ void test_strings()
                      "*(?:'((?:\x5c\x5c\x5c\x5c.|[^\x5c\x5c\x5c\x5c'])*)'|\x5c\"((?:"
                      "\x5c\x5c\x5c\x5c.|[^\x5c\x5c\x5c\x5c\x5c\"])*)\x5c\"|(",
                      "test string escaping is correct");
+  destroy_fjb_env();
 }
 
 void test_regex()
@@ -93,6 +112,7 @@ void test_regex()
   assert_node_exists(root, AST_FUNCTION, "validateEmail", "test AST_FUNCTION exists.");
   assert_node_exists(root, AST_REGEX, "/\x5cS+@\x5cS+\x5c.\x5cS+/",
                      "test regex exists and is correct.");
+  destroy_fjb_env();
 }
 
 void test_class()
@@ -105,6 +125,7 @@ void test_class()
   AST_T* root = run_get_ast(filepath, 1);
   assert_node_exists(root, AST_CLASS, "Animal", "test AST_CLASS Animal exists.");
   assert_node_exists(root, AST_CLASS, "Dog", "test AST_CLASS Dog exists.");
+  destroy_fjb_env();
 }
 
 void test_alias_imports()
@@ -116,6 +137,8 @@ void test_alias_imports()
 
   AST_T* root = run_get_ast(filepath, 1);
   assert_node_exists(root, AST_ASSIGNMENT, "mul", "test AST_ASSIGNMENT mul exists.");
+
+  destroy_fjb_env();
 }
 
 void test_wildcard_imports()
@@ -127,6 +150,8 @@ void test_wildcard_imports()
 
   AST_T* root = run_get_ast(filepath, 1);
   assert_node_exists(root, AST_ASSIGNMENT, "utils", "test AST_ASSIGNMENT utils exists.");
+
+  destroy_fjb_env();
 }
 
 void test_jsx()
@@ -138,6 +163,8 @@ void test_jsx()
 
   AST_T* root = run_get_ast(filepath, 1);
   assert_node_exists(root, AST_NAME, "document", "test AST_NAME document exists.");
+
+  destroy_fjb_env();
 }
 
 void test_jsx_custom()
@@ -150,6 +177,7 @@ void test_jsx_custom()
   AST_T* root = run_get_ast(filepath, 1);
   assert_node_exists(root, AST_NAME, "document", "test AST_NAME document exists.");
   assert_node_exists(root, AST_NAME, "HeadTitle", "test AST_NAME HeadTitle exists.");
+  destroy_fjb_env();
 }
 
 void test_json_import()
@@ -163,6 +191,7 @@ void test_json_import()
   assert_node_not_exists(root, AST_ARRAY, 0, "test AST_ARRAY does not exists.");
   AST_T* root_after = run_get_ast(filepath, 1);
   assert_node_not_exists(root, AST_ARRAY, 0, "test AST_ARRAY exists.");
+  destroy_fjb_env();
 }
 
 void test_css_import()
@@ -174,6 +203,7 @@ void test_css_import()
 
   AST_T* root = run_get_ast(filepath, 1);
   assert_node_not_exists(root, AST_TEMPLATE_STRING, 0, "test AST_TEMPLATE_STRING exists.");
+  destroy_fjb_env();
 }
 
 int main(int argc, char* argv[])
@@ -181,6 +211,7 @@ int main(int argc, char* argv[])
   test_es6();
   test_simple();
   test_with_lodash();
+  test_with_jquery();
   test_no_imports();
   test_with_assignment();
   test_strings();

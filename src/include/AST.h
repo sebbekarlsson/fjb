@@ -50,6 +50,7 @@ typedef struct FJB_AST_STRUCT
   unsigned int jsx_closed;
   unsigned int anon;
   unsigned int exported;
+  unsigned int not_exported;
   int line;
 
   unsigned int is_resolved;
