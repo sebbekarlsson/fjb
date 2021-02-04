@@ -4,8 +4,18 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@babel/core": "^7.12.13",
+    "@babel/preset-env": "^7.12.13",
+    "@rollup/plugin-json": "^4.1.0",
     "esbuild": "^0.8.36",
     "parcel": "^1.12.4",
-    "poi": "^12.10.3"
+    "poi": "^12.10.3",
+    "rollup": "^2.38.4",
+    "rollup-plugin-auto-named-exports": "^1.0.0-beta.3",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-cjs-es": "^1.0.1",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-export-default": "^1.4.0",
+    "rollup-plugin-node-resolve": "^5.2.0"
   }
 }

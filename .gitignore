@@ -199,3 +199,9 @@ dist.js
 callgrind.out*
 
 dist.css
+
+.cjsescache
+
+bundle.js
+
+yarn.lock

@@ -50,6 +50,19 @@ void destroy_fjb_env()
 {
   gc_sweep(FJB_ENV->GC);
   gc_free(FJB_ENV->GC);
+
+  if (FJB_ENV->imports)
+    map_free(FJB_ENV->imports);
+  if (FJB_ENV->functions)
+    map_free(FJB_ENV->functions);
+  if (FJB_ENV->assignments)
+    map_free(FJB_ENV->assignments);
+  if (FJB_ENV->source)
+    free(FJB_ENV->source);
+  if (FJB_ENV->filepath)
+    free(FJB_ENV->filepath);
+
+  free(FJB_ENV);
 }
 
 void fjb_set_aliased_import(unsigned int aliased_import)

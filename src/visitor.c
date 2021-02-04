@@ -1,16 +1,15 @@
 #include "include/visitor.h"
 #include "include/compound.h"
+#include "include/emit.h"
+#include "include/emit_hooks.h"
 #include "include/env.h"
 #include "include/fjb.h"
 #include "include/gc.h"
-#include "include/gen.h"
 #include "include/imported.h"
 #include "include/io.h"
 #include "include/jsx_eval.h"
 #include "include/node.h"
 #include "include/plugin.h"
-#include "include/resolve.h"
-#include "include/special_gen.h"
 #include "include/string_utils.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -143,19 +142,20 @@ AST_T* visitor_visit_import(visitor_T* visitor, AST_T* ast, list_T* stack)
   char* contents = fjb_read_file(final_file_to_read);
   fjb_set_source(contents);
   fjb_set_aliased_import(ast->alias != 0);
+  free(contents);
 
   char* ext = (char*)get_filename_ext(FJB_ENV->filepath);
-  compiler_result_T* special = special_gen(FJB_ENV, ext, ast->list_value);
+  compiler_result_T* special = emit_hooks(FJB_ENV, ext, ast->list_value);
 
   compiler_result_T* result = special ? special : fjb();
-  ast->headers = result->headers;
+  ast->headers = result->headers ? strdup(result->headers) : strdup("");
   ast->compiled_value = strdup(result->stdout);
 
   if (result->node && !special) {
     AST_T* dot = new_compound(result->node, FJB_ENV);
 
     ast->node = dot;
-    ast->compiled_value = dot->list_value ? gen(dot, FJB_ENV) : ast->compiled_value;
+    ast->compiled_value = dot->list_value ? emit(dot, FJB_ENV) : ast->compiled_value;
   }
 
   fjb_set_filepath(prev_filepath);
@@ -167,6 +167,9 @@ AST_T* visitor_visit_import(visitor_T* visitor, AST_T* ast, list_T* stack)
     char* name = ast_get_string(id);
     map_unset(FJB_ENV->imports, id->name);
   }
+
+  if (result)
+    compiler_result_free(result);
 
   /* char** keys;
    unsigned int nrkeys;
@@ -731,5 +734,7 @@ AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* stack)
 
 void visitor_free(visitor_T* visitor)
 {
+  if (visitor->map)
+    map_free(visitor->map);
   free(visitor);
 }

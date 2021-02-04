@@ -18,5 +18,8 @@ void compiler_result_free(compiler_result_T* result)
   if (result->stdout)
     free(result->stdout);
 
+  if (result->headers)
+    free(result->headers);
+
   free(result);
 }

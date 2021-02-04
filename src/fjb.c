@@ -1,15 +1,15 @@
 #include "include/fjb.h"
 #include "include/compound.h"
+#include "include/emit.h"
+#include "include/emit_hooks.h"
 #include "include/env.h"
 #include "include/gc.h"
-#include "include/gen.h"
 #include "include/io.h"
 #include "include/js/jsx_headers.js.h"
 #include "include/lexer.h"
 #include "include/list.h"
 #include "include/parser.h"
 #include "include/plugin.h"
-#include "include/special_gen.h"
 #include "include/string_utils.h"
 #include "include/visitor.h"
 #include <stdio.h>
@@ -44,8 +44,13 @@ compiler_result_T* fjb()
   visitor_T* visitor = init_visitor(parser);
   root = visitor_visit(visitor, root, stack);
 
+  if (!root) {
+    printf("No root node was generated.\n");
+    exit(1);
+  }
+
   /* ==== Tree-shake ==== */
-  AST_T* root_to_generate = new_compound(root, FJB_ENV);
+  AST_T* root_to_emiterate = new_compound(root, FJB_ENV);
 
   /* ==== Generate ==== */
   char* str = strdup("");
@@ -53,7 +58,7 @@ compiler_result_T* fjb()
   str = str_append(&str, "/* IMPORT `");
   str = str_append(&str, FJB_ENV->filepath);
   str = str_append(&str, "` */ ");
-  char* out = gen(root_to_generate, FJB_ENV);
+  char* out = emit(root_to_emiterate, FJB_ENV);
 
   if (out) {
     str = str_append(&str, out);
@@ -65,7 +70,7 @@ compiler_result_T* fjb()
   FJB_ENV->output = str;
   result->headers = fjb_get_headers(FJB_ENV);
   result->node = root;
-  FJB_ENV->root = root_to_generate;
+  FJB_ENV->root = root_to_emiterate;
 
   if (FJB_ENV->filepath)
     result->filepath = strdup(FJB_ENV->filepath);
@@ -74,9 +79,9 @@ compiler_result_T* fjb()
   parser_free(parser);
   visitor_free(visitor);
 
-  if (root_to_generate != root) {
-    root_to_generate->list_value = 0;
-    gc_mark(FJB_ENV->GC, root_to_generate);
+  if (root_to_emiterate != root) {
+    root_to_emiterate->list_value = 0;
+    gc_mark(FJB_ENV->GC, root_to_emiterate);
   }
 
   FJB_ENV->level += 1;

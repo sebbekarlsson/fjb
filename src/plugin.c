@@ -25,16 +25,17 @@ void* call_plugin_hook(plugin_hook hook, int action, void* ptr, fjb_env_T* env)
 
 void load_hooks_from_directory(const char* directory)
 {
+  if (!directory)
+    return;
+
   if (!file_exists((char*)directory))
     return;
 
   struct dirent* dp;
   DIR* dfd;
 
-  char* dir;
-
   if ((dfd = opendir(directory)) == NULL) {
-    fprintf(stderr, "Can't open %s\n", dir);
+    fprintf(stderr, "Can't open %s\n", directory);
     return;
   }
 
@@ -43,7 +44,14 @@ void load_hooks_from_directory(const char* directory)
 
   while ((dp = readdir(dfd)) != NULL) {
     struct stat stbuf;
-    sprintf(filename_qfd, "%s/%s", dir, dp->d_name);
+    if (!dp)
+      continue;
+
+    sprintf(filename_qfd, "%s/%s", directory, dp->d_name);
+
+    if (stat(filename_qfd, &stbuf) == -1) {
+      continue;
+    }
 
     if ((stbuf.st_mode & S_IFMT) == S_IFDIR) {
       continue;
@@ -55,7 +63,6 @@ void load_hooks_from_directory(const char* directory)
       char buff[256];
       sprintf(buff, "%s%s", directory, dp->d_name);
 
-      printf("%s\n", buff);
       void* handle = dlopen(buff, RTLD_NOW);
 
       if (handle) {
@@ -66,6 +73,8 @@ void load_hooks_from_directory(const char* directory)
       }
     }
   }
+
+  free(dfd);
 }
 
 void load_plugins()

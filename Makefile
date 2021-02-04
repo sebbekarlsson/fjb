@@ -14,7 +14,7 @@ gppheaders = $(gppfiles:.gpp=.h)
 GPP_PATH=$(or $(shell test -f ./gpp.out && echo ./gpp.out), gpp)
 
 ifdef DEBUG
-#flags += -D DEBUG -pg -Wall -g
+flags += -D DEBUG -pg -Wall -g
 endif
 
 $(exec): $(jsheaders) $(gppheaders) $(objects) libjson.a libhashmap.a
@@ -28,7 +28,7 @@ libfjb.a: $(objects_no_main)
 
 %.js.h: %.js
 	mkdir -p .tmp
-	$(GPP_PATH) $^ > .tmp/$(notdir $^)
+	$(GPP_PATH) $^ | tr -d \\n | sed -e :a -e '/[^[:blank:]]/,$$!d; /^[[:space:]]*$$/{ $$d; N; ba' -e '}' > .tmp/$(notdir $^)
 	xxd -i .tmp/$(notdir $^) | sed 's/\([0-9a-f]\)$$/\0, 0x00/' > src/include/js/$(notdir $^.h)
 
 %.h: %.gpp

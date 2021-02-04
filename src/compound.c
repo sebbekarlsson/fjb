@@ -2,7 +2,6 @@
 #include "../external/hashmap/src/include/map.h"
 #include "include/AST.h"
 #include "include/imported.h"
-#include "include/resolve.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -16,37 +15,6 @@ typedef struct
 } options_T;
 
 extern fjb_env_T* FJB_ENV;
-
-static unsigned int resolve_basic_query(AST_T* ast, query_T data)
-{
-  if (!ast)
-    return 0;
-  if (data.name == 0)
-    return 0;
-
-  unsigned int type_match = (ast->type == data.type) || data.type == -1;
-  unsigned int name_match =
-    ast->name && (ast->name == data.name || (strcmp(ast->name, data.name) == 0));
-
-  return type_match && name_match;
-}
-
-static unsigned int resolve_deps_query(AST_T* ast, query_T data)
-{
-  if (!ast)
-    return 0;
-  if (ast->from_obj)
-    return 0;
-  if (!ast->name)
-    return 0;
-  if (data.type == AST_ASSIGNMENT && !ast->flags)
-    return 0;
-  if (data.parent && ast->parent && (ast->parent != data.parent) &&
-      (ast->parent->type == AST_FUNCTION))
-    return 0;
-
-  return resolve_basic_query(ast, data);
-}
 
 list_T* get_imported_symbols(AST_T* lookup, list_T* search_index)
 {
@@ -74,8 +42,6 @@ list_T* get_imported_symbols(AST_T* lookup, list_T* search_index)
       data.type = types[k];
       data.name = key;
 
-      // if (imp->ast) resolved = imp->ast;
-
       if (!resolved) {
         if (types[k] == AST_FUNCTION) {
           resolved = (AST_T*)map_get_value(FJB_ENV->functions, key);
@@ -87,19 +53,12 @@ list_T* get_imported_symbols(AST_T* lookup, list_T* search_index)
       if (!resolved)
         continue;
 
-      /*if (!resolved)
-        resolved = ast_query(search_index, resolve_basic_query, data);*/
-
       if (resolved && !resolved->is_resolved) {
         /**
          * Copy alias from the import, to the resolved symbol.
          */
         if (imp && imp->alias) {
           resolved->alias = strdup(imp->alias);
-        }
-
-        if (imp) {
-          // imp->ast = resolved;
         }
 
         resolved->is_resolved = 1;
@@ -124,20 +83,30 @@ unsigned int get_deps(AST_T* ast, options_T args, fjb_env_T* env)
   if (ast->right && !ast->right->from_obj)
     get_deps(ast->right, args, env);
 
-  get_deps(ast->expr, args, env);
-  // get_deps(ast->node, args, env);
-  get_deps(ast->body, args, env);
-  get_deps(ast->next, args, env);
-  get_deps(ast->value, args, env);
-  get_deps(ast->condition, args, env);
+  if (ast->expr)
+    get_deps(ast->expr, args, env);
 
-  if (ast->list_value && ast->type != AST_FUNCTION && ast->type != AST_IMPORT &&
+  if (ast->body)
+    get_deps(ast->body, args, env);
+
+  if (ast->next)
+    get_deps(ast->next, args, env);
+
+  if (ast->value)
+    get_deps(ast->value, args, env);
+
+  if (ast->condition)
+    get_deps(ast->condition, args, env);
+
+  if (ast && ast->list_value && ast->type != AST_FUNCTION && ast->type != AST_IMPORT &&
       ast->type != AST_ARROW_DEFINITION && ast->type != AST_SIGNATURE) {
-    LOOP_NODES(ast->list_value, i, child, get_deps(child, args, env););
+    LOOP_NODES(
+      ast->list_value, i, child, if (child) { get_deps(child, args, env); });
   }
 
-  if (ast->options) {
-    LOOP_NODES(ast->options, i, child, get_deps(child, args, env););
+  if (ast && ast->options) {
+    LOOP_NODES(
+      ast->options, i, child, if (child) { get_deps(child, args, env); });
   }
 
   AST_T* ptr = 0;
@@ -172,11 +141,6 @@ unsigned int get_deps(AST_T* ast, options_T args, fjb_env_T* env)
       if (!ptr)
         continue;
 
-      /*if (!ptr)
-      {
-        ptr = ast_query(env->search_index, resolve_deps_query, query);
-      }*/
-
       if (ptr) {
         break;
       }
@@ -195,42 +159,35 @@ unsigned int get_deps(AST_T* ast, options_T args, fjb_env_T* env)
       ptr == ast || ptr == args.compound)
     return pushed;
 
-  // if (ptr_in_list(FJB_ENV->imported_symbols, ptr))
-  //  return pushed;
-
-  query_T query;
-  query.type = ptr->type;
-  query.name = ptr->name;
-
-  // if (!resolve(args.compound, resolve_deps_query, query)) {
-  if (args.saved) {
+  if (args.saved && ptr && ast) {
     list_push_at(args.saved, ptr, args.last_pushed ? args.last_pushed : ast);
     args.last_pushed = ptr;
     ptr->is_resolved = 1;
     pushed += 1;
   }
-  //}
 
   return pushed;
 }
 
 AST_T* new_compound(AST_T* lookup, fjb_env_T* env)
 {
+  if (!env)
+    return lookup;
+
   if (FJB_ENV->level <= 0)
     return lookup;
 
   AST_T* compound = init_ast(AST_COMPOUND);
   list_T* syms = get_imported_symbols(lookup, env->search_index);
-  list_T* imported_symbols = syms ? list_copy(syms) : NEW_STACK;
+  list_T* imported_symbols = syms ? syms : NEW_STACK;
   compound->list_value = imported_symbols;
-  // gc_mark_list(env->GC, compound->list_value);
 
   AST_T* parent = 0;
 
   if (imported_symbols && imported_symbols->size)
     parent = ((AST_T*)imported_symbols->items[0])->parent;
 
-  options_T args;
+  options_T args = {};
   args.lookup = lookup;
   args.saved = compound->list_value;
   args.compound = compound;
