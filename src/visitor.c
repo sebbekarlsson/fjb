@@ -62,14 +62,14 @@ static AST_T* getptr(AST_T* ast, list_T* stack, visitor_T* visitor)
 
   list_T* list = stack;
 
-  if (ast->ptr && ast->ptr->type == AST_OBJECT && ast->ptr->name) {
+  /*if (ast->ptr && ast->ptr->type == AST_OBJECT && ast->ptr->name) {
     if (strcmp(ast->ptr->name, "module") == 0 || strcmp(ast->ptr->name, "exports") == 0) {
       list = ast->ptr->list_value;
 
       if (list->size == 0)
         return ast->ptr;
     }
-  }
+  }*/
 
   ptr = getptr_any(ast, visitor, stack);
 
@@ -219,15 +219,15 @@ AST_T* visitor_visit_assignment(visitor_T* visitor, AST_T* ast, list_T* stack)
     }
 
     if (leftptr && rightptr) {
-      if (leftptr->type == AST_OBJECT && leftptr->list_value) {
+      /*if (leftptr->type == AST_OBJECT && leftptr->list_value) {
         if ((leftptr->name && strcmp(leftptr->name, "exports") == 0))
           list_push(leftptr->list_value, assignment);
-      } else {
-        if (leftptr->value)
-          leftptr->value = rightptr;
-        else
-          ast->left->ptr = rightptr;
-      }
+      } else {*/
+      if (leftptr->value)
+        leftptr->value = rightptr;
+      else
+        ast->left->ptr = rightptr;
+      //}
     }
   }
 
