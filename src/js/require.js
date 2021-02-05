@@ -1,2 +1,2 @@
 %s
-(function(){%s})
+new function(){%s}

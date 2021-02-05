@@ -83,6 +83,7 @@ unsigned int lexer_check_regex(lexer_T* lexer)
     return 0;
 
   if ((lexer->c == '/' && lexer_peek(lexer, 1) != '/' && lexer->prev_token->type != TOKEN_INT &&
+       lexer->prev_token->type != TOKEN_HEX && lexer->prev_token->type != TOKEN_INT_MIN &&
        lexer->prev_token->type != TOKEN_DIV && lexer->prev_token->type != TOKEN_ID &&
        lexer->prev_token->type != TOKEN_RPAREN && lexer->prev_token->type != TOKEN_RBRACKET &&
        lexer->prev_token->type != TOKEN_LT && lexer->prev_token->type != TOKEN_RBRACE &&
@@ -403,7 +404,6 @@ token_T* lexer_parse_string(lexer_T* lexer)
 token_T* lexer_parse_regex(lexer_T* lexer)
 {
   char* str = 0;
-
   char prevc;
 
   lexer_skip_whitespace(lexer);

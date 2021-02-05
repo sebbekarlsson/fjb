@@ -4,6 +4,7 @@
 #include "gc.h"
 #include "list.h"
 #include "token.h"
+#include <hashmap/map.h>
 typedef struct FJB_AST_STRUCT
 {
   enum AST_TYPE type;
@@ -51,11 +52,16 @@ typedef struct FJB_AST_STRUCT
   unsigned int anon;
   unsigned int exported;
   unsigned int not_exported;
+  unsigned int writable;
+  unsigned int bool_value;
+  unsigned int dead;
   int line;
 
   unsigned int is_resolved;
 
   list_T* parent_lists;
+
+  map_T* map;
 
 } AST_T;
 

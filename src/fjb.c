@@ -5,6 +5,7 @@
 #include "include/env.h"
 #include "include/gc.h"
 #include "include/io.h"
+#include "include/js/headers.js.h"
 #include "include/js/jsx_headers.js.h"
 #include "include/lexer.h"
 #include "include/list.h"
@@ -94,6 +95,13 @@ compiler_result_T* fjb()
 char* fjb_get_headers(fjb_env_T* env)
 {
   char* str = 0;
+
+  if (!FJB_ENV->has_included_headers) {
+    str = str_append(&str, (const char*)_tmp_headers_js);
+    printf("%s\n", str);
+    FJB_ENV->has_included_headers = 1;
+  }
+
   if (FJB_ENV->is_using_jsx && !FJB_ENV->has_included_jsx_headers) {
     str = str_append(&str, (const char*)_tmp_jsx_headers_js);
     FJB_ENV->has_included_jsx_headers = 1;

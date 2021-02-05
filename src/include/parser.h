@@ -30,9 +30,13 @@ AST_T* parser_parse(parser_T* parser, parser_options_T options);
 
 AST_T* parser_parse_any(parser_T* parser, parser_options_T options);
 
+AST_T* parser_parse_while(parser_T* parser, parser_options_T options);
+
 AST_T* parser_parse_call(parser_T* parser, parser_options_T options);
 
 AST_T* parser_parse_id(parser_T* parser, parser_options_T options);
+
+AST_T* parser_parse_object(parser_T* parser, parser_options_T options);
 
 AST_T* parser_parse_expr(parser_T* parser, parser_options_T options);
 

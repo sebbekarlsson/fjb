@@ -2,6 +2,7 @@
 #include "../external/hashmap/src/include/map.h"
 #include "include/AST.h"
 #include "include/imported.h"
+#include "include/resolve.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -33,12 +34,17 @@ list_T* get_imported_symbols(AST_T* lookup, list_T* search_index)
     char* key = keys[i];
     if (!key)
       continue;
+
+    if (list_contains_str(FJB_ENV->resolved_imports, key))
+      continue;
+
     AST_T* child = 0;
     imported_T* imp = (imported_T*)map_get_value(FJB_ENV->imports, key);
     if (!imp)
       continue;
 
     for (unsigned int k = 0; k < nr_types; k++) {
+
       data.type = types[k];
       data.name = key;
 
@@ -63,6 +69,7 @@ list_T* get_imported_symbols(AST_T* lookup, list_T* search_index)
 
         resolved->is_resolved = 1;
         list_push(list, resolved);
+        list_push(FJB_ENV->resolved_imports, key);
         break;
       }
     }
@@ -134,7 +141,7 @@ unsigned int get_deps(AST_T* ast, options_T args, fjb_env_T* env)
 
       if (ptr) {
         if (query.parent && ptr->parent && (ptr->parent != query.parent) &&
-            (ptr->parent->type == AST_FUNCTION))
+            (/*ptr->parent->type == AST_FUNCTION*/ 1))
           continue;
       }
 
@@ -154,6 +161,11 @@ unsigned int get_deps(AST_T* ast, options_T args, fjb_env_T* env)
 
   if (ptr->is_resolved)
     return pushed;
+
+  if (ptr->parent && ptr->parent->list_value && ptr_in_list(args.saved, ptr->parent)) {
+    if (ptr_in_list(ptr->parent->list_value, ptr))
+      return pushed;
+  }
 
   if (ptr->name == 0 || (args.saved && ptr_in_list(args.saved, ptr)) || ptr->from_obj ||
       ptr == ast || ptr == args.compound)

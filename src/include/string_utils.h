@@ -31,6 +31,12 @@ char* get_indent(unsigned int size);
 
 char* str_get_after(char* source, char* after);
 
+char* find_in_path(char* path, char* filename);
+
+char* get_basename(char* filepath);
+
+char* get_slashed_path(char* path);
+
 char char_tolower(unsigned char ch);
 
 int strcasecmp(const char* s1, const char* s2);

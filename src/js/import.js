@@ -1,2 +1,2 @@
-%s;var %s=(function(){%s;return this;}).apply(this)
+%s;var %s= new function(){%s;return this;}
 %s
