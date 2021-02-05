@@ -533,6 +533,9 @@ char* emit_compound(AST_T* ast, fjb_env_T* env)
   for (unsigned int i = 0; i < living->size; i++) {
     AST_T* child_ast = (AST_T*)living->items[i];
 
+    if (child_ast->string_value && strcmp(child_ast->string_value, "use strict") == 0)
+      continue;
+
     char* child_str = emit(child_ast, env);
     if (!child_str)
       continue;
