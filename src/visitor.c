@@ -421,6 +421,10 @@ AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* stack)
     if (im) {
       im->ast = ast;
     }
+    else
+    {
+      ast->not_exported = 1;
+    }
   }
 
   if (ast->body)
@@ -656,18 +660,6 @@ AST_T* visitor_visit_binop(visitor_T* visitor, AST_T* ast, list_T* stack)
 {
   if (ast->left)
     ast->left = visitor_visit(visitor, ast->left, stack);
-
-  if ((ast->left && ast->left->name && strcmp(ast->left->name, "module") == 0)) {
-    ast->left = 0;
-    ast->token = 0;
-
-    if (ast->right && ast->right->name && strcmp(ast->right->name, "exports") == 0) {
-      ast->type = AST_NOOP;
-      ast->right = 0;
-      ast->dead = 1;
-      return ast;
-    }
-  }
 
   if (ast->left && ast->left->ptr && ast->right) {
     ast->right->ptr = ast->left->ptr;
