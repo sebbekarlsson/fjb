@@ -90,7 +90,9 @@ char* emit_jsx_react_body(AST_T* ast, fjb_env_T* env)
     if (childstr) {
       str = str_append(&str, childstr);
       free(childstr);
-    });
+    }
+
+    if (i < ast->list_value->size - 1) { str = str_append(&str, ","); });
 
   return str ? str : strdup("");
 }
@@ -194,15 +196,14 @@ char* emit_jsx_react_element(AST_T* ast, fjb_env_T* env)
   const char* TEMPLATE = (const char*)(ast->ptr ? _tmp_jsx_react_ptr_js : _tmp_jsx_react_js);
   unsigned int TEMPLATE_LEN = ast->ptr ? _tmp_jsx_react_ptr_js_len : _tmp_jsx_react_js_len;
   char* name = ast_get_string(ast);
-  char* func_name = ast->ptr ? emit_jsx_call(ast, env) : name;
-  char* attr = emit_jsx_attributes(ast, env);
+  char* func_name = name; // ast->ptr ? emit_jsx_call(ast, env) : name;
   char* body = ast->body ? emit_jsx_react_body(ast->body, env) : strdup("");
-  char* call_args = ast->options && ast->options->size ? emit_tuple(ast->options, env) : strdup("");
-  char* value = calloc(TEMPLATE_LEN + strlen(name) + strlen(call_args) + strlen(func_name) +
-                         strlen(attr) + strlen(body) + 1,
-                       sizeof(char));
+  char* attr = ast->options && ast->options->size ? emit_tuple(ast->options, env) : strdup("");
+  char* value =
+    calloc(TEMPLATE_LEN + strlen(name) + strlen(func_name) + strlen(attr) + strlen(body) + 1,
+           sizeof(char));
 
-  sprintf(value, TEMPLATE, func_name, attr, body, call_args);
+  sprintf(value, TEMPLATE, func_name, attr, body);
 
   return value;
 }

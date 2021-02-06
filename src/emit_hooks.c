@@ -65,22 +65,16 @@ compiler_result_T* emit_hooks_json(fjb_env_T* env, list_T* imports)
 
 compiler_result_T* emit_hooks_css(fjb_env_T* env, list_T* imports)
 {
-  if (imports && !imports->size)
-    return init_compiler_result(env->source, env->filepath);
-
   char* value = 0;
   char* str = strdup(env->source);
 
-  AST_T* imp = (AST_T*)imports->items[0];
-  char* imp_name = ast_get_string(imp);
-
-  if (!imp)
-    return init_compiler_result(env->source, env->filepath);
+  AST_T* imp = imports && imports->size ? (AST_T*)imports->items[0] : 0;
+  char* imp_name = imp ? ast_get_string(imp) : 0;
 
   AST_T* css_ast = init_ast(AST_TEMPLATE_STRING);
   css_ast->string_value = str;
 
-  if (!env->aliased_import) {
+  if (!env->aliased_import && imp && imp_name) {
     AST_T* assignment = init_ast(AST_ASSIGNMENT);
     assignment->flags = NEW_STACK;
     assignment->left = init_ast(AST_NAME);
@@ -95,7 +89,7 @@ compiler_result_T* emit_hooks_css(fjb_env_T* env, list_T* imports)
     assignment->exported = 1;
 
     value = emit(assignment, env);
-  } else if (env->aliased_import) {
+  } else if (env->aliased_import || (!imp && !imp_name)) {
     AST_T* state = init_ast(AST_STATE);
     state->value = css_ast;
     state->string_value = strdup("return");
