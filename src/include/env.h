@@ -34,6 +34,8 @@ typedef struct FJB_ENV_STRUCT
 
   list_T* resolved_imports;
 
+  AST_T* current;
+
   gc_T* GC;
 } fjb_env_T;
 

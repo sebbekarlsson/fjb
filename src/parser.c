@@ -190,7 +190,8 @@ AST_T* parser_parse_dot_notation(parser_T* parser, parser_options_T options, AST
 
     if (binop->left->name)
       binop->name = strdup(binop->left->name);
-
+    
+    binop->from_obj = 1;
     if (left)
       left->from_obj = 1;
     if (binop->right)
@@ -748,6 +749,7 @@ AST_T* parser_parse_function(parser_T* parser, parser_options_T options)
   parser_eat(parser, TOKEN_FUNCTION);
   AST_T* ast = init_ast_line(AST_FUNCTION, parser->lexer->line);
   ast->parent = options.parent;
+  ast->from_module = parser->env->filepath ? strdup(parser->env->filepath) : 0;
   options.parent = ast;
 
   if (parser->token->type != TOKEN_LPAREN) {
@@ -1184,6 +1186,7 @@ AST_T* parser_parse_statement_or_expr(parser_T* parser, parser_options_T options
 AST_T* parser_parse_compound(parser_T* parser, parser_options_T options)
 {
   AST_T* ast = init_ast_line(AST_COMPOUND, parser->lexer->line);
+
   ast->parent = options.parent;
   ast->list_value = init_list(sizeof(AST_T*));
 

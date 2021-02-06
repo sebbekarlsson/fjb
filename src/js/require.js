@@ -1,2 +1,2 @@
 %s
-((function(module={}, exports={}){ %s; return module.exports || module; }).apply(exports))
+((function(module={}, exports={}%s){ %s; return module.exports || exports; }).apply({}))

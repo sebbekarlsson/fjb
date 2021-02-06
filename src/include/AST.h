@@ -27,6 +27,7 @@ typedef struct FJB_AST_STRUCT
   struct FJB_AST_STRUCT* node;
   struct FJB_AST_STRUCT* ast;
   struct FJB_AST_STRUCT* condition;
+  struct FJB_AST_STRUCT* module_root;
   token_T* token;
 
   int int_value;
@@ -60,6 +61,9 @@ typedef struct FJB_AST_STRUCT
   unsigned int is_resolved;
 
   list_T* parent_lists;
+  map_T* requirements;
+
+  char* basename;
 
   map_T* map;
 
