@@ -384,11 +384,12 @@ char* resolve_import(char* basepath, char* filepath, unsigned int node_modules)
 
   if (with_ext && file_exists(with_ext))
     return with_ext;
-  
+
   if (!path) {
     char* check_path = find_in_path(basepath, filepath);
 
-    if (file_exists(check_path) && !is_dir(check_path)) return check_path;
+    if (file_exists(check_path) && !is_dir(check_path))
+      return check_path;
 
     if (check_path) {
       char* v = resolve_file(check_path, filepath);
@@ -466,10 +467,11 @@ char* find_in_path(char* path, char* filename)
 
     if (file_exists(check_path) || is_dir(check_path))
       return new_path;
-    
+
     char* maybe = try_resolve(check_path);
 
-    if (maybe) return maybe;
+    if (maybe)
+      return maybe;
 
     free(check_path);
     token = strtok(0, "/");

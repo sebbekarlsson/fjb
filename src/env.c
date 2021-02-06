@@ -1,4 +1,5 @@
 #include "include/env.h"
+#include "include/jsx.h"
 #include "include/plugin.h"
 #include "include/string_utils.h"
 #include <stdio.h>
@@ -27,6 +28,10 @@ void register_process_object()
   AST_T* default_node_env = init_ast(AST_STRING);
   default_node_env->string_value = strdup("dev");
   map_set(envobject->map, "NODE_ENV", default_node_env);
+
+  AST_T* default_jsx_type = init_ast(AST_STRING);
+  default_node_env->string_value = strdup("react");
+  map_set(envobject->map, "jsx", default_node_env);
 
   AST_T* assignment = init_assignment("process", ast);
   assignment->writable = 1;
@@ -75,18 +80,18 @@ void destroy_fjb_env()
   gc_sweep(FJB_ENV->GC);
   gc_free(FJB_ENV->GC);
 
- // if (FJB_ENV->imports)
+  // if (FJB_ENV->imports)
   //  map_free(FJB_ENV->imports);
-  //if (FJB_ENV->functions)
+  // if (FJB_ENV->functions)
   //  map_free(FJB_ENV->functions);
-  //if (FJB_ENV->assignments)
+  // if (FJB_ENV->assignments)
   //  map_free(FJB_ENV->assignments);
-//  if (FJB_ENV->source)
-//    free(FJB_ENV->source);
- // if (FJB_ENV->filepath)
+  //  if (FJB_ENV->source)
+  //    free(FJB_ENV->source);
+  // if (FJB_ENV->filepath)
   //  free(FJB_ENV->filepath);
 
-  //free(FJB_ENV);
+  // free(FJB_ENV);
 }
 
 void fjb_set_aliased_import(unsigned int aliased_import)
@@ -137,4 +142,24 @@ char* fjb_get_node_env()
     return 0;
 
   return node_env->string_value;
+}
+
+int fjb_get_jsx_type()
+{
+  AST_T* env = (AST_T*)map_get_value(FJB_ENV->process->map, "env");
+
+  if (!env)
+    return 0;
+
+  AST_T* node_env = (AST_T*)map_get_value(env->map, "jsx");
+
+  if (!node_env)
+    return 0;
+  if (!node_env->string_value)
+    return 0;
+
+  if (strcmp(node_env->string_value, "react") == 0)
+    return JSX_REACT;
+
+  return JSX_DEFAULT;
 }

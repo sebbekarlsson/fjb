@@ -64,6 +64,7 @@ typedef struct FJB_AST_STRUCT
   map_T* requirements;
 
   char* basename;
+  char* comment;
 
   map_T* map;
 

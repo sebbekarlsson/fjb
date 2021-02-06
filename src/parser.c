@@ -190,7 +190,7 @@ AST_T* parser_parse_dot_notation(parser_T* parser, parser_options_T options, AST
 
     if (binop->left->name)
       binop->name = strdup(binop->left->name);
-    
+
     binop->from_obj = 1;
     if (left)
       left->from_obj = 1;
@@ -539,7 +539,7 @@ AST_T* parser_parse_condition(parser_T* parser, parser_options_T options)
     parser_eat(parser, TOKEN_SEMI);
   }
 
-  if (parser->token->type == TOKEN_ELSE && ast->token->type != TOKEN_ELSE) {
+  if (parser->token->type == TOKEN_ELSE) {
     ast->right = parser_parse_condition(parser, options);
     ast->right->prev = ast;
   }
