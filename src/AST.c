@@ -11,6 +11,7 @@ AST_T* init_ast(int type)
   AST_T* ast = calloc(1, sizeof(struct FJB_AST_STRUCT));
   ast->type = type;
   ast->line = 0;
+  ast->requirements = NEW_MAP();
 
   return ast;
 }

@@ -176,7 +176,7 @@ void test_jsx_custom()
 
   AST_T* root = run_get_ast(filepath, 1);
   assert_node_exists(root, AST_NAME, "document", "test AST_NAME document exists.");
-  assert_node_exists(root, AST_NAME, "HeadTitle", "test AST_NAME HeadTitle exists.");
+  assert_node_exists(root, AST_NAME, "HeadTitle", "test AST_CALL HeadTitle exists.");
   destroy_fjb_env();
 }
 
@@ -187,10 +187,8 @@ void test_json_import()
 
   MSG();
 
-  AST_T* root = run_get_ast(filepath, 0);
-  assert_node_not_exists(root, AST_ARRAY, 0, "test AST_ARRAY does not exists.");
-  AST_T* root_after = run_get_ast(filepath, 1);
-  assert_node_not_exists(root, AST_ARRAY, 0, "test AST_ARRAY exists.");
+  AST_T* root = run_get_ast(filepath, 1);
+  assert_node_exists(root, AST_ARRAY, 0, "test AST_ARRAY exists.");
   destroy_fjb_env();
 }
 

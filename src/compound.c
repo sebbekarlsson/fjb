@@ -190,6 +190,7 @@ AST_T* new_compound(AST_T* lookup, fjb_env_T* env)
     return lookup;
 
   AST_T* compound = init_ast(AST_COMPOUND);
+  compound->module_root = lookup->module_root;
   list_T* syms = get_imported_symbols(lookup, env->search_index);
   list_T* imported_symbols = syms ? syms : NEW_STACK;
   compound->list_value = imported_symbols;
