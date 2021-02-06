@@ -20,7 +20,7 @@ AST_T* NOOP;
 list_T* stack;
 extern fjb_env_T* FJB_ENV;
 
-compiler_result_T* fjb()
+compiler_result_T* _fjb()
 {
   if (!FJB_ENV->source)
     return 0;
@@ -62,14 +62,12 @@ compiler_result_T* fjb()
   char* out = emit(root_to_emiterate, FJB_ENV);
 
   if (out) {
-    str = str_append(&str, out);
+    str = str_append(&str, strdup(out));
     free(out);
   }
 
   compiler_result_T* result = calloc(1, sizeof(compiler_result_T));
-  result->stdout = str;
-  FJB_ENV->output = str;
-  result->headers = fjb_get_headers(FJB_ENV);
+  result->stdout = str ? str : strdup(" ");
   result->node = root;
   FJB_ENV->root = root_to_emiterate;
 
@@ -92,22 +90,42 @@ compiler_result_T* fjb()
   return result;
 }
 
+compiler_result_T* fjb()
+{
+  compiler_result_T* result = _fjb();
+  char* headers = fjb_get_headers(FJB_ENV);
+
+  result->headers = strdup(" ");
+
+  char* str = 0;
+
+  if (headers) {
+    const char* template = "%s\n%s";
+    char* buff =
+      calloc(strlen(headers) + strlen(result->stdout) + strlen(template) + 1, sizeof(char));
+
+    if (buff) {
+      sprintf(buff, template, headers, result->stdout);
+      result->stdout = buff;
+    }
+  }
+
+  return result;
+}
+
 char* fjb_get_headers(fjb_env_T* env)
 {
   char* str = 0;
 
   if (!FJB_ENV->has_included_headers) {
-    str = str_append(&str, (const char*)_tmp_headers_js);
-    printf("%s\n", str);
-    FJB_ENV->has_included_headers = 1;
+    str = str_append(&str, strdup((char*)_tmp_headers_js));
   }
 
   if (FJB_ENV->is_using_jsx && !FJB_ENV->has_included_jsx_headers) {
-    str = str_append(&str, (const char*)_tmp_jsx_headers_js);
-    FJB_ENV->has_included_jsx_headers = 1;
+    str = str_append(&str, strdup((char*)_tmp_jsx_headers_js));
   }
 
-  return str;
+  return strdup(str ? str : " ");
 }
 
 void fjb_set_only_parse(unsigned int only_parse)

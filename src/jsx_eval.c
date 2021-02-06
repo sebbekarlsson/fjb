@@ -39,6 +39,11 @@ AST_T* eval_jsx_element(visitor_T* visitor, AST_T* ast, list_T* stack)
           break;
         }
       });
+
+    if (!def)
+      def = (AST_T*)map_get_value(FJB_ENV->functions, ast->name);
+    if (!def)
+      def = (AST_T*)map_get_value(FJB_ENV->assignments, ast->name);
   }
 
   if (def) {
@@ -80,6 +85,8 @@ AST_T* eval_jsx(visitor_T* visitor, AST_T* ast, list_T* stack)
 {
   if (!ast)
     return 0;
+
+  FJB_ENV->is_using_jsx = 1;
 
   switch (ast->type) {
     case AST_JSX_ELEMENT: return eval_jsx_element(visitor, ast, stack); break;

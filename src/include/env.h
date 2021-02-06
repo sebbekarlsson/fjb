@@ -19,7 +19,6 @@ typedef struct FJB_ENV_STRUCT
   char* source;
   char* filepath;
   char* dumped_tree;
-  char* output;
 
   map_T* imports;
   map_T* map;
@@ -56,4 +55,6 @@ list_T* fjb_get_hooks();
 void* fjb_call_all_hooks(int type, void* ptr, fjb_env_T* env);
 
 char* fjb_get_node_env();
+
+int fjb_get_jsx_type();
 #endif

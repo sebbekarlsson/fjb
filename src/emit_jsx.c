@@ -9,18 +9,41 @@
 #include "include/js/jsx_attr.js.h"
 #include "include/js/jsx_close.js.h"
 #include "include/js/jsx_ptr.js.h"
+#include "include/js/jsx_react.js.h"
+#include "include/js/jsx_react_ptr.js.h"
+#include "include/jsx.h"
 #include "include/string_utils.h"
 #include <stdio.h>
 #include <string.h>
 
 extern fjb_env_T* FJB_ENV;
 
+const char* get_create_element_string()
+{
+  int jsx_type = fjb_get_jsx_type();
+
+  switch (jsx_type) {
+    case JSX_DEFAULT: return "document.createElement"; break;
+    case JSX_REACT: return "React.createElement"; break;
+  }
+}
+
+const char* get_create_text_node_string()
+{
+  int jsx_type = fjb_get_jsx_type();
+
+  switch (jsx_type) {
+    case JSX_DEFAULT: return "document.createTextNode("; break;
+    case JSX_REACT: return "React_createTextNode("; break;
+  }
+}
+
 char* emit_jsx_template_string(AST_T* ast, fjb_env_T* env)
 {
   char* m = "`";
   char* str = 0;
 
-  str = str_append(&str, "document.createTextNode(");
+  str = str_append(&str, get_create_text_node_string());
   str = str_append(&str, m);
   str = str_append(&str, "${");
 
@@ -42,7 +65,7 @@ char* emit_jsx_text(AST_T* ast, fjb_env_T* env)
   char* m = "\"";
   char* str = 0;
 
-  str = str_append(&str, "document.createTextNode(");
+  str = str_append(&str, get_create_text_node_string());
   str = str_append(&str, m);
 
   if (ast->string_value) {
@@ -55,6 +78,21 @@ char* emit_jsx_text(AST_T* ast, fjb_env_T* env)
   str = str_append(&str, ")");
 
   return str;
+}
+
+char* emit_jsx_react_body(AST_T* ast, fjb_env_T* env)
+{
+  char* str = 0;
+
+  LOOP_NODES(
+    ast->list_value, i, child, char* childstr = emit_jsx(child, env);
+
+    if (childstr) {
+      str = str_append(&str, childstr);
+      free(childstr);
+    });
+
+  return str ? str : strdup("");
 }
 
 char* emit_jsx_body(AST_T* ast, fjb_env_T* env)
@@ -136,9 +174,9 @@ char* emit_jsx_call(AST_T* ast, fjb_env_T* env)
 char* emit_jsx_element(AST_T* ast, fjb_env_T* env)
 {
   const char* TEMPLATE = (const char*)(ast->ptr ? _tmp_jsx_ptr_js : _tmp_jsx_js);
-  unsigned int TEMPLATE_LEN = ast->ptr ? _tmp_jsx_ptr_js_len : _tmp_jsx_js_len;
+  unsigned int TEMPLATE_LEN = ast->ptr ? _tmp_jsx_react_js_len : _tmp_jsx_js_len;
   char* name = ast_get_string(ast);
-  char* func_name = ast->ptr ? emit_jsx_call(ast, env) : strdup("document.createElement");
+  char* func_name = ast->ptr ? emit_jsx_call(ast, env) : strdup(get_create_element_string());
   char* attr = emit_jsx_attributes(ast, env);
   char* body = ast->body ? emit_jsx_body(ast->body, env) : strdup("");
   char* call_args = ast->options && ast->options->size ? emit_tuple(ast->options, env) : strdup("");
@@ -147,6 +185,24 @@ char* emit_jsx_element(AST_T* ast, fjb_env_T* env)
                        sizeof(char));
 
   sprintf(value, TEMPLATE, func_name, name, attr, body, call_args);
+
+  return value;
+}
+
+char* emit_jsx_react_element(AST_T* ast, fjb_env_T* env)
+{
+  const char* TEMPLATE = (const char*)(ast->ptr ? _tmp_jsx_react_ptr_js : _tmp_jsx_react_js);
+  unsigned int TEMPLATE_LEN = ast->ptr ? _tmp_jsx_react_ptr_js_len : _tmp_jsx_react_js_len;
+  char* name = ast_get_string(ast);
+  char* func_name = ast->ptr ? emit_jsx_call(ast, env) : name;
+  char* attr = emit_jsx_attributes(ast, env);
+  char* body = ast->body ? emit_jsx_react_body(ast->body, env) : strdup("");
+  char* call_args = ast->options && ast->options->size ? emit_tuple(ast->options, env) : strdup("");
+  char* value = calloc(TEMPLATE_LEN + strlen(name) + strlen(call_args) + strlen(func_name) +
+                         strlen(attr) + strlen(body) + 1,
+                       sizeof(char));
+
+  sprintf(value, TEMPLATE, func_name, attr, body, call_args);
 
   return value;
 }
@@ -165,18 +221,36 @@ char* emit_jsx_template_value(AST_T* ast, fjb_env_T* env)
 
 char* emit_jsx(AST_T* ast, fjb_env_T* env)
 {
-  switch (ast->type) {
-    case AST_JSX_ELEMENT: return emit_jsx_element(ast, env); break;
-    case AST_JSX_COMPOUND: return emit_jsx_body(ast, env); break;
-    case AST_JSX_TEMPLATE_VALUE: return emit_jsx_template_value(ast, env); break;
-    case AST_JSX_TEMPLATE_STRING: return emit_jsx_template_string(ast, env); break;
-    case AST_JSX_TEXT: return emit_jsx_text(ast, env); break;
-    case AST_CALL:
-    case AST_STATE: return emit(ast, env); break;
-    default: {
-      printf("[Gen(JSX)]: Missing emiterator for `%d`\n", ast->type);
-      exit(1);
-    } break;
+  unsigned int jsx_type = fjb_get_jsx_type();
+
+  if (jsx_type == JSX_DEFAULT) {
+    switch (ast->type) {
+      case AST_JSX_ELEMENT: return emit_jsx_element(ast, env); break;
+      case AST_JSX_COMPOUND: return emit_jsx_body(ast, env); break;
+      case AST_JSX_TEMPLATE_VALUE: return emit_jsx_template_value(ast, env); break;
+      case AST_JSX_TEMPLATE_STRING: return emit_jsx_template_string(ast, env); break;
+      case AST_JSX_TEXT: return emit_jsx_text(ast, env); break;
+      case AST_CALL:
+      case AST_STATE: return emit(ast, env); break;
+      default: {
+        printf("[Gen(JSX)]: Missing emiterator for `%d`\n", ast->type);
+        exit(1);
+      } break;
+    }
+  } else if (jsx_type == JSX_REACT) {
+    switch (ast->type) {
+      case AST_JSX_ELEMENT: return emit_jsx_react_element(ast, env); break;
+      case AST_JSX_COMPOUND: return emit_jsx_react_body(ast, env); break;
+      case AST_JSX_TEMPLATE_VALUE: return emit_jsx_template_value(ast, env); break;
+      case AST_JSX_TEMPLATE_STRING: return emit_jsx_template_string(ast, env); break;
+      case AST_JSX_TEXT: return emit_jsx_text(ast, env); break;
+      case AST_CALL:
+      case AST_STATE: return emit(ast, env); break;
+      default: {
+        printf("[Gen(JSX)]: Missing emiterator for `%d`\n", ast->type);
+        exit(1);
+      } break;
+    }
   }
 
   return 0;

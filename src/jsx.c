@@ -38,6 +38,7 @@ AST_T* parse_template(parser_T* parser, parser_options_T options)
 
 AST_T* parse_jsx_compound(parser_T* parser, parser_options_T options)
 {
+  FJB_ENV->is_using_jsx = 1;
   AST_T* ast = init_ast_line(AST_JSX_COMPOUND, parser->lexer->line);
   gc_mark(FJB_ENV->GC, ast);
   ast->parent = options.parent;

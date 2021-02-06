@@ -1,15 +1,13 @@
 import React, { Component } from "react";
-import { render } from "react-dom";
+const ReactDOM = require("react-dom");
 
 
-class App {
-  render() {
-    return (
-      <div>
-        <h2>Welcome</h2>
-      </div>
-    );
-  }
+function App() {
+  return (
+      <h2></h2>
+  );
 }
 
-render(<App />, document.getElementById("root"));
+const el = <h1>Hello</h1>;
+
+ReactDOM.render(el, document.getElementById("root"));
