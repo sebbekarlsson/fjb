@@ -104,7 +104,9 @@ AST_T* parse_jsx_compute_block(parser_T* parser, parser_options_T options)
 
 AST_T* parse_jsx_attr(parser_T* parser, parser_options_T options)
 {
-  AST_T* assignment = init_ast_line(AST_ASSIGNMENT, parser->lexer->line);
+  int jsx_type = fjb_get_jsx_type();
+  AST_T* assignment = init_ast_line(jsx_type == JSX_DEFAULT ? AST_ASSIGNMENT : AST_COLON_ASSIGNMENT,
+                                    parser->lexer->line);
   assignment->parent = options.parent;
   AST_T* left = parser_parse_id(parser, options);
 
@@ -127,7 +129,11 @@ AST_T* parse_jsx_attr(parser_T* parser, parser_options_T options)
 
   if (parser->token->type == TOKEN_EQUALS) {
     parser_eat(parser, TOKEN_EQUALS);
-    assignment->value = parse_jsx_attr_value(parser, options);
+    if (assignment->type == AST_ASSIGNMENT) {
+      assignment->value = parse_jsx_attr_value(parser, options);
+    } else {
+      assignment->right = parse_jsx_attr_value(parser, options);
+    }
   }
 
   assignment->left = left;

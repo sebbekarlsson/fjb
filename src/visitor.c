@@ -86,7 +86,6 @@ AST_T* visitor_visit_string(visitor_T* visitor, AST_T* ast, list_T* stack)
 
 AST_T* visitor_visit_import(visitor_T* visitor, AST_T* ast, list_T* stack)
 {
-  list_T* imports_before = NEW_STACK;
   char* prev_filepath = strdup(FJB_ENV->filepath);
   char* prev_source = FJB_ENV->source;
 
@@ -488,8 +487,10 @@ AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* stack)
 
       list_remove(stack, child, 0);
 
-      // if (child->name)
-      //  map_unset(FJB_ENV->map, child->name);
+      if (child->name) {
+        map_unset(FJB_ENV->map, child->name);
+        map_unset(FJB_ENV->assignments, child->name);
+      }
     }
   }
 
