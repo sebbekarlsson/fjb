@@ -2,12 +2,12 @@
 > These benchmarks were generated at **{{ now }}**
 {% macro renderRun(run) %}
 <details>
-  <summary>{{ run.title }} - time: {{ run.time }}, output size: {{ run.size }}</summary>
+  <summary>{{ run.title }} - time: {{ run.time }}, output size: {{ run.size }} bytes</summary>
 
 #### Output size
 > The size of the output is:
 ```
-{{ run.size }}
+{{ run.size }} bytes
 ```
 #### Time
 > The command:
@@ -32,6 +32,7 @@
 ```tsx
 {{ mark.source }}
 ```
+![graphs/{{ mark.graph }}](graphs/{{ mark.graph }})
 
 {% for run in mark.runs %}
   {{ renderRun(run) }}

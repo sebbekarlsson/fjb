@@ -3,32 +3,35 @@
 #include "AST.h"
 #include "list.h"
 #include <hashmap/map.h>
+
 typedef struct FJB_ENV_STRUCT
 {
   unsigned int is_using_jsx;
-  unsigned int has_included_jsx_headers;
-  unsigned int results_changed;
   unsigned int aliased_import;
-  unsigned int level;
+  unsigned long int level;
+  unsigned long int ticks;
 
   AST_T* root;
-  AST_T* module;
-  AST_T* exports;
-
-  list_T* search_index;
 
   char* source;
   char* filepath;
   char* dumped_tree;
-  char* output;
 
   map_T* imports;
+  map_T* map;
   map_T* functions;
   map_T* assignments;
 
-  unsigned int only_parse;
+  AST_T* process;
 
   list_T* hooks;
+
+  list_T* resolved_imports;
+
+  AST_T* current;
+  AST_T* current_import;
+
+  map_T* compiled_imports;
 
   gc_T* GC;
 } fjb_env_T;
@@ -43,9 +46,13 @@ void fjb_set_filepath(char* filepath);
 
 void fjb_set_aliased_import(unsigned int aliased_import);
 
-void fjb_set_only_parse(unsigned int only_parse);
-
 list_T* fjb_get_hooks();
 
 void* fjb_call_all_hooks(int type, void* ptr, fjb_env_T* env);
+
+char* fjb_get_node_env();
+
+int fjb_get_jsx_type();
+
+void fjb_set_jsx_type(int jsx_type);
 #endif

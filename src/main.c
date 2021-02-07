@@ -2,6 +2,7 @@
 #include "include/fjb.h"
 #include "include/io.h"
 #include "include/plugin.h"
+#include "include/string_utils.h"
 #include <stdio.h>
 #include <string.h>
 
