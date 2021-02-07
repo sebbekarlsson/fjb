@@ -88,6 +88,10 @@ BENCHMARKS = [
         '/tests/src/test_projects/with_jquery/index.js'
     ),
     create_mark(
+        "Importing `react` from react",
+        '/tests/src/test_projects/react_import/index.jsx'
+    ),
+    create_mark(
         "React project with JSX",
         '/tests/src/test_projects/with_react/index.jsx'
     )
