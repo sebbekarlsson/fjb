@@ -99,6 +99,14 @@ AST_T* init_assignment(char* name, AST_T* value)
   return ast;
 }
 
+AST_T* init_ast_string(char* string_value)
+{
+  AST_T* ast = init_ast(AST_STRING);
+  ast->string_value = string_value ? strdup(string_value) : strdup(" ");
+
+  return ast;
+}
+
 void ast_get_pointers(list_T* list, AST_T* ast)
 {
   if (!ast)

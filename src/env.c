@@ -1,6 +1,7 @@
 #include "include/env.h"
 #include "include/jsx.h"
 #include "include/plugin.h"
+#include "include/result.h"
 #include "include/string_utils.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -55,6 +56,8 @@ void init_fjb_env()
   FJB_ENV->GC = init_gc();
 
   register_process_object();
+
+  FJB_ENV->compiled_imports = NEW_MAP();
 
   /* ==== Built-in globals ==== */
   AST_T* module = init_ast(AST_OBJECT);

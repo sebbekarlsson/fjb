@@ -1,3 +1,5 @@
+import { useState, useMemo } from 'react';
+
 const style = {
   'width': '250px',
   'height': '250px',
@@ -12,10 +14,19 @@ const style = {
   'alignItems': 'center'
 }
 
-export const Card = (props) => {
-  const handleClick = (e) => console.log(e, 'clicked');
+const toggledStyle = {
+  backgroundColor: 'lightgray'
+};
 
-  return <div onClick={handleClick} style={style}>
+export const Card = (props) => {
+  const [toggled, setToggled] = useState(false);
+  const handleClick = (e) => setToggled(!toggled);
+
+  const mystyle = useMemo(() => {
+    return toggled ? ({...style, ...toggledStyle}) : style;
+  }, [toggled]);
+
+  return <div onClick={handleClick} style={mystyle}>
     <p>{ props.text }</p>
   </div>
 };

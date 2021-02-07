@@ -3,6 +3,7 @@
 #include "AST.h"
 #include "list.h"
 #include <hashmap/map.h>
+
 typedef struct FJB_ENV_STRUCT
 {
   unsigned int is_using_jsx;
@@ -34,6 +35,9 @@ typedef struct FJB_ENV_STRUCT
   list_T* resolved_imports;
 
   AST_T* current;
+  AST_T* current_import;
+
+  map_T* compiled_imports;
 
   gc_T* GC;
 } fjb_env_T;

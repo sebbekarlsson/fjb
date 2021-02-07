@@ -579,7 +579,9 @@ char* emit_import(AST_T* ast, fjb_env_T* env)
   }
 
   char* str = 0;
-  char* k = ast->node ? emit(ast->node, env) : strdup(ast->compiled_value);
+  char* k = ast->node             ? emit(ast->node, env)
+            : ast->compiled_value ? strdup(ast->compiled_value)
+                                  : 0;
 
   if (!k) {
     return strdup("\n");
@@ -608,7 +610,7 @@ char* emit_import(AST_T* ast, fjb_env_T* env)
   }
 
   char* requirements = 0;
-  AST_T* current = ast->module_root;
+  AST_T* current = ast; // ast->module_root;
   if (current) {
     unsigned int x = 0;
     unsigned int len;
@@ -621,7 +623,7 @@ char* emit_import(AST_T* ast, fjb_env_T* env)
       char* reqname = k;
 
       if (x == 0) {
-        requirements = str_append(&requirements, ",/*NILTON*/");
+        requirements = str_append(&requirements, ",/*REQUIREMENTS*/");
       }
 
       requirements = str_append(&requirements, reqname);
@@ -638,6 +640,8 @@ char* emit_import(AST_T* ast, fjb_env_T* env)
   if (!str)
     str = strdup("\n");
 
+  char* options_str = ast->options ? emit_tuple(ast->options, env) : strdup("\t");
+
   char* value;
 
   char* headers = ast->headers ? strdup(ast->headers) : strdup("\n");
@@ -648,15 +652,19 @@ char* emit_import(AST_T* ast, fjb_env_T* env)
              strlen(requirements) + (headers ? strlen(headers) : 0) + (k ? strlen(k) : 0),
              headers,
              requirements,
-             k);
+             k,
+             options_str);
   } else {
     TEMPLATE(import,
              value,
              (str ? strlen(str) : 0) + (headers ? strlen(headers) : 0) +
-               (encoding ? strlen(encoding) : 0) + (k ? strlen(k) : 0) + 256,
+               (encoding ? strlen(encoding) : 0) + strlen(options_str) + strlen(requirements) +
+               (k ? strlen(k) : 0) + 256,
              headers,
              encoding,
+             requirements,
              k,
+             options_str,
              str);
   }
 
@@ -732,7 +740,8 @@ char* emit_function(AST_T* ast, fjb_env_T* env)
              args_str,
              body_str);
   } else {
-    if (name && !ast->anon && ast->not_exported == 0 && ast->exported) {
+    if (name && !ast->anon && ast->not_exported == 0 &&
+        (ast->exported || map_get(env->imports, name))) {
       TEMPLATE(expose_def, expose_str, (strlen(name) * 2) + 16, name, name);
     } else {
       expose_str = strdup("\n");
