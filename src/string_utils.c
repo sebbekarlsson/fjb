@@ -382,7 +382,6 @@ char* resolve_import(char* basepath, char* filepath, unsigned int node_modules)
   if (with_ext && file_exists(with_ext))
     return with_ext;
 
-
   if (!path) {
     char* check_path = find_in_path(basepath, filepath);
 
@@ -451,12 +450,13 @@ unsigned int str_contains(char* source, char* sub)
 
 char* find_in_path(char* path, char* filename)
 {
-  if (!path) return 0;
+  if (!path)
+    return 0;
 
   char* _path = strdup(path);
   char* token = strtok(_path, "/");
   char* new_path = 0;
-  
+
   if (_path[0] == '/')
     new_path = str_append(&new_path, "/");
 
@@ -472,7 +472,8 @@ char* find_in_path(char* path, char* filename)
       return new_path;
 
     char* maybe = try_resolve(check_path);
-    if (!maybe) maybe = try_resolve_index(check_path);
+    if (!maybe)
+      maybe = try_resolve_index(check_path);
 
     if (maybe)
       return maybe;

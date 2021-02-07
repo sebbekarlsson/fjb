@@ -8,7 +8,8 @@ typedef struct FJB_ENV_STRUCT
 {
   unsigned int is_using_jsx;
   unsigned int aliased_import;
-  unsigned int level;
+  unsigned long int level;
+  unsigned long int ticks;
 
   AST_T* root;
 

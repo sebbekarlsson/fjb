@@ -1,1 +1,1 @@
-while (%s)
+while(%s)

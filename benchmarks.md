@@ -1,5 +1,5 @@
 # Benchmarks
-> These benchmarks were generated at **2021-02-07 17:27:58.148933**
+> These benchmarks were generated at **2021-02-07 18:49:15.011511**
 
 
 
@@ -24,12 +24,12 @@ console.log(r);
 
   
 <details>
-  <summary>FJB - time: 0:00:00.001679, output size: 551 bytes</summary>
+  <summary>FJB - time: 0:00:00.001646, output size: 509 bytes</summary>
 
 #### Output size
 > The size of the output is:
 ```
-551 bytes
+509 bytes
 ```
 #### Time
 > The command:
@@ -38,14 +38,14 @@ console.log(r);
 ````
 > finished in:
 ```
-0:00:00.001679
+0:00:00.001646
 ```
 </details>
 
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.003416, output size: 232 bytes</summary>
+  <summary>esbuild - time: 0:00:00.002933, output size: 232 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -59,14 +59,14 @@ console.log(r);
 ````
 > finished in:
 ```
-0:00:00.003416
+0:00:00.002933
 ```
 </details>
 
 
   
 <details>
-  <summary>parcel - time: 0:00:00.495557, output size: 1488 bytes</summary>
+  <summary>parcel - time: 0:00:00.488723, output size: 1488 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -80,14 +80,14 @@ console.log(r);
 ````
 > finished in:
 ```
-0:00:00.495557
+0:00:00.488723
 ```
 </details>
 
 
   
 <details>
-  <summary>poi - time: 0:00:01.495195, output size: 5601 bytes</summary>
+  <summary>poi - time: 0:00:01.481377, output size: 5601 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -101,7 +101,7 @@ console.log(r);
 ````
 > finished in:
 ```
-0:00:01.495195
+0:00:01.481377
 ```
 </details>
 
@@ -124,7 +124,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         931.013
+CPU MHz:                         3970.285
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -166,12 +166,12 @@ console.log(r);
 
   
 <details>
-  <summary>FJB - time: 0:00:00.001495, output size: 510 bytes</summary>
+  <summary>FJB - time: 0:00:00.001754, output size: 468 bytes</summary>
 
 #### Output size
 > The size of the output is:
 ```
-510 bytes
+468 bytes
 ```
 #### Time
 > The command:
@@ -180,14 +180,14 @@ console.log(r);
 ````
 > finished in:
 ```
-0:00:00.001495
+0:00:00.001754
 ```
 </details>
 
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.002681, output size: 214 bytes</summary>
+  <summary>esbuild - time: 0:00:00.003532, output size: 214 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -201,14 +201,14 @@ console.log(r);
 ````
 > finished in:
 ```
-0:00:00.002681
+0:00:00.003532
 ```
 </details>
 
 
   
 <details>
-  <summary>parcel - time: 0:00:00.494311, output size: 1383 bytes</summary>
+  <summary>parcel - time: 0:00:00.490510, output size: 1383 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -222,14 +222,14 @@ console.log(r);
 ````
 > finished in:
 ```
-0:00:00.494311
+0:00:00.490510
 ```
 </details>
 
 
   
 <details>
-  <summary>poi - time: 0:00:01.482382, output size: 5354 bytes</summary>
+  <summary>poi - time: 0:00:01.481396, output size: 5354 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -243,7 +243,7 @@ console.log(r);
 ````
 > finished in:
 ```
-0:00:01.482382
+0:00:01.481396
 ```
 </details>
 
@@ -266,7 +266,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         997.560
+CPU MHz:                         4057.605
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -308,12 +308,12 @@ document.head.appendChild(cssEl);
 
   
 <details>
-  <summary>FJB - time: 0:00:00.001364, output size: 813 bytes</summary>
+  <summary>FJB - time: 0:00:00.001586, output size: 772 bytes</summary>
 
 #### Output size
 > The size of the output is:
 ```
-813 bytes
+772 bytes
 ```
 #### Time
 > The command:
@@ -322,14 +322,14 @@ document.head.appendChild(cssEl);
 ````
 > finished in:
 ```
-0:00:00.001364
+0:00:00.001586
 ```
 </details>
 
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.002784, output size: 249 bytes</summary>
+  <summary>esbuild - time: 0:00:00.003323, output size: 249 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -343,14 +343,14 @@ document.head.appendChild(cssEl);
 ````
 > finished in:
 ```
-0:00:00.002784
+0:00:00.003323
 ```
 </details>
 
 
   
 <details>
-  <summary>parcel - time: 0:00:00.520910, output size: 1383 bytes</summary>
+  <summary>parcel - time: 0:00:00.503375, output size: 1383 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -364,14 +364,14 @@ document.head.appendChild(cssEl);
 ````
 > finished in:
 ```
-0:00:00.520910
+0:00:00.503375
 ```
 </details>
 
 
   
 <details>
-  <summary>poi - time: 0:00:01.481936, output size: 18660 bytes</summary>
+  <summary>poi - time: 0:00:01.483084, output size: 18660 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -385,7 +385,7 @@ document.head.appendChild(cssEl);
 ````
 > finished in:
 ```
-0:00:01.481936
+0:00:01.483084
 ```
 </details>
 
@@ -408,7 +408,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         4208.266
+CPU MHz:                         3827.480
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -447,12 +447,12 @@ console.log(people[0].first_name);
 
   
 <details>
-  <summary>FJB - time: 0:00:00.001418, output size: 1527 bytes</summary>
+  <summary>FJB - time: 0:00:00.001606, output size: 1486 bytes</summary>
 
 #### Output size
 > The size of the output is:
 ```
-1527 bytes
+1486 bytes
 ```
 #### Time
 > The command:
@@ -461,14 +461,14 @@ console.log(people[0].first_name);
 ````
 > finished in:
 ```
-0:00:00.001418
+0:00:00.001606
 ```
 </details>
 
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.003309, output size: 1003 bytes</summary>
+  <summary>esbuild - time: 0:00:00.003766, output size: 1003 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -482,14 +482,14 @@ console.log(people[0].first_name);
 ````
 > finished in:
 ```
-0:00:00.003309
+0:00:00.003766
 ```
 </details>
 
 
   
 <details>
-  <summary>parcel - time: 0:00:00.469990, output size: 1822 bytes</summary>
+  <summary>parcel - time: 0:00:00.500358, output size: 1822 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -503,14 +503,14 @@ console.log(people[0].first_name);
 ````
 > finished in:
 ```
-0:00:00.469990
+0:00:00.500358
 ```
 </details>
 
 
   
 <details>
-  <summary>poi - time: 0:00:01.484613, output size: 5936 bytes</summary>
+  <summary>poi - time: 0:00:01.511706, output size: 5936 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -524,7 +524,7 @@ console.log(people[0].first_name);
 ````
 > finished in:
 ```
-0:00:01.484613
+0:00:01.511706
 ```
 </details>
 
@@ -547,7 +547,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         2097.399
+CPU MHz:                         4222.722
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -587,7 +587,7 @@ console.log(ceil(25.443));
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.017727, output size: 222632 bytes</summary>
+  <summary>esbuild - time: 0:00:00.018194, output size: 222632 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -601,19 +601,19 @@ console.log(ceil(25.443));
 ````
 > finished in:
 ```
-0:00:00.017727
+0:00:00.018194
 ```
 </details>
 
 
   
 <details>
-  <summary>FJB - time: 0:00:00.391952, output size: 2315 bytes</summary>
+  <summary>FJB - time: 0:00:00.413475, output size: 2254 bytes</summary>
 
 #### Output size
 > The size of the output is:
 ```
-2315 bytes
+2254 bytes
 ```
 #### Time
 > The command:
@@ -622,14 +622,14 @@ console.log(ceil(25.443));
 ````
 > finished in:
 ```
-0:00:00.391952
+0:00:00.413475
 ```
 </details>
 
 
   
 <details>
-  <summary>parcel - time: 0:00:00.526476, output size: 94714 bytes</summary>
+  <summary>parcel - time: 0:00:00.545212, output size: 94714 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -643,14 +643,14 @@ console.log(ceil(25.443));
 ````
 > finished in:
 ```
-0:00:00.526476
+0:00:00.545212
 ```
 </details>
 
 
   
 <details>
-  <summary>poi - time: 0:00:01.487469, output size: 549705 bytes</summary>
+  <summary>poi - time: 0:00:01.533258, output size: 549705 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -664,7 +664,7 @@ console.log(ceil(25.443));
 ````
 > finished in:
 ```
-0:00:01.487469
+0:00:01.533258
 ```
 </details>
 
@@ -687,7 +687,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         4204.509
+CPU MHz:                         1067.751
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -726,7 +726,7 @@ console.log($);
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.013258, output size: 149812 bytes</summary>
+  <summary>esbuild - time: 0:00:00.014705, output size: 149812 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -740,19 +740,19 @@ console.log($);
 ````
 > finished in:
 ```
-0:00:00.013258
+0:00:00.014705
 ```
 </details>
 
 
   
 <details>
-  <summary>FJB - time: 0:00:00.231262, output size: 108719 bytes</summary>
+  <summary>FJB - time: 0:00:00.222779, output size: 100465 bytes</summary>
 
 #### Output size
 > The size of the output is:
 ```
-108719 bytes
+100465 bytes
 ```
 #### Time
 > The command:
@@ -761,14 +761,14 @@ console.log($);
 ````
 > finished in:
 ```
-0:00:00.231262
+0:00:00.222779
 ```
 </details>
 
 
   
 <details>
-  <summary>parcel - time: 0:00:00.511971, output size: 90592 bytes</summary>
+  <summary>parcel - time: 0:00:00.545179, output size: 90592 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -782,14 +782,14 @@ console.log($);
 ````
 > finished in:
 ```
-0:00:00.511971
+0:00:00.545179
 ```
 </details>
 
 
   
 <details>
-  <summary>poi - time: 0:00:01.537799, output size: 143057 bytes</summary>
+  <summary>poi - time: 0:00:01.496347, output size: 143057 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -803,7 +803,7 @@ console.log($);
 ````
 > finished in:
 ```
-0:00:01.537799
+0:00:01.496347
 ```
 </details>
 
@@ -826,7 +826,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         1119.177
+CPU MHz:                         907.106
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -892,7 +892,7 @@ render(<App />, document.getElementById("root"));
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.038760, output size: 1105110 bytes</summary>
+  <summary>esbuild - time: 0:00:00.038828, output size: 1105110 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -906,14 +906,14 @@ render(<App />, document.getElementById("root"));
 ````
 > finished in:
 ```
-0:00:00.038760
+0:00:00.038828
 ```
 </details>
 
 
   
 <details>
-  <summary>parcel - time: 0:00:00.591869, output size: 135732 bytes</summary>
+  <summary>parcel - time: 0:00:00.628750, output size: 135732 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -927,19 +927,19 @@ render(<App />, document.getElementById("root"));
 ````
 > finished in:
 ```
-0:00:00.591869
+0:00:00.628750
 ```
 </details>
 
 
   
 <details>
-  <summary>FJB - time: 0:00:01.269647, output size: 601672 bytes</summary>
+  <summary>FJB - time: 0:00:01.217528, output size: 591871 bytes</summary>
 
 #### Output size
 > The size of the output is:
 ```
-601672 bytes
+591871 bytes
 ```
 #### Time
 > The command:
@@ -948,14 +948,14 @@ render(<App />, document.getElementById("root"));
 ````
 > finished in:
 ```
-0:00:01.269647
+0:00:01.217528
 ```
 </details>
 
 
   
 <details>
-  <summary>poi - time: 0:00:01.484166, output size: 1031602 bytes</summary>
+  <summary>poi - time: 0:00:01.517913, output size: 1031602 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -969,7 +969,7 @@ render(<App />, document.getElementById("root"));
 ````
 > finished in:
 ```
-0:00:01.484166
+0:00:01.517913
 ```
 </details>
 
@@ -992,7 +992,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         3728.609
+CPU MHz:                         1000.159
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00

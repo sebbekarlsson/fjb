@@ -25,6 +25,8 @@ compiler_result_T* _fjb()
   if (!FJB_ENV->source)
     return 0;
 
+  FJB_ENV->ticks += 1;
+
   unsigned int old_level = FJB_ENV->level;
   NOOP = init_ast(AST_NOOP);
   gc_mark(FJB_ENV->GC, NOOP);
