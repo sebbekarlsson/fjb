@@ -8,7 +8,7 @@
         "cmd": "/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/es6/index.js  > ./dist.js",
         "exec": "/home/ianertson/workspace/fjb/fjb.out",
         "size": 509,
-        "time": "0:00:00.003654",
+        "time": "0:00:00.003264",
         "title": "FJB"
       },
       {
@@ -16,7 +16,7 @@
         "cmd": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/es6/index.js  --bundle --outfile=./dist.js",
         "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild",
         "size": 232,
-        "time": "0:00:00.004275",
+        "time": "0:00:00.004040",
         "title": "esbuild"
       },
       {
@@ -25,7 +25,7 @@
         "dist": "/dist/index.js",
         "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build",
         "size": 1488,
-        "time": "0:00:00.486929",
+        "time": "0:00:00.588133",
         "title": "parcel"
       },
       {
@@ -34,12 +34,12 @@
         "dist": "/dist/assets/js/index.js",
         "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi",
         "size": 5601,
-        "time": "0:00:01.478311",
+        "time": "0:00:01.611072",
         "title": "poi"
       }
     ],
     "source": "import { subtract } from './helpers/math';\n\n\nconst x = 10;\nconst y = 5;\nconst r = subtract(x, y);\nconsole.log(r);\n",
-    "sysinfo": "Architecture:                    x86_64\nCPU op-mode(s):                  32-bit, 64-bit\nByte Order:                      Little Endian\nAddress sizes:                   39 bits physical, 48 bits virtual\nCPU(s):                          16\nOn-line CPU(s) list:             0-15\nThread(s) per core:              2\nCore(s) per socket:              8\nSocket(s):                       1\nNUMA node(s):                    1\nVendor ID:                       GenuineIntel\nCPU family:                      6\nModel:                           158\nModel name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz\nStepping:                        13\nCPU MHz:                         3759.725\nCPU max MHz:                     5000.0000\nCPU min MHz:                     800.0000\nBogoMIPS:                        4800.00\nVirtualization:                  VT-x\nL1d cache:                       256 KiB\nL1i cache:                       256 KiB\nL2 cache:                        2 MiB\nL3 cache:                        16 MiB\nNUMA node0 CPU(s):               0-15\nVulnerability Itlb multihit:     KVM: Mitigation: VMX disabled\nVulnerability L1tf:              Not affected\nVulnerability Mds:               Not affected\nVulnerability Meltdown:          Not affected\nVulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp\nVulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling\nVulnerability Srbds:             Mitigation; TSX disabled\nVulnerability Tsx async abort:   Mitigation; TSX disabled\nFlags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities\n",
+    "sysinfo": "Architecture:                    x86_64\nCPU op-mode(s):                  32-bit, 64-bit\nByte Order:                      Little Endian\nAddress sizes:                   39 bits physical, 48 bits virtual\nCPU(s):                          16\nOn-line CPU(s) list:             0-15\nThread(s) per core:              2\nCore(s) per socket:              8\nSocket(s):                       1\nNUMA node(s):                    1\nVendor ID:                       GenuineIntel\nCPU family:                      6\nModel:                           158\nModel name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz\nStepping:                        13\nCPU MHz:                         4396.267\nCPU max MHz:                     5000.0000\nCPU min MHz:                     800.0000\nBogoMIPS:                        4800.00\nVirtualization:                  VT-x\nL1d cache:                       256 KiB\nL1i cache:                       256 KiB\nL2 cache:                        2 MiB\nL3 cache:                        16 MiB\nNUMA node0 CPU(s):               0-15\nVulnerability Itlb multihit:     KVM: Mitigation: VMX disabled\nVulnerability L1tf:              Not affected\nVulnerability Mds:               Not affected\nVulnerability Meltdown:          Not affected\nVulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp\nVulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling\nVulnerability Srbds:             Mitigation; TSX disabled\nVulnerability Tsx async abort:   Mitigation; TSX disabled\nFlags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities\n",
     "title": "Importing ES6 modules"
   },
   {
@@ -51,7 +51,7 @@
         "cmd": "/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/alias_imports/index.js  > ./dist.js",
         "exec": "/home/ianertson/workspace/fjb/fjb.out",
         "size": 468,
-        "time": "0:00:00.002906",
+        "time": "0:00:00.001906",
         "title": "FJB"
       },
       {
@@ -59,7 +59,7 @@
         "cmd": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/alias_imports/index.js  --bundle --outfile=./dist.js",
         "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild",
         "size": 214,
-        "time": "0:00:00.004763",
+        "time": "0:00:00.003415",
         "title": "esbuild"
       },
       {
@@ -68,7 +68,7 @@
         "dist": "/dist/index.js",
         "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build",
         "size": 1383,
-        "time": "0:00:00.486133",
+        "time": "0:00:00.557488",
         "title": "parcel"
       },
       {
@@ -77,12 +77,12 @@
         "dist": "/dist/assets/js/index.js",
         "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi",
         "size": 5354,
-        "time": "0:00:01.488920",
+        "time": "0:00:01.559605",
         "title": "poi"
       }
     ],
     "source": "import { multiply as mul } from './utils';\n\n\nconst r = mul(5, 5);\n\nconsole.log(r);\n",
-    "sysinfo": "Architecture:                    x86_64\nCPU op-mode(s):                  32-bit, 64-bit\nByte Order:                      Little Endian\nAddress sizes:                   39 bits physical, 48 bits virtual\nCPU(s):                          16\nOn-line CPU(s) list:             0-15\nThread(s) per core:              2\nCore(s) per socket:              8\nSocket(s):                       1\nNUMA node(s):                    1\nVendor ID:                       GenuineIntel\nCPU family:                      6\nModel:                           158\nModel name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz\nStepping:                        13\nCPU MHz:                         4324.669\nCPU max MHz:                     5000.0000\nCPU min MHz:                     800.0000\nBogoMIPS:                        4800.00\nVirtualization:                  VT-x\nL1d cache:                       256 KiB\nL1i cache:                       256 KiB\nL2 cache:                        2 MiB\nL3 cache:                        16 MiB\nNUMA node0 CPU(s):               0-15\nVulnerability Itlb multihit:     KVM: Mitigation: VMX disabled\nVulnerability L1tf:              Not affected\nVulnerability Mds:               Not affected\nVulnerability Meltdown:          Not affected\nVulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp\nVulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling\nVulnerability Srbds:             Mitigation; TSX disabled\nVulnerability Tsx async abort:   Mitigation; TSX disabled\nFlags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities\n",
+    "sysinfo": "Architecture:                    x86_64\nCPU op-mode(s):                  32-bit, 64-bit\nByte Order:                      Little Endian\nAddress sizes:                   39 bits physical, 48 bits virtual\nCPU(s):                          16\nOn-line CPU(s) list:             0-15\nThread(s) per core:              2\nCore(s) per socket:              8\nSocket(s):                       1\nNUMA node(s):                    1\nVendor ID:                       GenuineIntel\nCPU family:                      6\nModel:                           158\nModel name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz\nStepping:                        13\nCPU MHz:                         4138.262\nCPU max MHz:                     5000.0000\nCPU min MHz:                     800.0000\nBogoMIPS:                        4800.00\nVirtualization:                  VT-x\nL1d cache:                       256 KiB\nL1i cache:                       256 KiB\nL2 cache:                        2 MiB\nL3 cache:                        16 MiB\nNUMA node0 CPU(s):               0-15\nVulnerability Itlb multihit:     KVM: Mitigation: VMX disabled\nVulnerability L1tf:              Not affected\nVulnerability Mds:               Not affected\nVulnerability Meltdown:          Not affected\nVulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp\nVulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling\nVulnerability Srbds:             Mitigation; TSX disabled\nVulnerability Tsx async abort:   Mitigation; TSX disabled\nFlags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities\n",
     "title": "Importing aliased ES6 modules"
   },
   {
@@ -90,20 +90,20 @@
     "path": "/home/ianertson/workspace/fjb/tests/src/test_projects/css_import/index.js",
     "runs": [
       {
-        "args": " > ./dist.js",
-        "cmd": "/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/css_import/index.js  > ./dist.js",
-        "exec": "/home/ianertson/workspace/fjb/fjb.out",
-        "size": 772,
-        "time": "0:00:00.002756",
-        "title": "FJB"
-      },
-      {
         "args": " --bundle --outfile=./dist.js",
         "cmd": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/css_import/index.js  --bundle --outfile=./dist.js",
         "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild",
         "size": 249,
-        "time": "0:00:00.004954",
+        "time": "0:00:00.003412",
         "title": "esbuild"
+      },
+      {
+        "args": " > ./dist.js",
+        "cmd": "/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/css_import/index.js  > ./dist.js",
+        "exec": "/home/ianertson/workspace/fjb/fjb.out",
+        "size": 772,
+        "time": "0:00:00.003825",
+        "title": "FJB"
       },
       {
         "args": "",
@@ -111,7 +111,7 @@
         "dist": "/dist/index.js",
         "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build",
         "size": 1383,
-        "time": "0:00:00.518103",
+        "time": "0:00:00.599687",
         "title": "parcel"
       },
       {
@@ -120,12 +120,12 @@
         "dist": "/dist/assets/js/index.js",
         "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi",
         "size": 18660,
-        "time": "0:00:01.483189",
+        "time": "0:00:01.551284",
         "title": "poi"
       }
     ],
     "source": "import style from './style.css';\n\n\nconst cssEl = document.createElement('style')\ncssEl.innerText = style;\ndocument.head.appendChild(cssEl);\n",
-    "sysinfo": "Architecture:                    x86_64\nCPU op-mode(s):                  32-bit, 64-bit\nByte Order:                      Little Endian\nAddress sizes:                   39 bits physical, 48 bits virtual\nCPU(s):                          16\nOn-line CPU(s) list:             0-15\nThread(s) per core:              2\nCore(s) per socket:              8\nSocket(s):                       1\nNUMA node(s):                    1\nVendor ID:                       GenuineIntel\nCPU family:                      6\nModel:                           158\nModel name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz\nStepping:                        13\nCPU MHz:                         3352.456\nCPU max MHz:                     5000.0000\nCPU min MHz:                     800.0000\nBogoMIPS:                        4800.00\nVirtualization:                  VT-x\nL1d cache:                       256 KiB\nL1i cache:                       256 KiB\nL2 cache:                        2 MiB\nL3 cache:                        16 MiB\nNUMA node0 CPU(s):               0-15\nVulnerability Itlb multihit:     KVM: Mitigation: VMX disabled\nVulnerability L1tf:              Not affected\nVulnerability Mds:               Not affected\nVulnerability Meltdown:          Not affected\nVulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp\nVulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling\nVulnerability Srbds:             Mitigation; TSX disabled\nVulnerability Tsx async abort:   Mitigation; TSX disabled\nFlags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities\n",
+    "sysinfo": "Architecture:                    x86_64\nCPU op-mode(s):                  32-bit, 64-bit\nByte Order:                      Little Endian\nAddress sizes:                   39 bits physical, 48 bits virtual\nCPU(s):                          16\nOn-line CPU(s) list:             0-15\nThread(s) per core:              2\nCore(s) per socket:              8\nSocket(s):                       1\nNUMA node(s):                    1\nVendor ID:                       GenuineIntel\nCPU family:                      6\nModel:                           158\nModel name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz\nStepping:                        13\nCPU MHz:                         4204.907\nCPU max MHz:                     5000.0000\nCPU min MHz:                     800.0000\nBogoMIPS:                        4800.00\nVirtualization:                  VT-x\nL1d cache:                       256 KiB\nL1i cache:                       256 KiB\nL2 cache:                        2 MiB\nL3 cache:                        16 MiB\nNUMA node0 CPU(s):               0-15\nVulnerability Itlb multihit:     KVM: Mitigation: VMX disabled\nVulnerability L1tf:              Not affected\nVulnerability Mds:               Not affected\nVulnerability Meltdown:          Not affected\nVulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp\nVulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling\nVulnerability Srbds:             Mitigation; TSX disabled\nVulnerability Tsx async abort:   Mitigation; TSX disabled\nFlags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities\n",
     "title": "Importing CSS"
   },
   {
@@ -137,7 +137,7 @@
         "cmd": "/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/json_import/index.js  > ./dist.js",
         "exec": "/home/ianertson/workspace/fjb/fjb.out",
         "size": 1486,
-        "time": "0:00:00.003433",
+        "time": "0:00:00.001870",
         "title": "FJB"
       },
       {
@@ -145,7 +145,7 @@
         "cmd": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/json_import/index.js  --bundle --outfile=./dist.js",
         "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild",
         "size": 1003,
-        "time": "0:00:00.006757",
+        "time": "0:00:00.003391",
         "title": "esbuild"
       },
       {
@@ -154,7 +154,7 @@
         "dist": "/dist/index.js",
         "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build",
         "size": 1822,
-        "time": "0:00:00.507911",
+        "time": "0:00:00.534910",
         "title": "parcel"
       },
       {
@@ -163,12 +163,12 @@
         "dist": "/dist/assets/js/index.js",
         "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi",
         "size": 5936,
-        "time": "0:00:01.482894",
+        "time": "0:00:01.514436",
         "title": "poi"
       }
     ],
     "source": "import people from './people.json';\n\nconsole.log(people[0].first_name);\n",
-    "sysinfo": "Architecture:                    x86_64\nCPU op-mode(s):                  32-bit, 64-bit\nByte Order:                      Little Endian\nAddress sizes:                   39 bits physical, 48 bits virtual\nCPU(s):                          16\nOn-line CPU(s) list:             0-15\nThread(s) per core:              2\nCore(s) per socket:              8\nSocket(s):                       1\nNUMA node(s):                    1\nVendor ID:                       GenuineIntel\nCPU family:                      6\nModel:                           158\nModel name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz\nStepping:                        13\nCPU MHz:                         2205.535\nCPU max MHz:                     5000.0000\nCPU min MHz:                     800.0000\nBogoMIPS:                        4800.00\nVirtualization:                  VT-x\nL1d cache:                       256 KiB\nL1i cache:                       256 KiB\nL2 cache:                        2 MiB\nL3 cache:                        16 MiB\nNUMA node0 CPU(s):               0-15\nVulnerability Itlb multihit:     KVM: Mitigation: VMX disabled\nVulnerability L1tf:              Not affected\nVulnerability Mds:               Not affected\nVulnerability Meltdown:          Not affected\nVulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp\nVulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling\nVulnerability Srbds:             Mitigation; TSX disabled\nVulnerability Tsx async abort:   Mitigation; TSX disabled\nFlags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities\n",
+    "sysinfo": "Architecture:                    x86_64\nCPU op-mode(s):                  32-bit, 64-bit\nByte Order:                      Little Endian\nAddress sizes:                   39 bits physical, 48 bits virtual\nCPU(s):                          16\nOn-line CPU(s) list:             0-15\nThread(s) per core:              2\nCore(s) per socket:              8\nSocket(s):                       1\nNUMA node(s):                    1\nVendor ID:                       GenuineIntel\nCPU family:                      6\nModel:                           158\nModel name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz\nStepping:                        13\nCPU MHz:                         4189.959\nCPU max MHz:                     5000.0000\nCPU min MHz:                     800.0000\nBogoMIPS:                        4800.00\nVirtualization:                  VT-x\nL1d cache:                       256 KiB\nL1i cache:                       256 KiB\nL2 cache:                        2 MiB\nL3 cache:                        16 MiB\nNUMA node0 CPU(s):               0-15\nVulnerability Itlb multihit:     KVM: Mitigation: VMX disabled\nVulnerability L1tf:              Not affected\nVulnerability Mds:               Not affected\nVulnerability Meltdown:          Not affected\nVulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp\nVulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling\nVulnerability Srbds:             Mitigation; TSX disabled\nVulnerability Tsx async abort:   Mitigation; TSX disabled\nFlags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities\n",
     "title": "Importing JSON"
   },
   {
@@ -180,7 +180,7 @@
         "cmd": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/with_lodash/index.js  --bundle --outfile=./dist.js",
         "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild",
         "size": 222632,
-        "time": "0:00:00.018608",
+        "time": "0:00:00.019700",
         "title": "esbuild"
       },
       {
@@ -188,7 +188,7 @@
         "cmd": "/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/with_lodash/index.js  > ./dist.js",
         "exec": "/home/ianertson/workspace/fjb/fjb.out",
         "size": 2254,
-        "time": "0:00:00.387164",
+        "time": "0:00:00.433858",
         "title": "FJB"
       },
       {
@@ -197,7 +197,7 @@
         "dist": "/dist/index.js",
         "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build",
         "size": 94714,
-        "time": "0:00:00.533784",
+        "time": "0:00:00.621514",
         "title": "parcel"
       },
       {
@@ -206,12 +206,12 @@
         "dist": "/dist/assets/js/index.js",
         "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi",
         "size": 549705,
-        "time": "0:00:01.485380",
+        "time": "0:00:01.533023",
         "title": "poi"
       }
     ],
     "source": "import { ceil } from 'lodash';\n\n\nconsole.log(ceil(25.443));\n",
-    "sysinfo": "Architecture:                    x86_64\nCPU op-mode(s):                  32-bit, 64-bit\nByte Order:                      Little Endian\nAddress sizes:                   39 bits physical, 48 bits virtual\nCPU(s):                          16\nOn-line CPU(s) list:             0-15\nThread(s) per core:              2\nCore(s) per socket:              8\nSocket(s):                       1\nNUMA node(s):                    1\nVendor ID:                       GenuineIntel\nCPU family:                      6\nModel:                           158\nModel name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz\nStepping:                        13\nCPU MHz:                         3996.365\nCPU max MHz:                     5000.0000\nCPU min MHz:                     800.0000\nBogoMIPS:                        4800.00\nVirtualization:                  VT-x\nL1d cache:                       256 KiB\nL1i cache:                       256 KiB\nL2 cache:                        2 MiB\nL3 cache:                        16 MiB\nNUMA node0 CPU(s):               0-15\nVulnerability Itlb multihit:     KVM: Mitigation: VMX disabled\nVulnerability L1tf:              Not affected\nVulnerability Mds:               Not affected\nVulnerability Meltdown:          Not affected\nVulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp\nVulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling\nVulnerability Srbds:             Mitigation; TSX disabled\nVulnerability Tsx async abort:   Mitigation; TSX disabled\nFlags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities\n",
+    "sysinfo": "Architecture:                    x86_64\nCPU op-mode(s):                  32-bit, 64-bit\nByte Order:                      Little Endian\nAddress sizes:                   39 bits physical, 48 bits virtual\nCPU(s):                          16\nOn-line CPU(s) list:             0-15\nThread(s) per core:              2\nCore(s) per socket:              8\nSocket(s):                       1\nNUMA node(s):                    1\nVendor ID:                       GenuineIntel\nCPU family:                      6\nModel:                           158\nModel name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz\nStepping:                        13\nCPU MHz:                         4392.123\nCPU max MHz:                     5000.0000\nCPU min MHz:                     800.0000\nBogoMIPS:                        4800.00\nVirtualization:                  VT-x\nL1d cache:                       256 KiB\nL1i cache:                       256 KiB\nL2 cache:                        2 MiB\nL3 cache:                        16 MiB\nNUMA node0 CPU(s):               0-15\nVulnerability Itlb multihit:     KVM: Mitigation: VMX disabled\nVulnerability L1tf:              Not affected\nVulnerability Mds:               Not affected\nVulnerability Meltdown:          Not affected\nVulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp\nVulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling\nVulnerability Srbds:             Mitigation; TSX disabled\nVulnerability Tsx async abort:   Mitigation; TSX disabled\nFlags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities\n",
     "title": "Importing `ceil` from lodash, with tree shaking."
   },
   {
@@ -223,7 +223,7 @@
         "cmd": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/with_jquery/index.js  --bundle --outfile=./dist.js",
         "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild",
         "size": 149812,
-        "time": "0:00:00.014432",
+        "time": "0:00:00.015510",
         "title": "esbuild"
       },
       {
@@ -231,7 +231,7 @@
         "cmd": "/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/with_jquery/index.js  > ./dist.js",
         "exec": "/home/ianertson/workspace/fjb/fjb.out",
         "size": 100465,
-        "time": "0:00:00.217807",
+        "time": "0:00:00.252928",
         "title": "FJB"
       },
       {
@@ -240,7 +240,7 @@
         "dist": "/dist/index.js",
         "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build",
         "size": 90592,
-        "time": "0:00:00.515912",
+        "time": "0:00:00.595938",
         "title": "parcel"
       },
       {
@@ -249,13 +249,56 @@
         "dist": "/dist/assets/js/index.js",
         "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi",
         "size": 143057,
-        "time": "0:00:01.482181",
+        "time": "0:00:01.537756",
         "title": "poi"
       }
     ],
     "source": "const $ = require('./jquery');\n\nconsole.log($);\n",
-    "sysinfo": "Architecture:                    x86_64\nCPU op-mode(s):                  32-bit, 64-bit\nByte Order:                      Little Endian\nAddress sizes:                   39 bits physical, 48 bits virtual\nCPU(s):                          16\nOn-line CPU(s) list:             0-15\nThread(s) per core:              2\nCore(s) per socket:              8\nSocket(s):                       1\nNUMA node(s):                    1\nVendor ID:                       GenuineIntel\nCPU family:                      6\nModel:                           158\nModel name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz\nStepping:                        13\nCPU MHz:                         4290.029\nCPU max MHz:                     5000.0000\nCPU min MHz:                     800.0000\nBogoMIPS:                        4800.00\nVirtualization:                  VT-x\nL1d cache:                       256 KiB\nL1i cache:                       256 KiB\nL2 cache:                        2 MiB\nL3 cache:                        16 MiB\nNUMA node0 CPU(s):               0-15\nVulnerability Itlb multihit:     KVM: Mitigation: VMX disabled\nVulnerability L1tf:              Not affected\nVulnerability Mds:               Not affected\nVulnerability Meltdown:          Not affected\nVulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp\nVulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling\nVulnerability Srbds:             Mitigation; TSX disabled\nVulnerability Tsx async abort:   Mitigation; TSX disabled\nFlags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities\n",
+    "sysinfo": "Architecture:                    x86_64\nCPU op-mode(s):                  32-bit, 64-bit\nByte Order:                      Little Endian\nAddress sizes:                   39 bits physical, 48 bits virtual\nCPU(s):                          16\nOn-line CPU(s) list:             0-15\nThread(s) per core:              2\nCore(s) per socket:              8\nSocket(s):                       1\nNUMA node(s):                    1\nVendor ID:                       GenuineIntel\nCPU family:                      6\nModel:                           158\nModel name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz\nStepping:                        13\nCPU MHz:                         4218.797\nCPU max MHz:                     5000.0000\nCPU min MHz:                     800.0000\nBogoMIPS:                        4800.00\nVirtualization:                  VT-x\nL1d cache:                       256 KiB\nL1i cache:                       256 KiB\nL2 cache:                        2 MiB\nL3 cache:                        16 MiB\nNUMA node0 CPU(s):               0-15\nVulnerability Itlb multihit:     KVM: Mitigation: VMX disabled\nVulnerability L1tf:              Not affected\nVulnerability Mds:               Not affected\nVulnerability Meltdown:          Not affected\nVulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp\nVulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling\nVulnerability Srbds:             Mitigation; TSX disabled\nVulnerability Tsx async abort:   Mitigation; TSX disabled\nFlags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities\n",
     "title": "Require `jquery`"
+  },
+  {
+    "graph": "SW1wb3J0aW5nIGByZWFjdGAgZnJvbSByZWFjdA==.png",
+    "path": "/home/ianertson/workspace/fjb/tests/src/test_projects/react_import/index.jsx",
+    "runs": [
+      {
+        "args": " --bundle --outfile=./dist.js",
+        "cmd": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/react_import/index.jsx  --bundle --outfile=./dist.js",
+        "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild",
+        "size": 76776,
+        "time": "0:00:00.008916",
+        "title": "esbuild"
+      },
+      {
+        "args": " > ./dist.js",
+        "cmd": "/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/react_import/index.jsx  > ./dist.js",
+        "exec": "/home/ianertson/workspace/fjb/fjb.out",
+        "size": 43082,
+        "time": "0:00:00.044936",
+        "title": "FJB"
+      },
+      {
+        "args": "",
+        "cmd": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/react_import/index.jsx ",
+        "dist": "/dist/index.js",
+        "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build",
+        "size": 8574,
+        "time": "0:00:01.108874",
+        "title": "parcel"
+      },
+      {
+        "args": "",
+        "cmd": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi /home/ianertson/workspace/fjb/tests/src/test_projects/react_import/index.jsx ",
+        "dist": "/dist/assets/js/index.js",
+        "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi",
+        "size": 80699,
+        "time": "0:00:01.535615",
+        "title": "poi"
+      }
+    ],
+    "source": "import React from 'react';\n",
+    "sysinfo": "Architecture:                    x86_64\nCPU op-mode(s):                  32-bit, 64-bit\nByte Order:                      Little Endian\nAddress sizes:                   39 bits physical, 48 bits virtual\nCPU(s):                          16\nOn-line CPU(s) list:             0-15\nThread(s) per core:              2\nCore(s) per socket:              8\nSocket(s):                       1\nNUMA node(s):                    1\nVendor ID:                       GenuineIntel\nCPU family:                      6\nModel:                           158\nModel name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz\nStepping:                        13\nCPU MHz:                         4258.879\nCPU max MHz:                     5000.0000\nCPU min MHz:                     800.0000\nBogoMIPS:                        4800.00\nVirtualization:                  VT-x\nL1d cache:                       256 KiB\nL1i cache:                       256 KiB\nL2 cache:                        2 MiB\nL3 cache:                        16 MiB\nNUMA node0 CPU(s):               0-15\nVulnerability Itlb multihit:     KVM: Mitigation: VMX disabled\nVulnerability L1tf:              Not affected\nVulnerability Mds:               Not affected\nVulnerability Meltdown:          Not affected\nVulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp\nVulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling\nVulnerability Srbds:             Mitigation; TSX disabled\nVulnerability Tsx async abort:   Mitigation; TSX disabled\nFlags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities\n",
+    "title": "Importing `react` from react"
   },
   {
     "graph": "UmVhY3QgcHJvamVjdCB3aXRoIEpTWA==.png",
@@ -266,24 +309,15 @@
         "cmd": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/with_react/index.jsx  --bundle --outfile=./dist.js",
         "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild",
         "size": 1105110,
-        "time": "0:00:00.039588",
+        "time": "0:00:00.042006",
         "title": "esbuild"
-      },
-      {
-        "args": "",
-        "cmd": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/with_react/index.jsx ",
-        "dist": "/dist/index.js",
-        "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build",
-        "size": 135732,
-        "time": "0:00:00.598075",
-        "title": "parcel"
       },
       {
         "args": " > ./dist.js",
         "cmd": "/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/with_react/index.jsx  > ./dist.js",
         "exec": "/home/ianertson/workspace/fjb/fjb.out",
         "size": 591871,
-        "time": "0:00:01.140683",
+        "time": "0:00:01.351878",
         "title": "FJB"
       },
       {
@@ -292,12 +326,21 @@
         "dist": "/dist/assets/js/index.js",
         "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi",
         "size": 1031602,
-        "time": "0:00:01.492584",
+        "time": "0:00:01.550122",
         "title": "poi"
+      },
+      {
+        "args": "",
+        "cmd": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/with_react/index.jsx ",
+        "dist": "/dist/index.js",
+        "exec": "/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build",
+        "size": 135732,
+        "time": "0:00:03.579459",
+        "title": "parcel"
       }
     ],
     "source": "import React, { Component } from \"react\";\nimport { Card } from \"./card\";\nimport style from \"./style.css\";\nimport { render } from \"react-dom\";\n\n// unfortunately, need to manually append style tag right now\nconst styleTag = document.createElement(\"style\");\nstyleTag.innerText = style;\ndocument.head.appendChild(styleTag);\n\nconst SUBTITLE = \"It's so simple!\";\nconst appStyle = {\n  width: \"100%\",\n  height: \"100%\",\n  display: \"flex\",\n  justifyContent: \"center\",\n  alignItems: \"center\",\n};\n\nconst App = () => {\n  return (\n    <div style={appStyle}>\n      <div>\n        <Card text={SUBTITLE} />\n      </div>\n    </div>\n  );\n};\n\nrender(<App />, document.getElementById(\"root\"));\n",
-    "sysinfo": "Architecture:                    x86_64\nCPU op-mode(s):                  32-bit, 64-bit\nByte Order:                      Little Endian\nAddress sizes:                   39 bits physical, 48 bits virtual\nCPU(s):                          16\nOn-line CPU(s) list:             0-15\nThread(s) per core:              2\nCore(s) per socket:              8\nSocket(s):                       1\nNUMA node(s):                    1\nVendor ID:                       GenuineIntel\nCPU family:                      6\nModel:                           158\nModel name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz\nStepping:                        13\nCPU MHz:                         4674.102\nCPU max MHz:                     5000.0000\nCPU min MHz:                     800.0000\nBogoMIPS:                        4800.00\nVirtualization:                  VT-x\nL1d cache:                       256 KiB\nL1i cache:                       256 KiB\nL2 cache:                        2 MiB\nL3 cache:                        16 MiB\nNUMA node0 CPU(s):               0-15\nVulnerability Itlb multihit:     KVM: Mitigation: VMX disabled\nVulnerability L1tf:              Not affected\nVulnerability Mds:               Not affected\nVulnerability Meltdown:          Not affected\nVulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp\nVulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling\nVulnerability Srbds:             Mitigation; TSX disabled\nVulnerability Tsx async abort:   Mitigation; TSX disabled\nFlags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities\n",
+    "sysinfo": "Architecture:                    x86_64\nCPU op-mode(s):                  32-bit, 64-bit\nByte Order:                      Little Endian\nAddress sizes:                   39 bits physical, 48 bits virtual\nCPU(s):                          16\nOn-line CPU(s) list:             0-15\nThread(s) per core:              2\nCore(s) per socket:              8\nSocket(s):                       1\nNUMA node(s):                    1\nVendor ID:                       GenuineIntel\nCPU family:                      6\nModel:                           158\nModel name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz\nStepping:                        13\nCPU MHz:                         4225.976\nCPU max MHz:                     5000.0000\nCPU min MHz:                     800.0000\nBogoMIPS:                        4800.00\nVirtualization:                  VT-x\nL1d cache:                       256 KiB\nL1i cache:                       256 KiB\nL2 cache:                        2 MiB\nL3 cache:                        16 MiB\nNUMA node0 CPU(s):               0-15\nVulnerability Itlb multihit:     KVM: Mitigation: VMX disabled\nVulnerability L1tf:              Not affected\nVulnerability Mds:               Not affected\nVulnerability Meltdown:          Not affected\nVulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp\nVulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling\nVulnerability Srbds:             Mitigation; TSX disabled\nVulnerability Tsx async abort:   Mitigation; TSX disabled\nFlags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities\n",
     "title": "React project with JSX"
   }
 ]
