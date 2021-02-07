@@ -1,3 +1,1 @@
-class %s %s {
-  %s
-}
+class %s %s {%s}

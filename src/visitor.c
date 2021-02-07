@@ -3,6 +3,7 @@
 #include "include/emit.h"
 #include "include/emit_hooks.h"
 #include "include/env.h"
+#include "include/eval.h"
 #include "include/fjb.h"
 #include "include/gc.h"
 #include "include/imported.h"
@@ -93,9 +94,20 @@ AST_T* visitor_visit_import(visitor_T* visitor, AST_T* ast, list_T* stack)
 
   if (!encoding) {
     char buff[156];
-    sprintf(buff, "_%p", ast);
+    const char* template = "_fjb%d";
+    sprintf(buff,
+            template,
+            (int)(FJB_ENV->level + FJB_ENV->ticks +
+                  (int)(FJB_ENV->resolved_imports ? FJB_ENV->resolved_imports->size : 0)));
     encoding = strdup(buff);
   }
+
+  /*
+  if (!encoding) {
+    char buff[156];
+    sprintf(buff, "_%p", ast);
+    encoding = strdup(buff);
+  }*/
 
   ast->encoding = encoding;
 
@@ -602,7 +614,9 @@ AST_T* visitor_visit_name(visitor_T* visitor, AST_T* ast, list_T* stack)
 
   ast->ptr = getptr(ast, stack, visitor);
 
-  return ast;
+  AST_T* result = eval(visitor, ast);
+
+  return result ? result : ast;
 }
 
 AST_T* visitor_visit_arrow_definition(visitor_T* visitor, AST_T* ast, list_T* stack)
@@ -701,8 +715,7 @@ AST_T* visitor_visit_call(visitor_T* visitor, AST_T* ast, list_T* stack)
     if (str != 0) {
       char* final_file_to_read = resolve_import(((char*)FJB_ENV->filepath), str, 0);
 
-      if (!final_file_to_read)
-      { 
+      if (!final_file_to_read) {
         printf("[Error]: Unable to resolve `%s -> %s`\n", FJB_ENV->filepath, str);
         exit(1);
       }
@@ -781,25 +794,9 @@ AST_T* visitor_visit_binop(visitor_T* visitor, AST_T* ast, list_T* stack)
     ast->ptr = ast->right->ptr;
   }
 
-  if (ast->left && ast->left->ptr && ast->right && ast->token) {
-    if (ast->left->ptr->type == AST_STRING && ast->right->type == AST_STRING) {
-      AST_T* result = 0;
-
-      unsigned int strdiff = strcmp(ast->left->ptr->string_value, ast->right->string_value);
-
-      if (ast->token->type == TOKEN_NOT_EQUALS || ast->token->type == TOKEN_NOT_EQUALS_EQUALS) {
-        result = init_ast(AST_BOOL);
-        result->bool_value = strdiff != 0;
-      } else if (ast->token->type == TOKEN_EQUALS_EQUALS ||
-                 ast->token->type == TOKEN_EQUALS_EQUALS_EQUALS) {
-        result = init_ast(AST_BOOL);
-        result->bool_value = strdiff == 0;
-      }
-
-      if (result)
-        return result;
-    }
-  }
+  AST_T* result = eval(visitor, ast);
+  if (result && result != 0)
+    return result;
 
   if (ast->right && ast->right->name && !ast->name) {
     ast->name = strdup(ast->right->name);
