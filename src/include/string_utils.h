@@ -11,10 +11,6 @@ char* charstr(char c);
 
 char* dirname(const char* path);
 
-const char* extension(const char* path);
-
-char* remove_char(char* str, char find);
-
 const char* get_filename_ext(char* filename);
 
 char* int_to_str(int x);

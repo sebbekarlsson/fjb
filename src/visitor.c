@@ -26,6 +26,9 @@ static AST_T* getptr(AST_T* ast, list_T* stack, visitor_T* visitor)
 
   AST_T* ptr = ast->ptr;
 
+  if (!ptr && ast->stack_frame)
+    ptr = (AST_T*)map_get_value(ast->stack_frame, ast->name);
+
   if (!ptr)
     ptr = (AST_T*)map_get_value(FJB_ENV->map, ast->name);
 
@@ -311,8 +314,6 @@ AST_T* visitor_visit_assignment(visitor_T* visitor, AST_T* ast, list_T* stack)
   if (ast->name)
     map_set(FJB_ENV->assignments, ast->name, ast);
 
-  // list_push(FJB_ENV->search_index, ast);
-
   return ast;
 }
 
@@ -505,7 +506,6 @@ AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* stack)
   if (ast->name) {
     map_set(FJB_ENV->map, ast->name, ast);
     list_push(stack, ast);
-    // list_push(FJB_ENV->search_index, ast);
     map_set(FJB_ENV->functions, ast->name, ast);
 
     imported_T* im = (imported_T*)map_get_value(FJB_ENV->imports, ast->name);
@@ -537,9 +537,6 @@ AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* stack)
       }
     }
   }
-
-  if (ast->name)
-    map_set(FJB_ENV->functions, ast->name, ast);
 
   return ast;
 }
@@ -704,8 +701,14 @@ AST_T* visitor_visit_call(visitor_T* visitor, AST_T* ast, list_T* stack)
     if (str != 0) {
       char* final_file_to_read = resolve_import(((char*)FJB_ENV->filepath), str, 0);
 
+      if (!final_file_to_read)
+      { 
+        printf("[Error]: Unable to resolve `%s -> %s`\n", FJB_ENV->filepath, str);
+        exit(1);
+      }
+
       char* base = final_file_to_read ? get_slashed_path(final_file_to_read) : 0;
-      ast->basename = strdup(base);
+      ast->basename = base ? strdup(base) : 0;
 
       if ((base && list_contains_str(FJB_ENV->resolved_imports, base)) ||
           list_contains_str(FJB_ENV->resolved_imports, str)) {
@@ -891,7 +894,7 @@ AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* stack)
   if (ast->next)
     ast->next = visitor_visit(visitor, ast->next, stack);
 
-  if (FJB_ENV->assignments && !ast->stack_frame) {
+  if (FJB_ENV->map && !ast->stack_frame) {
     ast->stack_frame = map_copy(FJB_ENV->map);
   }
 

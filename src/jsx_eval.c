@@ -23,53 +23,11 @@ AST_T* eval_jsx_element(visitor_T* visitor, AST_T* ast, list_T* stack)
 
   ast->body = eval_jsx(visitor, ast->body, stack);
 
-  AST_T* def = 0;
-
-  list_T* search_index = list_merge(FJB_ENV->search_index, stack);
-
-  /*if (ast->name && ast->stack_frame) {
-    LOOP_NODES(
-      search_index, i, child, char* name = ast_get_string(child);
-
-      if (!name) continue;
-
-      if (child->type == AST_ASSIGNMENT || child->type == AST_FUNCTION) {
-        if (strcmp(name, ast->name) == 0) {
-          def = child;
-          break;
-        }
-      });
-
-  }*/
-
-  if (!def)
-    def = (AST_T*)map_get_value(FJB_ENV->functions, ast->name);
-  if (!def)
-    def = (AST_T*)map_get_value(ast->stack_frame, ast->name);
+  AST_T* def = (AST_T*)map_get_value(ast->stack_frame, ast->name);
 
   if (def) {
     ast->ptr = def;
   }
-
-  /*if (ast->ptr)
-  {
-  AST_T* call_ast = init_ast(AST_CALL);
-  //call_ast->ptr = def;
-  call_ast->name = strdup(ast->ptr->name);
-  call_ast->list_value = list_copy(ast->options);
-
-  if ((ast->ptr && ast->ptr->type == AST_FUNCTION) ||
-      (ast->ptr && ast->ptr->value && ast->ptr->value->type == AST_FUNCTION)) {
-    AST_T* state = init_ast(AST_STATE);
-    state->string_value = strdup("new");
-    state->value = call_ast;
-
-    return state;
-  } else {
-    return call_ast;
-  }
-  }
-    ast->ptr = 0;*/
 
   return ast;
 }

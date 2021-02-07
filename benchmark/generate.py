@@ -75,6 +75,10 @@ BENCHMARKS = [
     create_mark(
         "Require `jquery`",
         '/tests/src/test_projects/with_jquery/index.js'
+    ),
+    create_mark(
+        "React project with JSX",
+        '/tests/src/test_projects/with_react/index.jsx'
     )
 ]
 

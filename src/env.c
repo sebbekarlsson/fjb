@@ -46,7 +46,6 @@ void init_fjb_env()
   FJB_ENV = calloc(1, sizeof(struct FJB_ENV_STRUCT));
   FJB_ENV->source = 0;
   FJB_ENV->filepath = 0;
-  FJB_ENV->search_index = NEW_STACK;
   FJB_ENV->hooks = init_list(sizeof(plugin_hook));
   FJB_ENV->resolved_imports = init_list(sizeof(char*));
   FJB_ENV->imports = NEW_MAP();
