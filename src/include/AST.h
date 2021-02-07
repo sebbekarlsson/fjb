@@ -39,11 +39,12 @@ typedef struct FJB_AST_STRUCT
   char* from_module;
   char* innerText;
   char* headers;
+  char* encoding;
 
   list_T* list_value;
   list_T* options;
   list_T* flags;
-  list_T* stack_frame;
+  map_T* stack_frame;
 
   unsigned int capsulated;
   unsigned int lazy;
@@ -75,6 +76,8 @@ AST_T* init_ast(int type);
 AST_T* init_ast_line(int type, int line);
 
 AST_T* init_assignment(char* name, AST_T* value);
+
+AST_T* init_ast_string(char* string_value);
 
 void ast_init_parent_lists(AST_T* ast);
 

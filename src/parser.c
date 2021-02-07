@@ -383,7 +383,14 @@ AST_T* parser_parse_definition(parser_T* parser, parser_options_T options)
     parser_eat(parser, parser->token->type);
   }
 
-  AST_T* assignment = parser_parse_assignment(parser, options, parser_parse_id(parser, options));
+  AST_T* left = 0;
+
+  if (parser->token->type == TOKEN_LBRACKET) {
+    left = parser_parse_array(parser, options);
+  } else {
+    left = parser_parse_id(parser, options);
+  }
+  AST_T* assignment = parser_parse_assignment(parser, options, left);
   assignment->flags = flags;
 
   return assignment;
@@ -695,6 +702,10 @@ AST_T* parser_parse_object_child(parser_T* parser, parser_options_T options)
   colon_ass->parent = options.parent;
 
   colon_ass->left = parser_parse_factor(parser, options);
+
+  if (parser->token->type != TOKEN_COLON) {
+    return colon_ass->left;
+  }
 
   parser_eat(parser, TOKEN_COLON);
 

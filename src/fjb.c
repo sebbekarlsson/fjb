@@ -97,7 +97,32 @@ compiler_result_T* fjb()
 
   result->headers = strdup(" ");
 
-  char* str = 0;
+  char* imps = 0;
+  if (FJB_ENV->compiled_imports) {
+    char** keys = 0;
+    unsigned int len = 0;
+    map_get_keys(FJB_ENV->compiled_imports, &keys, &len);
+
+    for (unsigned int i = 0; i < len; i++) {
+      char* key = keys[i];
+      if (!key)
+        continue;
+
+      AST_T* imp_res = (AST_T*)map_get_value(FJB_ENV->compiled_imports, key);
+      if (!imp_res)
+        continue;
+
+      imp_res->dead = 0;
+
+      char* impstr = emit(imp_res, FJB_ENV);
+      if (!impstr)
+        continue;
+      imps = str_append(&imps, impstr);
+    }
+  }
+
+  if (imps)
+    headers = str_append(&headers, imps);
 
   if (headers) {
     const char* template = "%s\n%s";

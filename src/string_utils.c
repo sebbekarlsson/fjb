@@ -1,4 +1,5 @@
 #include "include/string_utils.h"
+#include "include/constants.h"
 #include "include/io.h"
 #include "include/package.h"
 #include <stdio.h>
@@ -202,62 +203,87 @@ char* get_filename(char* path)
 {
   char* _path = strdup(path);
   char* tok = strtok(_path, "/");
+  if (!tok)
+    return 0;
 
-  char** parts = 0;
-  unsigned int len;
+  char** parts = calloc(1, sizeof(char*));
+  unsigned int len = 0;
 
+  unsigned int i = 0;
   while (tok != 0) {
-    len += 1;
     if (!parts) {
-      parts = calloc(len, sizeof(char*));
+      len += 1;
+      parts = calloc(len, sizeof(char*) + (strlen(tok) * sizeof(char)));
+      i += 1;
     } else {
-      parts = realloc(parts, len * sizeof(char*));
+      len += 1;
+      parts = realloc(parts, len * (sizeof(char*) + (strlen(tok) * sizeof(char))));
+      i += 1;
     }
     parts[len - 1] = strdup(tok);
     tok = strtok(0, "/");
   }
 
-  if (len < 2 || !parts)
+  if (!len || !parts)
     return path;
 
-  char* last = parts[len - 1];
-  free(parts);
-  free(_path);
+  unsigned int index = MAX(0, len - 1);
+  char* last = len >= index ? parts[index] : 0;
+
+  if (parts)
+    free(parts);
+
+  if (_path)
+    free(_path);
 
   return last;
 }
 
 char* get_slashed_path(char* path)
 {
+  if (!path)
+    return 0;
+
   char* _path = strdup(path);
   char* tok = strtok(_path, "/");
 
+  if (!tok)
+    return 0;
+
   char** parts = 0;
-  unsigned int len;
+  unsigned int len = 0;
 
   while (tok != 0) {
-    len += 1;
     if (!parts) {
+      len += 1;
       parts = calloc(len, sizeof(char*));
     } else {
+      len += 1;
       parts = realloc(parts, len * sizeof(char*));
     }
     parts[len - 1] = strdup(tok);
     tok = strtok(0, "/");
   }
 
-  if (len < 2 || !parts)
+  if (!len || !parts)
     return path;
 
-  char* last = parts[len - 2];
+  unsigned int index = MAX(0, len - 2);
+  char* last = parts[index];
   char* fname = get_filename(path);
+  if (!fname)
+    return 0;
+
   char* str = 0;
   str = str_append(&str, last);
   str = str_append(&str, "/");
   str = str_append(&str, fname);
 
-  free(parts);
-  free(_path);
+  if (parts)
+    free(parts);
+
+  if (_path)
+    free(_path);
 
   return str;
 }
