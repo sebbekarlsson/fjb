@@ -1,4 +1,5 @@
 #include "include/env.h"
+#include "include/hooks/register.h"
 #include "include/jsx.h"
 #include "include/plugin.h"
 #include "include/result.h"
@@ -31,7 +32,7 @@ void register_process_object()
   map_set(envobject->map, "NODE_ENV", default_node_env);
 
   AST_T* default_jsx_type = init_ast(AST_STRING);
-  default_node_env->string_value = strdup("react");
+  default_node_env->string_value = strdup("jsx");
   map_set(envobject->map, "jsx", default_node_env);
 
   AST_T* assignment = init_assignment("process", ast);
@@ -75,6 +76,8 @@ void init_fjb_env()
   AST_T* exports_assignment = init_assignment("exports", exports);
   gc_mark(FJB_ENV->GC, exports_assignment);
   list_push(module->list_value, exports_assignment);
+
+  register_builtin_hooks();
 }
 
 void destroy_fjb_env()
@@ -153,15 +156,32 @@ int fjb_get_jsx_type()
   if (!env)
     return 0;
 
-  AST_T* node_env = (AST_T*)map_get_value(env->map, "jsx");
+  AST_T* jsxval = (AST_T*)map_get_value(env->map, "jsx");
 
-  if (!node_env)
+  if (!jsxval)
     return 0;
-  if (!node_env->string_value)
+  if (!jsxval->string_value)
     return 0;
 
-  if (strcmp(node_env->string_value, "react") == 0)
+  if (strcmp(jsxval->string_value, "react") == 0)
     return JSX_REACT;
 
   return JSX_DEFAULT;
+}
+
+void fjb_set_jsx_type(int jsx_type)
+{
+  AST_T* env = (AST_T*)map_get_value(FJB_ENV->process->map, "env");
+
+  if (!env)
+    return;
+
+  AST_T* jsxval = (AST_T*)map_get_value(env->map, "jsx");
+
+  if (jsxval)
+    gc_mark(FJB_ENV->GC, jsxval);
+
+  AST_T* val = init_ast_string(jsx_type == JSX_REACT ? "react" : "jsx");
+
+  map_set(env->map, "jsx", val);
 }

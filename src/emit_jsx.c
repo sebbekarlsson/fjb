@@ -25,6 +25,7 @@ const char* get_create_element_string()
   switch (jsx_type) {
     case JSX_DEFAULT: return "document.createElement"; break;
     case JSX_REACT: return "React.createElement"; break;
+    default: return "noop("; break;
   }
 }
 
@@ -35,6 +36,7 @@ const char* get_create_text_node_string()
   switch (jsx_type) {
     case JSX_DEFAULT: return "document.createTextNode("; break;
     case JSX_REACT: return "React_createTextNode("; break;
+    default: return "noop("; break;
   }
 }
 
@@ -176,7 +178,7 @@ char* emit_jsx_call(AST_T* ast, fjb_env_T* env)
 char* emit_jsx_element(AST_T* ast, fjb_env_T* env)
 {
   const char* TEMPLATE = (const char*)(ast->ptr ? _tmp_jsx_ptr_js : _tmp_jsx_js);
-  unsigned int TEMPLATE_LEN = ast->ptr ? _tmp_jsx_react_js_len : _tmp_jsx_js_len;
+  unsigned int TEMPLATE_LEN = ast->ptr ? _tmp_jsx_js_len : _tmp_jsx_js_len;
   char* name = ast_get_string(ast);
   char* func_name = ast->ptr ? emit_jsx_call(ast, env) : strdup(get_create_element_string());
   char* attr = emit_jsx_attributes(ast, env);

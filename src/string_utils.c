@@ -443,9 +443,9 @@ int strcasecmp(const char* s1, const char* s2)
   return (char_tolower(*us1) - char_tolower(*--us2));
 }
 
-unsigned int str_contains(char* source, char* sub)
+unsigned int str_contains(char* haystack, char* needle)
 {
-  return (strstr(source, sub) != 0);
+  return (strstr(haystack, needle) != 0);
 }
 
 char* find_in_path(char* path, char* filename)

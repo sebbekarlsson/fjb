@@ -26,6 +26,10 @@ compiler_result_T* _fjb()
     return 0;
 
   FJB_ENV->ticks += 1;
+  fjb_set_filepath(fjb_call_all_hooks(HOOK_RECEIVE_FILEPATH, FJB_ENV->filepath, FJB_ENV));
+
+  if (FJB_ENV->source)
+    fjb_set_source(fjb_call_all_hooks(HOOK_RECEIVE_SOURCE, FJB_ENV->source, FJB_ENV));
 
   unsigned int old_level = FJB_ENV->level;
   NOOP = init_ast(AST_NOOP);
@@ -94,6 +98,9 @@ compiler_result_T* _fjb()
 
 compiler_result_T* fjb()
 {
+  if (FJB_ENV->filepath)
+    fjb_set_filepath(fjb_call_all_hooks(HOOK_RECEIVE_FILEPATH, FJB_ENV->filepath, FJB_ENV));
+
   compiler_result_T* result = _fjb();
   char* headers = fjb_get_headers(FJB_ENV);
 

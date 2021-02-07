@@ -5,6 +5,8 @@ char* str_append(char** source, const char* piece);
 
 char* str_prefix(char** source, const char* piece);
 
+unsigned int str_contains(char* haystack, char* needle);
+
 char* str_encode(char* source);
 
 char* charstr(char c);

@@ -43,6 +43,7 @@ fjb index.js
 - [x] JSX support
 - [x] Importing JSON
 - [x] Importing CSS
+- [x] Automatic JSX format detection
 - [x] [Plugin support](PLUGINS.md)
 - [x] Removing dead code (Tree shaking)
 - [x] Supports package.json
@@ -51,7 +52,6 @@ fjb index.js
 ### Planned Features
 - [ ] TypeScript support
 - [ ] Lazy imports
-- [ ] Better formatted output. (kind of ugly right now)
 
 ## Example
 > Below is an example of some code that is **100%** supported.  
@@ -104,10 +104,10 @@ make install
 > way a bit more than they should.
 
 ### Is it mature enough to use it with React?
-> At some point, I want this project to get there.  
-> But right now, it lacks some features.  
-> For example, fjb currently supports JSX; but react-jsx is not implemented  
-> right now.
+> You can definitely bundle React apps with FJB.  
+> However, there might be some missing features / bugs since the JSX
+> implementation in FJB is pretty new.  
+> You can see a working React example [here](tests/src/test_projects/with_react)
 
 ### Should I use it?
 > I will not encourage anyone to use it, but feel free to do it.
