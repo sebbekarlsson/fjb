@@ -5,7 +5,8 @@ setup(
     name='fjb_bench',
     version='1.0.0',
     install_requires=[
-        'jinja2'
+        'jinja2',
+        'matplotlib'
     ],
     packages=find_packages(),
     entry_points={

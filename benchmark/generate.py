@@ -2,6 +2,10 @@ import subprocess
 import jinja2
 import os
 import datetime
+import json
+import matplotlib.pyplot as plt
+
+import base64
 
 PWD = os.getcwd()
 
@@ -15,6 +19,13 @@ POI_DIST = '/dist/assets/js/index.js'
 POI_ARGS = ''
 FJB_PATH = "/fjb.out"
 FJB_ARGS = ' > ./dist.js'
+
+
+DUMP_NAME = PWD + '/bench.json'
+GRAPH_DIR = PWD + '/graphs'
+
+if not os.path.isdir(GRAPH_DIR):
+    os.mkdir(GRAPH_DIR)
 
 
 RUNS = [
@@ -93,7 +104,7 @@ def get_sysinfo():
 
 
 def get_filesize(filename):
-    return str(os.path.getsize(filename)) + ' bytes'
+    return os.path.getsize(filename)
 
 
 def run_entry(mark, entry):
@@ -111,7 +122,7 @@ def run_entry(mark, entry):
     )
     process.communicate()
 
-    diff = str(datetime.datetime.now() - timebefore)
+    diff = datetime.datetime.now() - timebefore
 
     return {
         'time': diff,
@@ -128,7 +139,7 @@ def run_benchmark(mark):
 def run_benchmarks(marks):
     return map(
         lambda x: dict(list(x.items()) + list(dict(
-            runs=sorted(run_benchmark(x), key=lambda x: x['time']),
+            runs=list(sorted(run_benchmark(x), key=lambda x: x['time'])),
             source=open(x['path']).read(),
             sysinfo=get_sysinfo(),
         ).items())),
@@ -136,11 +147,52 @@ def run_benchmarks(marks):
     )
 
 
+def generate_graph(mark):
+    markname = base64.b64encode(mark['title'].encode()).decode('utf-8')
+    filename = '{}.png'.format(markname)
+
+    x = []
+    y = []
+    y2 = []
+
+    for r in mark['runs']:
+        x.append(r['title'])
+        y.append(str(r['time']))
+        y2.append(r['size'])
+
+    plt.figure()
+    plt.subplot(1, 2, 1)
+    plt.ylabel('time')
+    plt.bar(x, y)
+    plt.subplot(1, 2, 2)
+    plt.ylabel('size (bytes)')
+    plt.bar(x, y2)
+
+    plt.tight_layout()
+    plt.savefig('{}/{}'.format(GRAPH_DIR, filename), dpi=99)
+
+    return filename
+
+
+def generate_graphs(marks):
+    return list(map(generate_graph, marks))
+
+
+def set_graphname(mark, name):
+    mark['graph'] = name
+    return mark
+
+
 def generate(results):
     template = jinja2.Template(open(
         PWD + '/benchmark/templates/mark.md').read())
 
     marks = list(results)
+    graphs = generate_graphs(marks)
+    marks = [set_graphname(m, graphs[i]) for i, m in enumerate(marks)]
+
+    open(DUMP_NAME, 'w+').write(json.dumps(
+        marks, default=str, sort_keys=True, indent=2))
     contents = template.render(marks=marks, now=str(datetime.datetime.now()))
     open(os.getcwd() + '/benchmarks.md', 'w+').write(contents)
 
