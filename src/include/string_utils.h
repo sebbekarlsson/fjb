@@ -5,15 +5,13 @@ char* str_append(char** source, const char* piece);
 
 char* str_prefix(char** source, const char* piece);
 
+unsigned int str_contains(char* haystack, char* needle);
+
 char* str_encode(char* source);
 
 char* charstr(char c);
 
 char* dirname(const char* path);
-
-const char* extension(const char* path);
-
-char* remove_char(char* str, char find);
 
 const char* get_filename_ext(char* filename);
 
@@ -30,6 +28,12 @@ char* remove_whitespace(char* source);
 char* get_indent(unsigned int size);
 
 char* str_get_after(char* source, char* after);
+
+char* find_in_path(char* path, char* filename);
+
+char* get_basename(char* filepath);
+
+char* get_slashed_path(char* path);
 
 char char_tolower(unsigned char ch);
 
