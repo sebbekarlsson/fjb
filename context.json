@@ -1,5 +1,7 @@
 {
     "astEnums": [
+        "AST_CASE",
+        "AST_BOOL",
         "AST_ARROW_DEFINITION",
         "AST_CALL",
         "AST_FUNCTION",

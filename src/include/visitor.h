@@ -14,7 +14,7 @@
 typedef struct FJB_VISITOR_STRUCT
 {
   parser_T* parser;
-  map_T* map;
+  AST_T* root;
 } visitor_T;
 
 visitor_T* init_visitor(parser_T* parser);

@@ -1,4 +1,5 @@
 #include "include/string_utils.h"
+#include "include/constants.h"
 #include "include/io.h"
 #include "include/package.h"
 #include <stdio.h>
@@ -89,35 +90,6 @@ char* dirname(const char* path)
   return dir ? dir : strdup(path);
 }
 
-const char* extension(const char* path)
-{
-  char* last = strrchr(path, '.');
-
-  if (!last || !path)
-    return 0;
-
-  int pos = last - path;
-  return path + pos;
-}
-
-char* remove_char(char* str, char find)
-{
-  char* newstr = calloc(1, sizeof(char));
-
-  unsigned int len = strlen(str);
-
-  for (int i = 0; i < len; i++) {
-    if (str[i] != find) {
-      newstr = realloc(newstr, (strlen(newstr) + 2) * sizeof(char));
-      char* chstr = charstr(str[i]);
-      strcat(newstr, chstr);
-      free(chstr);
-    }
-  }
-
-  return newstr;
-}
-
 const char* get_filename_ext(char* filename)
 {
   if (!filename)
@@ -198,6 +170,95 @@ char* get_basename(char* filepath)
   return strip_ext(filepath);
 }
 
+char* get_filename(char* path)
+{
+  char* _path = strdup(path);
+  char* tok = strtok(_path, "/");
+  if (!tok)
+    return 0;
+
+  char** parts = calloc(1, sizeof(char*));
+  unsigned int len = 0;
+
+  unsigned int i = 0;
+  while (tok != 0) {
+    if (!parts) {
+      len += 1;
+      parts = calloc(len, sizeof(char*) + (strlen(tok) * sizeof(char)));
+      i += 1;
+    } else {
+      len += 1;
+      parts = realloc(parts, len * (sizeof(char*) + (strlen(tok) * sizeof(char))));
+      i += 1;
+    }
+    parts[len - 1] = strdup(tok);
+    tok = strtok(0, "/");
+  }
+
+  if (!len || !parts)
+    return path;
+
+  unsigned int index = MAX(0, len - 1);
+  char* last = len >= index ? parts[index] : 0;
+
+  if (parts)
+    free(parts);
+
+  if (_path)
+    free(_path);
+
+  return last;
+}
+
+char* get_slashed_path(char* path)
+{
+  if (!path)
+    return 0;
+
+  char* _path = strdup(path);
+  char* tok = strtok(_path, "/");
+
+  if (!tok)
+    return 0;
+
+  char** parts = 0;
+  unsigned int len = 0;
+
+  while (tok != 0) {
+    if (!parts) {
+      len += 1;
+      parts = calloc(len, sizeof(char*));
+    } else {
+      len += 1;
+      parts = realloc(parts, len * sizeof(char*));
+    }
+    parts[len - 1] = strdup(tok);
+    tok = strtok(0, "/");
+  }
+
+  if (!len || !parts)
+    return path;
+
+  unsigned int index = MAX(0, len - 2);
+  char* last = parts[index];
+  char* fname = get_filename(path);
+  if (!fname)
+    return 0;
+
+  char* str = 0;
+  str = str_append(&str, last);
+  str = str_append(&str, "/");
+  str = str_append(&str, fname);
+
+  if (parts)
+    free(parts);
+
+  if (_path)
+    free(_path);
+
+  return str;
+}
+
 char* get_entry(char* dir)
 {
   char* entry_point = 0;
@@ -212,11 +273,23 @@ char* get_entry(char* dir)
   return entry_point;
 }
 
+const char* extensions[] = { ".js", ".ts", ".jsx" };
+const size_t nr_extensions = 3;
+
+char* try_resolve_index(char* path)
+{
+  for (unsigned int i = 0; i < nr_extensions; i++) {
+    char buff[360];
+    sprintf(buff, "%s/index%s", path, extensions[i]);
+    if (file_exists(buff) && !is_dir(buff))
+      return strdup(buff);
+  }
+
+  return 0;
+}
+
 char* try_resolve(char* path)
 {
-  const char* extensions[] = { ".js", ".ts", ".jsx" };
-  size_t nr_extensions = 3;
-
   for (unsigned int i = 0; i < nr_extensions; i++) {
     char buff[360];
     sprintf(buff, "%s%s", path, extensions[i]);
@@ -228,16 +301,21 @@ char* try_resolve(char* path)
   return 0;
 }
 
-char* resolve_import(char* basepath, char* filepath, unsigned int node_modules)
+char* resolve_file(char* basepath, char* filepath)
 {
-  char* path = 0;
   char* full_path = 0;
-
-  basepath = dirname(basepath);
-
   char* with_e = try_resolve(filepath);
+
   if (with_e)
     return with_e;
+
+  char* path_to_file = 0;
+  path_to_file = str_append(&path_to_file, basepath);
+  path_to_file = str_append(&path_to_file, "/");
+  path_to_file = str_append(&path_to_file, filepath);
+  char* index = try_resolve_index(path_to_file);
+  if (index)
+    return index;
 
   if (filepath[0] != '.') {
     basepath = str_append(&basepath, "/node_modules");
@@ -262,10 +340,60 @@ char* resolve_import(char* basepath, char* filepath, unsigned int node_modules)
     return full_path;
   }
 
+  return 0;
+}
+
+char* resolve_import(char* basepath, char* filepath, unsigned int node_modules)
+{
+  char* path = 0;
+  char* full_path = 0;
+
+  basepath = dirname(basepath);
+
+  char* with_e = try_resolve(filepath);
+  if (with_e)
+    return with_e;
+
+  if (filepath[0] != '.') {
+    basepath = str_append(&basepath, "/node_modules");
+  }
+
+  full_path = str_append(&full_path, basepath);
+  full_path = str_append(&full_path, "/");
+  full_path = str_append(&full_path, filepath);
+
+  if (full_path && is_dir(full_path)) {
+    char* entry = get_entry(full_path);
+
+    if (entry) {
+      full_path = str_append(&full_path, "/");
+      full_path = str_append(&full_path, entry);
+
+      free(entry);
+    }
+  }
+
+  if (full_path && file_exists(full_path) && !is_dir(full_path)) {
+    return full_path;
+  }
+
   char* with_ext = try_resolve(full_path);
 
   if (with_ext && file_exists(with_ext))
     return with_ext;
+
+  if (!path) {
+    char* check_path = find_in_path(basepath, filepath);
+
+    if (check_path && file_exists(check_path) && !is_dir(check_path))
+      return check_path;
+
+    if (check_path) {
+      char* v = resolve_file(check_path, filepath);
+      if (v)
+        return v;
+    }
+  }
 
   return path;
 }
@@ -315,9 +443,47 @@ int strcasecmp(const char* s1, const char* s2)
   return (char_tolower(*us1) - char_tolower(*--us2));
 }
 
-unsigned int str_contains(char* source, char* sub)
+unsigned int str_contains(char* haystack, char* needle)
 {
-  return (strstr(source, sub) != 0);
+  return (strstr(haystack, needle) != 0);
+}
+
+char* find_in_path(char* path, char* filename)
+{
+  if (!path)
+    return 0;
+
+  char* _path = strdup(path);
+  char* token = strtok(_path, "/");
+  char* new_path = 0;
+
+  if (_path[0] == '/')
+    new_path = str_append(&new_path, "/");
+
+  while (token != 0) {
+    new_path = str_append(&new_path, token);
+
+    char* check_path = 0;
+    check_path = str_append(&check_path, new_path);
+    check_path = str_append(&check_path, "/");
+    check_path = str_append(&check_path, filename);
+
+    if (file_exists(check_path) || is_dir(check_path))
+      return new_path;
+
+    char* maybe = try_resolve(check_path);
+    if (!maybe)
+      maybe = try_resolve_index(check_path);
+
+    if (maybe)
+      return maybe;
+
+    free(check_path);
+    token = strtok(0, "/");
+    new_path = str_append(&new_path, "/");
+  }
+
+  return 0;
 }
 
 char* str_get_after(char* source, char* after)

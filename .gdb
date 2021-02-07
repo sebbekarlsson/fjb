@@ -4,5 +4,3 @@ set $i = 1000
         next
   end
 end
-
-run ./tests/src/test_projects/with_lodash/index.js

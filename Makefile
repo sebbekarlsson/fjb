@@ -1,5 +1,5 @@
 exec = fjb.out
-sources = $(wildcard src/*.c)
+sources = $(wildcard src/*.c) $(wildcard src/hooks/*.c)
 objects = $(sources:.c=.o)
 flags = -I$$HOME/.local/include -lm -ldl -fPIC -rdynamic -L$$HOME/.local/lib -lhashmap -ljson
 
@@ -17,6 +17,7 @@ ifdef DEBUG
 flags += -D DEBUG -pg -Wall -g
 endif
 
+
 $(exec): $(jsheaders) $(gppheaders) $(objects) libjson.a libhashmap.a
 	gcc $(objects) $(flags) -g -o $(exec)
 
@@ -24,6 +25,9 @@ libfjb.a: $(objects_no_main)
 	ar rcs $@ $^
 
 %.o: %.c include/%.h
+	gcc -c $(flags) $< -o $@
+
+%.o: %.c ../include/hooks/%.h
 	gcc -c $(flags) $< -o $@
 
 %.js.h: %.js

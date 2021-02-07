@@ -12,3 +12,9 @@ function __jsx_append(parent, el) {
   return __jsx_append_many(parent, el);
 }
 globalDef(__jsx_append);
+
+function React_createTextNode(text)
+{
+  return React.createElement('span', null, text);
+}
+globalDef(React_createTextNode);

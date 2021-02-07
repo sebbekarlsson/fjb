@@ -141,6 +141,19 @@ int list_indexof_str(list_T* list, char* item)
   return -1;
 }
 
+unsigned int list_contains_str(list_T* list, char* item)
+{
+  for (unsigned int i = 0; i < list->size; i++) {
+    if (!list->items[i])
+      continue;
+
+    if (strcmp((char*)list->items[i], item) == 0)
+      return 1;
+  }
+
+  return 0;
+}
+
 unsigned int ptr_in_list(list_T* list, void* ptr)
 {
   if (!list)
