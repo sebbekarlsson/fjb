@@ -1,1 +1,1 @@
-for %s {%s}
+for%s{%s}

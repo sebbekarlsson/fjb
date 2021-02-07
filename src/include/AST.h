@@ -4,6 +4,7 @@
 #include "gc.h"
 #include "list.h"
 #include "token.h"
+#include <hashmap/map.h>
 typedef struct FJB_AST_STRUCT
 {
   enum AST_TYPE type;
@@ -26,6 +27,7 @@ typedef struct FJB_AST_STRUCT
   struct FJB_AST_STRUCT* node;
   struct FJB_AST_STRUCT* ast;
   struct FJB_AST_STRUCT* condition;
+  struct FJB_AST_STRUCT* module_root;
   token_T* token;
 
   int int_value;
@@ -37,11 +39,12 @@ typedef struct FJB_AST_STRUCT
   char* from_module;
   char* innerText;
   char* headers;
+  char* encoding;
 
   list_T* list_value;
   list_T* options;
   list_T* flags;
-  list_T* stack_frame;
+  map_T* stack_frame;
 
   unsigned int capsulated;
   unsigned int lazy;
@@ -51,11 +54,20 @@ typedef struct FJB_AST_STRUCT
   unsigned int anon;
   unsigned int exported;
   unsigned int not_exported;
+  unsigned int writable;
+  unsigned int bool_value;
+  unsigned int dead;
   int line;
 
   unsigned int is_resolved;
 
   list_T* parent_lists;
+  map_T* requirements;
+
+  char* basename;
+  char* comment;
+
+  map_T* map;
 
 } AST_T;
 
@@ -65,6 +77,8 @@ AST_T* init_ast_line(int type, int line);
 
 AST_T* init_assignment(char* name, AST_T* value);
 
+AST_T* init_ast_string(char* string_value);
+
 void ast_init_parent_lists(AST_T* ast);
 
 unsigned int ast_is_in_list(AST_T* ast, list_T* list);
@@ -73,10 +87,6 @@ char* ast_type_to_str(AST_T* ast);
 
 char* ast_binop_to_str(AST_T* ast, int indent);
 
-void ast_get_pointers(list_T* list, AST_T* ast);
-
-AST_T* get_node_by_name(list_T* list, char* name);
-
 typedef struct QUERY_STRUCT_T
 {
   char* name;
@@ -84,7 +94,6 @@ typedef struct QUERY_STRUCT_T
   list_T* ignore;
   AST_T* parent;
 } query_T;
-AST_T* ast_query(list_T* list, unsigned int (*match)(AST_T* ast, query_T query), query_T query);
 
 AST_T* ast_search_pointer(AST_T* ast, int type);
 
@@ -93,8 +102,6 @@ char* ast_encode_strings(list_T* strings);
 char* ast_get_string(AST_T* ast);
 
 char* ast_get_string_copy(AST_T* ast);
-
-unsigned int ast_is_iterable(AST_T* ast);
 
 void list_free(gc_T* gc, list_T* list);
 

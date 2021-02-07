@@ -34,6 +34,14 @@ void assert_node_exists(AST_T* root, int type, char* name, const char* msg)
   AST_T* node = resolve(root, node_query, query);
 
   if (!node) {
+    node = (AST_T*)map_get_value(FJB_ENV->functions, name);
+  }
+
+  if (!node) {
+    node = (AST_T*)map_get_value(FJB_ENV->assignments, name);
+  }
+
+  if (!node) {
     printf(RED "[FAIL]: Did NOT find node which was expected.\n"
                "\tname: %s, type: %d\n" RESET,
            name, type);
