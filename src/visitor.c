@@ -209,22 +209,6 @@ AST_T* visitor_visit_import(visitor_T* visitor, AST_T* ast, list_T* stack)
     return init_ast(AST_NOOP);
   }
 
-  /* char** keys;
-   unsigned int nrkeys;
-   map_get_keys(FJB_ENV->imports,  &keys, &nrkeys);
-   for (unsigned int i = 0; i < nrkeys; i++) {
-     char* key = keys[i];
-     if (!key) continue;
-
-     imported_T* imp = map_get_value(FJB_ENV->imports, key);
-     if (!imp) continue;
-     if (!imp->ast) continue;
-
-     map_unset(FJB_ENV->imports, key);
-   }*/
-
-  // list_clear(FJB_ENV->imports);
-
   return init_ast(AST_NOOP);
 }
 

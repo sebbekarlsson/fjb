@@ -53,4 +53,6 @@ void* fjb_call_all_hooks(int type, void* ptr, fjb_env_T* env);
 char* fjb_get_node_env();
 
 int fjb_get_jsx_type();
+
+void fjb_set_jsx_type(int jsx_type);
 #endif
