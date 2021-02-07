@@ -142,18 +142,11 @@ char* fjb_get_headers(fjb_env_T* env)
 {
   char* str = 0;
 
-  if (!FJB_ENV->has_included_headers) {
-    str = str_append(&str, strdup((char*)_tmp_headers_js));
-  }
+  str = str_append(&str, strdup((char*)_tmp_headers_js));
 
-  if (FJB_ENV->is_using_jsx && !FJB_ENV->has_included_jsx_headers) {
+  if (FJB_ENV->is_using_jsx) {
     str = str_append(&str, strdup((char*)_tmp_jsx_headers_js));
   }
 
   return strdup(str ? str : " ");
-}
-
-void fjb_set_only_parse(unsigned int only_parse)
-{
-  FJB_ENV->only_parse = 1;
 }

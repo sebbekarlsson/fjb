@@ -17,7 +17,7 @@ typedef struct
 
 extern fjb_env_T* FJB_ENV;
 
-list_T* get_imported_symbols(AST_T* lookup, list_T* search_index)
+list_T* get_imported_symbols(AST_T* lookup)
 {
   list_T* list = NEW_STACK;
   AST_T* resolved = 0;
@@ -140,8 +140,7 @@ unsigned int get_deps(AST_T* ast, options_T args, fjb_env_T* env)
       }
 
       if (ptr) {
-        if (query.parent && ptr->parent && (ptr->parent != query.parent) &&
-            (/*ptr->parent->type == AST_FUNCTION*/ 1))
+        if (query.parent && ptr->parent && (ptr->parent != query.parent))
           continue;
       }
 
@@ -191,7 +190,7 @@ AST_T* new_compound(AST_T* lookup, fjb_env_T* env)
 
   AST_T* compound = init_ast(AST_COMPOUND);
   compound->module_root = lookup->module_root;
-  list_T* syms = get_imported_symbols(lookup, env->search_index);
+  list_T* syms = get_imported_symbols(lookup);
   list_T* imported_symbols = syms ? syms : NEW_STACK;
   compound->list_value = imported_symbols;
 

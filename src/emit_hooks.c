@@ -42,7 +42,6 @@ compiler_result_T* emit_hooks_json(fjb_env_T* env, list_T* imports)
 
     map_set(FJB_ENV->imports, assignment->name, init_imported(assignment->name, 0, assignment));
     map_set(FJB_ENV->assignments, assignment->name, assignment);
-    list_push(FJB_ENV->search_index, assignment);
 
     value = emit(assignment, env);
   } else if (env->aliased_import) {

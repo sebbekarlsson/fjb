@@ -1,21 +1,21 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo } from "react";
 
 const style = {
-  'width': '250px',
-  'height': '250px',
-  'backgroundColor': 'white',
-  'borderStyle': 'solid',
-  'borderWidth': '1px',
-  'borderColor': 'lightgray',
-  'boxSizing': 'border-box',
-  'padding': '1rem',
-  'display': 'flex',
-  'justifyContent': 'center',
-  'alignItems': 'center'
-}
+  width: "250px",
+  height: "250px",
+  backgroundColor: "white",
+  borderStyle: "solid",
+  borderWidth: "1px",
+  borderColor: "lightgray",
+  boxSizing: "border-box",
+  padding: "1rem",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+};
 
 const toggledStyle = {
-  backgroundColor: 'lightgray'
+  backgroundColor: "lightgray",
 };
 
 export const Card = (props) => {
@@ -23,10 +23,12 @@ export const Card = (props) => {
   const handleClick = (e) => setToggled(!toggled);
 
   const mystyle = useMemo(() => {
-    return toggled ? ({...style, ...toggledStyle}) : style;
+    return toggled ? { ...style, ...toggledStyle } : style;
   }, [toggled]);
 
-  return <div onClick={handleClick} style={mystyle}>
-    <p>{ props.text }</p>
-  </div>
+  return (
+    <div onClick={handleClick} style={mystyle}>
+      <p>{props.text}</p>
+    </div>
+  );
 };

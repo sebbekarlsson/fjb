@@ -137,7 +137,7 @@ char* emit_spaced_list(list_T* list_value, fjb_env_T* env)
 
     str = str_append(&str, child_str);
 
-    if (i < living->size - 1 && child_str)
+    if (i < living->size - 1)
       str = str_append(&str, " ");
 
     free(child_str);
@@ -162,8 +162,7 @@ char* emit_tuple(list_T* list_value, fjb_env_T* env)
 
     str = str_append(&str, child_str);
 
-    if (i < living->size - 1 && child->type != AST_NOOP && child->type != AST_UNDEFINED &&
-        child_str)
+    if (i < living->size - 1 && child->type != AST_NOOP && child->type != AST_UNDEFINED)
       str = str_append(&str, ",");
 
     free(child_str);
@@ -188,14 +187,13 @@ static char* emit_semi_tuple(list_T* list_value, fjb_env_T* env)
 
     str = str_append(&str, child_str);
 
-    if (i < living->size - 1 && child->type != AST_COLON_ASSIGNMENT && child->type != AST_NOOP &&
-        child_str && child->type != AST_JSX_ELEMENT)
+    if (i < living->size - 1 && child->type != AST_COLON_ASSIGNMENT && child->type != AST_NOOP && child->type != AST_JSX_ELEMENT)
       str = str_append(&str, ";");
 
     free(child_str);
   }
 
-  return str ? str : strdup("\n");
+  return str ? str : strdup("");
 }
 
 char* emit(AST_T* ast, fjb_env_T* env)
@@ -427,10 +425,10 @@ char* emit_assignment(AST_T* ast, fjb_env_T* env)
 
   if (ast->value) {
     if (ast->value->dead)
-      return strdup("\t");
+      return strdup("");
     valuestr = emit(ast->value, env);
   } else {
-    return strdup("\t");
+    return strdup("");
   }
 
   if (ast->not_exported == 0) {
@@ -442,7 +440,7 @@ char* emit_assignment(AST_T* ast, fjb_env_T* env)
   }
 
   if (!valuestr)
-    valuestr = strdup("\t");
+    valuestr = strdup("");
 
   TEMPLATE(assignment,
            str,
@@ -484,8 +482,8 @@ char* emit_colon_assignment(AST_T* ast, fjb_env_T* env)
 char* emit_case(AST_T* ast, fjb_env_T* env)
 {
   char* str = 0;
-  char* condition_str = ast->condition ? emit(ast->condition, env) : strdup("\n");
-  char* valuestr = ast->value ? emit(ast->value, env) : strdup("\n");
+  char* condition_str = ast->condition ? emit(ast->condition, env) : strdup("");
+  char* valuestr = ast->value ? emit(ast->value, env) : strdup("");
 
   TEMPLATE(switch_case, str, strlen(condition_str) + strlen(valuestr), condition_str, valuestr);
 
@@ -498,7 +496,7 @@ char* emit_while(AST_T* ast, fjb_env_T* env)
   char* body_str;
   char* expr_str;
 
-  expr_str = ast->expr ? emit(ast->expr, env) : strdup("\n");
+  expr_str = ast->expr ? emit(ast->expr, env) : strdup("\t");
   body_str = ast->body ? emit(ast->body, env) : strdup("\n");
 
   if (ast->body) {
@@ -537,8 +535,8 @@ char* emit_compound(AST_T* ast, fjb_env_T* env)
 
   list_T* living = ast->list_value;
 
-  if (!living)
-    return strdup(" ");
+  if (!living || (living && !living->size))
+    return strdup("");
 
   for (unsigned int i = 0; i < living->size; i++) {
     AST_T* child_ast = (AST_T*)living->items[i];
@@ -568,7 +566,7 @@ char* emit_compound(AST_T* ast, fjb_env_T* env)
 char* emit_import(AST_T* ast, fjb_env_T* env)
 {
   if (ast->dead)
-    return strdup("\n");
+    return strdup("");
 
   char* encoding = ast->alias ? strdup(ast->alias) : 0;
 
@@ -584,7 +582,7 @@ char* emit_import(AST_T* ast, fjb_env_T* env)
                                   : 0;
 
   if (!k) {
-    return strdup("\n");
+    return strdup("");
   }
 
   if (ast->type == AST_IMPORT && ast->list_value && !ast->alias) {
@@ -635,16 +633,16 @@ char* emit_import(AST_T* ast, fjb_env_T* env)
   }
 
   if (!requirements)
-    requirements = strdup("\n");
+    requirements = strdup("");
 
   if (!str)
-    str = strdup("\n");
+    str = strdup("");
 
-  char* options_str = ast->options ? emit_tuple(ast->options, env) : strdup("\t");
+  char* options_str = ast->options ? emit_tuple(ast->options, env) : strdup("");
 
   char* value;
 
-  char* headers = ast->headers ? strdup(ast->headers) : strdup("\n");
+  char* headers = ast->headers ? strdup(ast->headers) : strdup("");
 
   if (ast->type == AST_CALL) {
     TEMPLATE(require,
@@ -669,7 +667,7 @@ char* emit_import(AST_T* ast, fjb_env_T* env)
   }
 
   if (!value)
-    value = strdup("\t");
+    value = strdup("");
 
   if (encoding)
     free(encoding);
@@ -685,7 +683,7 @@ char* emit_import(AST_T* ast, fjb_env_T* env)
 
 char* emit_undefined(AST_T* ast, fjb_env_T* env)
 {
-  return strdup("\n");
+  return strdup("\t");
 }
 
 char* emit_call(AST_T* ast, fjb_env_T* env)
@@ -723,13 +721,13 @@ char* emit_function(AST_T* ast, fjb_env_T* env)
   if (ast->list_value) {
     args_str = emit_args(ast->list_value, env);
   } else {
-    args_str = strdup("\n");
+    args_str = strdup("");
   }
 
   if (ast->body) {
     body_str = emit(ast->body, env);
   } else {
-    body_str = strdup("\n");
+    body_str = strdup("");
   }
 
   if (ast->type == AST_CLASS_FUNCTION) {
@@ -744,7 +742,7 @@ char* emit_function(AST_T* ast, fjb_env_T* env)
         (ast->exported || map_get(env->imports, name))) {
       TEMPLATE(expose_def, expose_str, (strlen(name) * 2) + 16, name, name);
     } else {
-      expose_str = strdup("\n");
+      expose_str = strdup("");
     }
 
     TEMPLATE(function,
@@ -765,11 +763,13 @@ char* emit_function(AST_T* ast, fjb_env_T* env)
   if (name)
     free(name);
 
+  #ifdef DEBUG
   if (ast->from_module) {
     char buff[256];
     sprintf(buff, "\n/* `%s` */\n", ast->from_module);
     str = str_append(&str, strdup(buff));
   }
+  #endif
 
   return str;
 }
@@ -847,7 +847,7 @@ char* emit_binop(AST_T* ast, fjb_env_T* env)
   char* str = 0;
 
   if (ast->token) {
-    if (ast->token->type == TOKEN_DOT) {
+    if (ast->token->type == TOKEN_DOT || ast->token->type == TOKEN_COMMA || ast->token->type == TOKEN_PLUS) {
       str = str_append(&str, ast->token->value);
     } else {
       str = str_append(&str, " ");
@@ -856,12 +856,12 @@ char* emit_binop(AST_T* ast, fjb_env_T* env)
     }
   }
 
-  return str ? str : strdup("\n");
+  return str ? str : strdup("");
 }
 
 char* emit_unop(AST_T* ast, fjb_env_T* env)
 {
-  return strdup(ast->token ? ast->token->value : "\t");
+  return strdup(ast->token ? ast->token->value : "");
 }
 
 char* emit_block_linked_list(AST_T* ast, fjb_env_T* env)
@@ -891,7 +891,7 @@ char* emit_block_linked_list(AST_T* ast, fjb_env_T* env)
     }
   }
 
-  return str ? strdup(str) : strdup("\n");
+  return str ? strdup(str) : strdup("");
 }
 
 char* emit_increment(AST_T* ast, fjb_env_T* env)
@@ -938,7 +938,7 @@ char* emit_try(AST_T* ast, fjb_env_T* env)
     free(linkedstr);
   }
 
-  return str ? str : strdup("\n");
+  return str ? str : strdup("");
 }
 
 char* emit_class(AST_T* ast, fjb_env_T* env)
@@ -949,8 +949,8 @@ char* emit_class(AST_T* ast, fjb_env_T* env)
   char* bodystr = 0;
 
   options_str =
-    ast->options && ast->options->size ? emit_spaced_list(ast->options, env) : strdup("\t");
-  bodystr = ast->body ? emit(ast->body, env) : strdup("\t");
+    ast->options && ast->options->size ? emit_spaced_list(ast->options, env) : strdup(" ");
+  bodystr = ast->body ? emit(ast->body, env) : strdup(" ");
 
   TEMPLATE(class_definition,
            str,
@@ -966,7 +966,7 @@ char* emit_condition(AST_T* ast, fjb_env_T* env)
 {
   char* str = 0;
   if (!ast->body)
-    return strdup("/* if without body*/");
+    return strdup("");
   str = str_append(&str, ast->expr ? "if" : "");
 
   if (ast->expr) {
@@ -1006,8 +1006,8 @@ char* emit_condition(AST_T* ast, fjb_env_T* env)
 char* emit_switch(AST_T* ast, fjb_env_T* env)
 {
   char* str = 0;
-  char* expr_str = ast->expr ? emit(ast->expr, env) : strdup("\t");
-  char* body_str = ast->body ? emit(ast->body, env) : strdup("\t");
+  char* expr_str = ast->expr ? emit(ast->expr, env) : strdup("");
+  char* body_str = ast->body ? emit(ast->body, env) : strdup("");
 
   TEMPLATE(switch_statement, str, strlen(expr_str) + strlen(body_str), expr_str, body_str);
 
@@ -1021,7 +1021,7 @@ char* emit_switch(AST_T* ast, fjb_env_T* env)
 
 char* emit_noop(AST_T* ast, fjb_env_T* env)
 {
-  return strdup("\n");
+  return strdup("");
 }
 
 char* emit_label(AST_T* ast, fjb_env_T* env)
@@ -1037,7 +1037,7 @@ char* emit_label(AST_T* ast, fjb_env_T* env)
     }
   }
 
-  return str ? str : strdup("\n");
+  return str ? str : strdup("");
 }
 
 char* emit_ternary(AST_T* ast, fjb_env_T* env)
@@ -1052,13 +1052,13 @@ char* emit_ternary(AST_T* ast, fjb_env_T* env)
     free(valuestr);
   }
 
-  return str ? str : strdup("\t");
+  return str ? str : strdup("");
 }
 
 char* emit_do(AST_T* ast, fjb_env_T* env)
 {
   char* str;
-  char* bodystr = ast->body ? emit(ast->body, env) : strdup("\n");
+  char* bodystr = ast->body ? emit(ast->body, env) : strdup("");
 
   char* rightstr = ast->right ? emit(ast->right, env) : strdup("\t");
 

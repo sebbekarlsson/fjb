@@ -11,7 +11,7 @@ AST_T* init_ast(int type)
   AST_T* ast = calloc(1, sizeof(struct FJB_AST_STRUCT));
   ast->type = type;
   ast->line = 0;
-  ast->requirements = NEW_MAP();
+  ast->requirements = init_map(16);
 
   return ast;
 }
@@ -107,57 +107,6 @@ AST_T* init_ast_string(char* string_value)
   return ast;
 }
 
-void ast_get_pointers(list_T* list, AST_T* ast)
-{
-  if (!ast)
-    return;
-
-  AST_T* ptr = ast->ptr;
-
-  if (ptr)
-    list_push(list, ptr);
-
-  ast_get_pointers(list, ptr);
-}
-
-AST_T* ast_get_final_ptr(AST_T* ast)
-{
-  if (!ast)
-    return 0;
-  if (ast->value)
-    return ast_get_final_ptr(ast->value);
-  if (ast->ptr)
-    return ast->ptr;
-  return ast;
-}
-
-AST_T* get_node_by_name(list_T* list, char* name)
-{
-  if (!name)
-    return 0;
-
-  LOOP_NODES(list, i, child, {
-    char* child_name = ast_get_string(child);
-    if (!child_name)
-      continue;
-
-    if (child_name == name || (strcmp(child_name, name) == 0))
-      return child;
-  });
-
-  return 0;
-}
-
-AST_T* ast_query(list_T* list, unsigned int (*match)(AST_T* ast, query_T query), query_T query)
-{
-  LOOP_NODES(list, i, child, {
-    if (match(child, query))
-      return child;
-  });
-
-  return 0;
-}
-
 char* ast_encode_strings(list_T* strings)
 {
   char* str = 0;
@@ -210,24 +159,4 @@ char* ast_type_to_str(AST_T* ast)
   if (!ast)
     return 0;
   return (char*)AST_TYPE_STR[ast->type];
-}
-
-unsigned int ast_is_iterable(AST_T* ast)
-{
-  if (!ast)
-    return 0;
-
-  if (ast->type == AST_CALL && ast->name && strcmp(ast->name, "map") == 0)
-    return 1;
-  if (ast->type == AST_ARRAY || ast->type == AST_TUPLE)
-    return 1;
-
-  if (ast_is_iterable(ast->value))
-    return 1;
-  if (ast_is_iterable(ast->left))
-    return 1;
-  if (ast_is_iterable(ast->right))
-    return 1;
-
-  return 0;
 }

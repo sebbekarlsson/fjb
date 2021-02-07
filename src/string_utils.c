@@ -90,35 +90,6 @@ char* dirname(const char* path)
   return dir ? dir : strdup(path);
 }
 
-const char* extension(const char* path)
-{
-  char* last = strrchr(path, '.');
-
-  if (!last || !path)
-    return 0;
-
-  int pos = last - path;
-  return path + pos;
-}
-
-char* remove_char(char* str, char find)
-{
-  char* newstr = calloc(1, sizeof(char));
-
-  unsigned int len = strlen(str);
-
-  for (int i = 0; i < len; i++) {
-    if (str[i] != find) {
-      newstr = realloc(newstr, (strlen(newstr) + 2) * sizeof(char));
-      char* chstr = charstr(str[i]);
-      strcat(newstr, chstr);
-      free(chstr);
-    }
-  }
-
-  return newstr;
-}
-
 const char* get_filename_ext(char* filename)
 {
   if (!filename)
@@ -391,7 +362,7 @@ char* resolve_import(char* basepath, char* filepath, unsigned int node_modules)
   full_path = str_append(&full_path, "/");
   full_path = str_append(&full_path, filepath);
 
-  if (is_dir(full_path)) {
+  if (full_path && is_dir(full_path)) {
     char* entry = get_entry(full_path);
 
     if (entry) {
@@ -402,7 +373,7 @@ char* resolve_import(char* basepath, char* filepath, unsigned int node_modules)
     }
   }
 
-  if (file_exists(full_path) && !is_dir(full_path)) {
+  if (full_path && file_exists(full_path) && !is_dir(full_path)) {
     return full_path;
   }
 
@@ -411,10 +382,11 @@ char* resolve_import(char* basepath, char* filepath, unsigned int node_modules)
   if (with_ext && file_exists(with_ext))
     return with_ext;
 
+
   if (!path) {
     char* check_path = find_in_path(basepath, filepath);
 
-    if (file_exists(check_path) && !is_dir(check_path))
+    if (check_path && file_exists(check_path) && !is_dir(check_path))
       return check_path;
 
     if (check_path) {
@@ -479,9 +451,14 @@ unsigned int str_contains(char* source, char* sub)
 
 char* find_in_path(char* path, char* filename)
 {
+  if (!path) return 0;
+
   char* _path = strdup(path);
   char* token = strtok(_path, "/");
   char* new_path = 0;
+  
+  if (_path[0] == '/')
+    new_path = str_append(&new_path, "/");
 
   while (token != 0) {
     new_path = str_append(&new_path, token);
@@ -495,6 +472,7 @@ char* find_in_path(char* path, char* filename)
       return new_path;
 
     char* maybe = try_resolve(check_path);
+    if (!maybe) maybe = try_resolve_index(check_path);
 
     if (maybe)
       return maybe;

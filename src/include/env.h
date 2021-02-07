@@ -7,15 +7,10 @@
 typedef struct FJB_ENV_STRUCT
 {
   unsigned int is_using_jsx;
-  unsigned int has_included_jsx_headers;
-  unsigned int has_included_headers;
-  unsigned int results_changed;
   unsigned int aliased_import;
   unsigned int level;
 
   AST_T* root;
-
-  list_T* search_index;
 
   char* source;
   char* filepath;
@@ -27,8 +22,6 @@ typedef struct FJB_ENV_STRUCT
   map_T* assignments;
 
   AST_T* process;
-
-  unsigned int only_parse;
 
   list_T* hooks;
 
@@ -51,8 +44,6 @@ void fjb_set_source(char* source);
 void fjb_set_filepath(char* filepath);
 
 void fjb_set_aliased_import(unsigned int aliased_import);
-
-void fjb_set_only_parse(unsigned int only_parse);
 
 list_T* fjb_get_hooks();
 

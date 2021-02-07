@@ -405,7 +405,6 @@ AST_T* parser_parse_assignment(parser_T* parser, parser_options_T options, AST_T
 
   if (ast->left && ast->left->name) {
     ast->name = strdup(ast->left->name);
-    // list_push(parser->env->search_index, ast);
   }
 
   AST_T* val = ast->left;
@@ -1097,8 +1096,6 @@ AST_T* parser_parse_expr(parser_T* parser, parser_options_T options)
       if (name)
         colon_ass->name = strdup(name);
     }
-
-    // list_push(parser->env->search_index, colon_ass);
 
     gc_mark(parser->env->GC, colon_ass);
     left = colon_ass;
