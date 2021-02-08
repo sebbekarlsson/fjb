@@ -64,7 +64,7 @@ char* emit_jsx_template_string(AST_T* ast, fjb_env_T* env)
 
 char* emit_jsx_text(AST_T* ast, fjb_env_T* env)
 {
-  char* m = "\"";
+  char* m = "`";
   char* str = 0;
 
   str = str_append(&str, get_create_text_node_string());
@@ -155,22 +155,15 @@ char* emit_jsx_call(AST_T* ast, fjb_env_T* env)
   char* value = 0;
 
   AST_T* call_ast = init_ast(AST_CALL);
-  call_ast->left = init_ast(AST_NAME);
-  call_ast->left->name = ast->ptr && ast->ptr->name ? strdup(ast->ptr->name) : 0;
-  call_ast->name = ast->ptr && ast->ptr->name ? strdup(ast->ptr->name) : 0;
+  call_ast->left = ast->ptr;
   call_ast->list_value = list_copy(ast->options);
-  gc_mark(env->GC, call_ast);
 
-  if ((ast->ptr && ast->ptr->type == AST_FUNCTION) ||
-      (ast->ptr && ast->ptr->value && ast->ptr->value->type == AST_FUNCTION)) {
-    AST_T* state = init_ast(AST_STATE);
-    state->string_value = strdup("new");
-    state->value = call_ast;
+  AST_T* state = init_ast(AST_STATE);
+  state->string_value = strdup("new");
+  state->value = call_ast;
+  gc_mark(env->GC, state);
 
-    value = emit(state, env);
-  } else {
-    value = emit(call_ast, env);
-  }
+  value = emit(state, env);
 
   return value;
 }
