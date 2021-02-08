@@ -17,7 +17,8 @@ AST_T* parse_template(parser_T* parser, parser_options_T options)
 
   innerText = str_append(&innerText, tok->value);
 
-  if (parser->token->type == TOKEN_ID) {
+  if (parser->token->type == TOKEN_ID || parser->token->type == TOKEN_COMMA ||
+      parser->token->type == TOKEN_QUESTION) {
     tok = lexer_parse_any(parser->lexer, '<', '{');
     parser->token = tok;
     innerText = str_append(&innerText, tok->value);
@@ -46,8 +47,10 @@ AST_T* parse_jsx_compound(parser_T* parser, parser_options_T options)
 
   while (parser->lexer->c != '/' &&
          (parser->token->type == TOKEN_LT || parser->token->type == TOKEN_ID ||
-          parser->token->type == TOKEN_LBRACE)) {
-    if (parser->token->type == TOKEN_ID) {
+          parser->token->type == TOKEN_LBRACE || parser->token->type == TOKEN_COMMA ||
+          parser->token->type == TOKEN_QUESTION)) {
+    if (parser->token->type == TOKEN_ID || parser->token->type == TOKEN_COMMA ||
+        parser->token->type == TOKEN_QUESTION) {
       AST_T* template = parse_template(parser, options);
       list_push(ast->list_value, template);
     } else if (parser->token->type == TOKEN_LBRACE) {
@@ -144,6 +147,22 @@ AST_T* parse_jsx_attr(parser_T* parser, parser_options_T options)
   return assignment;
 }
 
+AST_T* parse_jsx_name(parser_T* parser, parser_options_T options)
+{
+  AST_T* left = parser_parse_id(parser, options);
+
+  while (parser->token->type == TOKEN_DOT) {
+    parser_eat(parser, TOKEN_DOT);
+    AST_T* binop = init_ast(AST_BINOP);
+    binop->token = init_token(".", TOKEN_DOT);
+    binop->left = left;
+    binop->right = parser_parse_id(parser, options);
+    left = binop;
+  }
+
+  return left;
+}
+
 AST_T* parse_jsx(parser_T* parser, parser_options_T options)
 {
   FJB_ENV->is_using_jsx = 1;
@@ -157,7 +176,10 @@ AST_T* parse_jsx(parser_T* parser, parser_options_T options)
   parser_eat(parser, TOKEN_LT);
 
   ast->name = strdup(parser->token->value);
-  parser_eat(parser, TOKEN_ID);
+  ast->name_ast = parse_jsx_name(parser, options);
+  // if (ast->name_ast && ast->name_ast->right && ast->name_ast->right->name)
+  //  ast->name = strdup(ast->name_ast->right->name);
+  // parser_eat(parser, TOKEN_ID);
 
   while (parser->token->type == TOKEN_ID) {
     AST_T* assignment = parse_jsx_attr(parser, options);
@@ -176,7 +198,10 @@ AST_T* parse_jsx(parser_T* parser, parser_options_T options)
 
   parser_eat(parser, TOKEN_LT);
   parser_eat(parser, TOKEN_DIV);
-  parser_eat(parser, TOKEN_ID);
+
+  ast->name_ast = parse_jsx_name(parser, options);
+
+  // parser_eat(parser, TOKEN_ID);
   parser_eat(parser, TOKEN_GT);
 
   return ast;

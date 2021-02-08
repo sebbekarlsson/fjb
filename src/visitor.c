@@ -18,7 +18,7 @@
 
 extern fjb_env_T* FJB_ENV;
 
-static AST_T* getptr(AST_T* ast, list_T* stack, visitor_T* visitor)
+AST_T* getptr(AST_T* ast, list_T* stack, visitor_T* visitor)
 {
   if (!ast)
     return 0;

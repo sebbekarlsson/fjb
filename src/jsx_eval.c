@@ -15,6 +15,9 @@ AST_T* eval_jsx_template_value(visitor_T* visitor, AST_T* ast, list_T* stack)
 
 AST_T* eval_jsx_element(visitor_T* visitor, AST_T* ast, list_T* stack)
 {
+  if (ast->name_ast)
+    ast->name_ast = visitor_visit(visitor, ast->name_ast, stack);
+
   LOOP_NODES(ast->options, i, child, visitor_visit(visitor, child, stack););
 
   query_T query;
@@ -26,6 +29,26 @@ AST_T* eval_jsx_element(visitor_T* visitor, AST_T* ast, list_T* stack)
   AST_T* def = (AST_T*)map_get_value(ast->stack_frame, ast->name);
 
   if (def) {
+    if (def->type == AST_ASSIGNMENT && def->value && def->name && ast->name_ast &&
+        ast->name_ast->name) {
+      char* defname = strdup(def->name);
+
+      def = def->value;
+
+      if (def->type == AST_OBJECT) {
+        AST_T* binop = init_ast(AST_BINOP);
+        binop->left = init_ast(AST_NAME);
+        binop->left->name = defname;
+        binop->token = init_token(".", TOKEN_DOT);
+        binop->right = init_ast(AST_NAME);
+        binop->right->name = strdup(ast->name_ast->name);
+        def = binop;
+      }
+    } else if (def->name) {
+      AST_T* ast_name = init_ast(AST_NAME);
+      ast_name->name = strdup(def->name);
+      def = ast_name;
+    }
     ast->ptr = def;
   }
 
