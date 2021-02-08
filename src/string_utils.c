@@ -314,7 +314,7 @@ char* try_resolve_index(char* path)
       path_to_entry = str_append(&path_to_entry, "/");
       path_to_entry = str_append(&path_to_entry, entry);
 
-      if (file_exists(path_to_entry)) {
+      if (file_exists(path_to_entry) && !is_dir(path_to_entry)) {
         return path_to_entry;
       }
     }
@@ -429,22 +429,58 @@ char* resolve_import(char* basepath, char* filepath, unsigned int node_modules)
   char* path = 0;
   char* full_path = 0;
 
-  if (filepath[0] != '.') {
-    char* smart = try_every_dir(basepath, filepath);
-    if (smart)
-      return smart;
-  }
   basepath = dirname(basepath);
 
   char* with_e = try_resolve(filepath);
   if (with_e)
     return with_e;
 
-  char* m = resolve_file(basepath, filepath);
-  if (m)
-    return m;
+  if (filepath[0] != '.') {
+    basepath = str_append(&basepath, "/node_modules");
+  }
 
-  return path;
+  full_path = str_append(&full_path, basepath);
+  full_path = str_append(&full_path, "/");
+  full_path = str_append(&full_path, filepath);
+
+  if (full_path && is_dir(full_path)) {
+    char* entry = get_entry(full_path);
+
+    if (entry) {
+      full_path = str_append(&full_path, "/");
+      full_path = str_append(&full_path, entry);
+
+      free(entry);
+    }
+  }
+
+  if (full_path && file_exists(full_path) && !is_dir(full_path)) {
+    return full_path;
+  }
+
+  char* with_ext = try_resolve(full_path);
+
+  if (with_ext && file_exists(with_ext))
+    return with_ext;
+
+  if (!path) {
+    char* check_path = find_in_path(basepath, filepath);
+
+    if (check_path && file_exists(check_path) && !is_dir(check_path))
+      return check_path;
+
+    if (check_path) {
+      char* v = resolve_file(check_path, filepath);
+      if (v)
+        return v;
+    }
+  }
+
+  if (!path) {
+    path = try_every_dir(basepath, filepath);
+  }
+
+  return file_exists(path) && !is_dir(path) ? path : 0;
 }
 
 char* remove_whitespace(char* source)
