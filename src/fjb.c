@@ -37,11 +37,17 @@ compiler_result_T* _fjb()
 
   /* ==== Lexing ==== */
   lexer_T* lexer = init_lexer(FJB_ENV->source, FJB_ENV->filepath);
-  parser_T* parser = init_parser(lexer, FJB_ENV);
+#ifdef DEBUG
+  printf("/* Lexer done. */\n");
+#endif
 
   /* ==== Parsing ==== */
+  parser_T* parser = init_parser(lexer, FJB_ENV);
   parser_options_T options = EMPTY_PARSER_OPTIONS;
   AST_T* root = parser_parse(parser, options);
+#ifdef DEBUG
+  printf("/* Parser done. */\n");
+#endif
 
   if (!stack) {
     stack = NEW_STACK;
@@ -50,6 +56,9 @@ compiler_result_T* _fjb()
   /* ==== Evaluate ==== */
   visitor_T* visitor = init_visitor(parser);
   root = visitor_visit(visitor, root, stack);
+#ifdef DEBUG
+  printf("/* Evaluation done. */\n");
+#endif
 
   if (!root) {
     printf("No root node was generated.\n");
@@ -58,6 +67,9 @@ compiler_result_T* _fjb()
 
   /* ==== Tree-shake ==== */
   AST_T* root_to_emiterate = new_compound(root, FJB_ENV);
+#ifdef DEBUG
+  printf("/* Tree-shake done. */\n");
+#endif
 
   /* ==== Generate ==== */
   char* str = strdup("");

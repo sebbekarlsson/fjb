@@ -595,6 +595,8 @@ token_T* lexer_switch_id(lexer_T* lexer, token_T* token)
     token->type = TOKEN_CLASS;
   else if (strcmp(token->value, "extends") == 0)
     token->type = TOKEN_EXTENDS;
+  else if (strcmp(token->value, "get") == 0)
+    token->type = TOKEN_GET;
 
   return ret_tok(lexer, token);
 }
@@ -617,4 +619,25 @@ void lexer_free(lexer_T* lexer)
     free(lexer->source);
 
   free(lexer);
+}
+
+lexer_T* lexer_copy(lexer_T* lexer)
+{
+  lexer_T* lex = init_lexer(lexer->source, lexer->filepath);
+  lex->c = lexer->c;
+  lex->i = lexer->i;
+  lex->line = lexer->line;
+  lex->prev_token = token_clone(lexer->prev_token);
+  memcpy(lex->cstr, lexer->cstr, sizeof(lexer->cstr));
+
+  return lex;
+}
+
+token_T* lexer_peek_next_token(lexer_T* lexer)
+{
+  lexer_T* copy = lexer_copy(lexer);
+  token_T* next_token = lexer_next(copy);
+  lexer_free(copy);
+
+  return next_token;
 }
