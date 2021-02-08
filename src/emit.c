@@ -825,6 +825,12 @@ char* emit_state(AST_T* ast, fjb_env_T* env)
 {
   char* str = strcmp(ast->string_value, "export") == 0 ? 0 : strdup(ast->string_value);
 
+  if (ast->parent && ast->parent->type != AST_SWITCH && strcmp(ast->string_value, "default") == 0) {
+    if (str)
+      free(str);
+    str = 0;
+  }
+
   if (ast->value || ast->right) {
     str = str_append(&str, " ");
     char* valuestr = emit(ast->value ? ast->value : ast->right, env);
