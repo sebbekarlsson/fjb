@@ -46,6 +46,10 @@ token_T* lexer_switch_id(lexer_T* lexer, token_T* token);
 
 token_T* ret_tok(lexer_T* lexer, token_T* token);
 
+lexer_T* lexer_copy(lexer_T* lexer);
+
+token_T* lexer_peek_next_token(lexer_T* lexer);
+
 void lexer_free(lexer_T* lexer);
 
 #endif
