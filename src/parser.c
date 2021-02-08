@@ -179,7 +179,7 @@ AST_T* parser_parse_dot_notation(parser_T* parser, parser_options_T options, AST
 {
   AST_T* binop = left;
 
-  while (parser->token->type == TOKEN_DOT) {
+  while (parser->token->type == TOKEN_DOT || parser->token->type == TOKEN_ASYNC) {
     binop = init_ast_line(AST_BINOP, parser->lexer->line);
     binop->parent = options.parent;
     binop->left = left;
@@ -387,6 +387,8 @@ AST_T* parser_parse_definition(parser_T* parser, parser_options_T options)
 
   if (parser->token->type == TOKEN_LBRACKET) {
     left = parser_parse_array(parser, options);
+  } else if (parser->token->type == TOKEN_LBRACE) {
+    left = parser_parse_destructor(parser, options);
   } else {
     left = parser_parse_id(parser, options);
   }
@@ -452,9 +454,13 @@ AST_T* parser_parse_state(parser_T* parser, parser_options_T options)
   }
 
   if (parser->token->type != TOKEN_SEMI) {
-    ast->value = parser_parse_expr(parser, options);
+    if (parser->token->type == TOKEN_DEFAULT) {
+      ast->value = parser_parse_statement_or_expr(parser, options);
+    } else {
+      ast->value = parser_parse_expr(parser, options);
+    }
 
-    if (ast->value && ast->token->type == TOKEN_EXPORT)
+    if (ast->value && (ast->token->type == TOKEN_EXPORT || ast->token->type == TOKEN_DEFAULT))
       ast->value->exported = 1;
   }
 
@@ -643,6 +649,7 @@ AST_T* parser_parse_switch(parser_T* parser, parser_options_T options)
 {
   parser_eat(parser, TOKEN_SWITCH);
   AST_T* ast = init_ast_line(AST_SWITCH, parser->lexer->line);
+  options.parent = ast;
   parser_eat(parser, TOKEN_LPAREN);
   ast->expr = parser_parse_expr(parser, options);
   parser_eat(parser, TOKEN_RPAREN);
@@ -749,6 +756,37 @@ AST_T* parser_parse_object(parser_T* parser, parser_options_T options)
   return ast;
 }
 
+AST_T* parser_parse_destructor(parser_T* parser, parser_options_T options)
+{
+  AST_T* ast = init_ast_line(AST_OBJECT, parser->lexer->line);
+  ast->list_value = init_list(sizeof(token_T*));
+  options.parent = ast;
+
+  parser_eat(parser, TOKEN_LBRACE);
+
+  if (parser->token->type != TOKEN_RBRACE) {
+    AST_T* id = parser_parse_factor(parser, options);
+    AST_T* child = parser_parse_assignment(parser, options, id);
+    list_push(ast->list_value, child);
+
+    while (parser->token->type == TOKEN_COMMA) {
+      parser_eat(parser, TOKEN_COMMA);
+
+      if (parser->token->type != TOKEN_RBRACE) {
+        AST_T* id = parser_parse_factor(parser, options);
+        AST_T* child = parser_parse_assignment(parser, options, id);
+        list_push(ast->list_value, child);
+      }
+    }
+  }
+
+  parser_eat(parser, TOKEN_RBRACE);
+
+  gc_mark(parser->env->GC, ast);
+
+  return ast;
+}
+
 AST_T* parser_parse_jsx_element(parser_T* parser, parser_options_T options)
 {
   return parse_jsx(parser, options);
@@ -768,8 +806,28 @@ AST_T* parser_parse_function(parser_T* parser, parser_options_T options)
   }
 
   if (parser->token->type == TOKEN_LPAREN) {
-    ast->list_value = parse_args(parser, options);
+    parser_eat(parser, TOKEN_LPAREN);
+    list_T* list_value = init_list(sizeof(AST_T*));
+
+    if (parser->token->type != TOKEN_RPAREN) {
+      AST_T* child = 0;
+      if (parser->token->type == TOKEN_LBRACE) {
+        child = parser_parse_destructor(parser, options);
+      } else {
+        child = parser_parse_expr(parser, options);
+      }
+      list_push(list_value, child);
+
+      while (parser->token->type == TOKEN_COMMA) {
+        parser_eat(parser, TOKEN_COMMA);
+        child = parser_parse_expr(parser, options);
+        list_push(list_value, child);
+      }
+    }
+
+    parser_eat(parser, TOKEN_RPAREN);
     parser_eat(parser, TOKEN_LBRACE);
+    ast->list_value = list_value;
   }
 
   if (parser->token->type != TOKEN_RBRACE) {
@@ -867,7 +925,6 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
     case TOKEN_CATCH:
     case TOKEN_ELSE:
     case TOKEN_FROM:
-    case TOKEN_ASYNC:
     case TOKEN_AS:
     case TOKEN_DEFAULT:
     case TOKEN_CLASS:
@@ -895,6 +952,7 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
     case TOKEN_INSTANCEOF:
     case TOKEN_VOID:
     case TOKEN_AWAIT:
+    case TOKEN_ASYNC:
     case TOKEN_ASSERT: left = parser_parse_state(parser, options); break;
     case TOKEN_CONST:
     case TOKEN_LET:

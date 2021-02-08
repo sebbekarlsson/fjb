@@ -29,6 +29,8 @@ void visitor_free(visitor_T* visitor);
 
 AST_T* get_pointer(AST_T* ptr, unsigned int body);
 
+AST_T* getptr(AST_T* ast, list_T* stack, visitor_T* visitor);
+
 AST_T* resolve_pointer(AST_T* ptrin, char* name, list_T* stack);
 
 void loads(AST_T* ast, visitor_T* visitor, list_T* imported_symbols, list_T* refs);
