@@ -90,6 +90,34 @@ char* dirname(const char* path)
   return dir ? dir : strdup(path);
 }
 
+void get_dirs(char* path, char*** dirs, unsigned int* len)
+{
+  if (!path)
+    return;
+
+  char** _dirs = 0;
+  char* _path = strdup(path);
+  char* tok = strtok(_path, "/");
+  unsigned int _len = 0;
+
+  while (tok != 0) {
+    _len += 1;
+
+    if (!_dirs) {
+      _dirs = calloc(_len, sizeof(char*));
+    } else {
+      _dirs = realloc(_dirs, sizeof(char*) * _len);
+    }
+
+    _dirs[_len - 1] = strdup(tok);
+
+    tok = strtok(0, "/");
+  }
+
+  *dirs = _dirs;
+  *len = _len;
+}
+
 const char* get_filename_ext(char* filename)
 {
   if (!filename)
@@ -278,6 +306,19 @@ const size_t nr_extensions = 3;
 
 char* try_resolve_index(char* path)
 {
+  if (is_dir(path)) {
+    char* entry = get_entry(path);
+    if (entry) {
+      char* path_to_entry = 0;
+      path_to_entry = str_append(&path_to_entry, path);
+      path_to_entry = str_append(&path_to_entry, "/");
+      path_to_entry = str_append(&path_to_entry, entry);
+
+      if (file_exists(path_to_entry)) {
+        return path_to_entry;
+      }
+    }
+  }
   for (unsigned int i = 0; i < nr_extensions; i++) {
     char buff[360];
     sprintf(buff, "%s/index%s", path, extensions[i]);
@@ -303,6 +344,7 @@ char* try_resolve(char* path)
 
 char* resolve_file(char* basepath, char* filepath)
 {
+
   char* full_path = 0;
   char* with_e = try_resolve(filepath);
 
@@ -314,6 +356,11 @@ char* resolve_file(char* basepath, char* filepath)
   path_to_file = str_append(&path_to_file, "/");
   path_to_file = str_append(&path_to_file, filepath);
   char* index = try_resolve_index(path_to_file);
+
+  char* m = try_resolve(path_to_file);
+  if (m)
+    return m;
+
   if (index)
     return index;
 
@@ -340,6 +387,40 @@ char* resolve_file(char* basepath, char* filepath)
     return full_path;
   }
 
+  with_e = try_resolve(full_path);
+
+  if (with_e)
+    return with_e;
+
+  return 0;
+}
+
+char* try_every_dir(char* basepath, char* filepath)
+{
+  if (!basepath)
+    return 0;
+  char** dirs = 0;
+  unsigned int len = 0;
+  get_dirs(basepath, &dirs, &len);
+
+  char* full = 0;
+
+  for (unsigned int i = 0; i < len; i++) {
+    char* dir = dirs[i];
+    if (!dir)
+      continue;
+
+    full = str_append(&full, dir);
+    full = str_append(&full, "/");
+    char* to_check = 0;
+    to_check = str_append(&to_check, full);
+    to_check = str_append(&to_check, "node_modules");
+
+    char* maybe = resolve_file(to_check, filepath);
+    if (maybe)
+      return maybe;
+  }
+
   return 0;
 }
 
@@ -348,52 +429,20 @@ char* resolve_import(char* basepath, char* filepath, unsigned int node_modules)
   char* path = 0;
   char* full_path = 0;
 
+  if (filepath[0] != '.') {
+    char* smart = try_every_dir(basepath, filepath);
+    if (smart)
+      return smart;
+  }
   basepath = dirname(basepath);
 
   char* with_e = try_resolve(filepath);
   if (with_e)
     return with_e;
 
-  if (filepath[0] != '.') {
-    basepath = str_append(&basepath, "/node_modules");
-  }
-
-  full_path = str_append(&full_path, basepath);
-  full_path = str_append(&full_path, "/");
-  full_path = str_append(&full_path, filepath);
-
-  if (full_path && is_dir(full_path)) {
-    char* entry = get_entry(full_path);
-
-    if (entry) {
-      full_path = str_append(&full_path, "/");
-      full_path = str_append(&full_path, entry);
-
-      free(entry);
-    }
-  }
-
-  if (full_path && file_exists(full_path) && !is_dir(full_path)) {
-    return full_path;
-  }
-
-  char* with_ext = try_resolve(full_path);
-
-  if (with_ext && file_exists(with_ext))
-    return with_ext;
-
-  if (!path) {
-    char* check_path = find_in_path(basepath, filepath);
-
-    if (check_path && file_exists(check_path) && !is_dir(check_path))
-      return check_path;
-
-    if (check_path) {
-      char* v = resolve_file(check_path, filepath);
-      if (v)
-        return v;
-    }
-  }
+  char* m = resolve_file(basepath, filepath);
+  if (m)
+    return m;
 
   return path;
 }

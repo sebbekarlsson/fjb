@@ -208,17 +208,24 @@ AST_T* parser_parse_ternary(parser_T* parser, parser_options_T options, AST_T* l
 {
   while (parser->token->type == TOKEN_QUESTION) {
     parser_eat(parser, TOKEN_QUESTION);
+
+    if (parser->token->type == TOKEN_DOT) {
+      AST_T* binop = init_ast(AST_BINOP);
+      binop->left = left;
+      binop->token = init_token("?.", TOKEN_QUESTION);
+      parser_eat(parser, TOKEN_DOT);
+      binop->right = parser_parse_factor(parser, options);
+      left = binop;
+      continue;
+    }
+
     AST_T* ast_tern = init_ast_line(AST_TERNARY, parser->lexer->line);
     ast_tern->parent = options.parent;
     ast_tern->left = left;
 
     ast_tern->value = parser_parse_expr(parser, options);
 
-    /**
-     * The reason why we're not expecting a TOKEN_COLON here,
-     * is because it's later being taken care of when parsing the
-     * next expression.
-     */
+    // parser_eat(parser, TOKEN_COLON);
 
     ast_tern->right = parser_parse_expr(parser, options);
 
@@ -704,6 +711,13 @@ AST_T* parser_parse_scope(parser_T* parser, parser_options_T options)
 
 AST_T* parser_parse_object_child(parser_T* parser, parser_options_T options)
 {
+  if (parser->token->type == TOKEN_GET) {
+    token_T* next_tok = lexer_peek_next_token(parser->lexer);
+
+    if (next_tok->type != TOKEN_COLON)
+      return parser_parse_state(parser, options);
+  }
+
   AST_T* colon_ass = init_ast_line(AST_COLON_ASSIGNMENT, parser->lexer->line);
   colon_ass->parent = options.parent;
 
@@ -864,8 +878,18 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
   if (parser->token->type == TOKEN_LPAREN) {
     parser_eat(parser, TOKEN_LPAREN);
     AST_T* expr = parser_parse_expr(parser, options);
+
+    if (parser->token->type == TOKEN_COMMA) {
+      AST_T* tuple = init_ast(AST_TUPLE);
+      tuple->list_value = parse_tuple(parser, options);
+      list_prefix(tuple->list_value, expr);
+      expr = tuple;
+      tuple->capsulated = 1;
+    } else {
+      expr->capsulated = 1;
+    }
+
     expr->parent = options.parent;
-    expr->capsulated = 1;
     expr->not_exported = 1;
     parser_eat(parser, TOKEN_RPAREN);
     left = expr;
@@ -929,6 +953,7 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
     case TOKEN_DEFAULT:
     case TOKEN_CLASS:
     case TOKEN_IN:
+    case TOKEN_GET:
     case TOKEN_FOR: left = parser_parse_id(parser, options); break;
     case TOKEN_INT: left = parser_parse_int(parser, options); break;
     case TOKEN_INT_MIN: left = parser_parse_int_min(parser, options); break;
@@ -1139,7 +1164,8 @@ AST_T* parser_parse_expr(parser_T* parser, parser_options_T options)
     left = binop;
   }
 
-  if (left && parser->token->type == TOKEN_COLON && options.stop_token != parser->token->type) {
+  if (left && left->type != AST_INT && parser->token->type == TOKEN_COLON &&
+      options.stop_token != parser->token->type) {
     AST_T* colon_ass = init_ast_line(AST_COLON_ASSIGNMENT, parser->lexer->line);
     colon_ass->parent = options.parent;
     colon_ass->left = left;
@@ -1214,6 +1240,7 @@ AST_T* parser_parse_statement(parser_T* parser, parser_options_T options)
     case TOKEN_AWAIT:
     case TOKEN_DEFAULT:
     case TOKEN_EXTENDS:
+    case TOKEN_GET:
     case TOKEN_ASSERT: return parser_parse_state(parser, options); break;
     default: return 0; break;
   }
