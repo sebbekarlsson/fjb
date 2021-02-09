@@ -15,12 +15,25 @@ unsigned int getarg(int argc, char* argv[], const char* key)
   return 0;
 }
 
+void show_help()
+{
+  printf("Usage:\n"
+         "\tfjb <input-file>\n");
+}
+
 int main(int argc, char* argv[])
 {
   init_fjb_env();
   load_plugins();
 
   char* filepath = argv[1];
+
+  if (!filepath) {
+    printf("You have not told me what to do.\n");
+    show_help();
+    return 0;
+  }
+
   char* source = fjb_read_file(filepath);
   unsigned int should_dump = getarg(argc, argv, "-d");
 
@@ -28,6 +41,11 @@ int main(int argc, char* argv[])
   fjb_set_filepath(filepath);
 
   compiler_result_T* result = fjb();
+
+  if (!result || (result && !result->stdout)) {
+    printf("Nothing to do.\n");
+    return 0;
+  }
 
   printf("%s\n", result->stdout);
 

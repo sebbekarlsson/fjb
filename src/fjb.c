@@ -114,6 +114,9 @@ compiler_result_T* fjb()
     fjb_set_filepath(fjb_call_all_hooks(HOOK_RECEIVE_FILEPATH, FJB_ENV->filepath, FJB_ENV));
 
   compiler_result_T* result = _fjb();
+  if (!result)
+    return 0;
+
   char* headers = fjb_get_headers(FJB_ENV);
 
   result->headers = strdup(" ");
