@@ -1,10 +1,7 @@
 <style>
 #main {
-  box-sizing: border-box;
-  padding: 1rem;
   width: 100%;
   height: 100%;
-  background-color: white;
   position: relative;
 }
 
@@ -31,7 +28,7 @@
 <div id='main'>
   
   <h1 class='title'>Benchmarks</h1>
-  <p class='subtitle'>These benchmarks were generated at <b>2021-02-09 16:40:01.964490</b></p>
+  <p class='subtitle'>These benchmarks were generated at <b>2021-02-09 18:55:44.200606</b></p>
   
     <details>
       <summary>Ternary operator</summary>
@@ -41,8 +38,8 @@
         <pre><code>function getNumber(x)
 {
   switch (x) {
-    case "hello": return 1; break;
-    case "world": return 2; break;
+    case &#34;hello&#34;: return 1; break;
+    case &#34;world&#34;: return 2; break;
     default: return 0; break;
   }
 }
@@ -50,32 +47,32 @@
 
 const y = 4;
 
-const x = y > 3 ? y : z;
+const x = y &gt; 3 ? y : z;
 
-const g = x > 0 ? { name: "john" } : { name: "sarah" };
+const g = x &gt; 0 ? { name: &#34;john&#34; } : { name: &#34;sarah&#34; };
 </code></pre>
         <img src="graphs/VGVybmFyeSBvcGVyYXRvcg==.png"/>
 
         
           
   <details>
-    <summary>FJB - time: 0:00:00.002878, output size: 409 bytes</summary>
+    <summary>FJB - time: 0:00:00.003759, output size: 409 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
       <pre><code>409 bytes</code></pre>
       <h3 class='title'>Time</h3>
       <p class='subtitle'>The command:</p>
-      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/ternary/index.js  > ./dist.js</code></pre>
+      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/ternary/index.js  &gt; ./dist.js</code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.002878</code></pre>
+      <pre><code>0:00:00.003759</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>esbuild - time: 0:00:00.003424, output size: 151 bytes</summary>
+    <summary>esbuild - time: 0:00:00.004497, output size: 151 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -84,14 +81,14 @@ const g = x > 0 ? { name: "john" } : { name: "sarah" };
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/ternary/index.js  --bundle --outfile=./dist.js</code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.003424</code></pre>
+      <pre><code>0:00:00.004497</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>parcel - time: 0:00:00.511908, output size: 1265 bytes</summary>
+    <summary>parcel - time: 0:00:00.599866, output size: 1265 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -100,14 +97,14 @@ const g = x > 0 ? { name: "john" } : { name: "sarah" };
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/ternary/index.js </code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.511908</code></pre>
+      <pre><code>0:00:00.599866</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>poi - time: 0:00:01.507252, output size: 4670 bytes</summary>
+    <summary>poi - time: 0:00:01.498870, output size: 4670 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -116,7 +113,7 @@ const g = x > 0 ? { name: "john" } : { name: "sarah" };
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi /home/ianertson/workspace/fjb/tests/src/test_projects/ternary/index.js </code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:01.507252</code></pre>
+      <pre><code>0:00:01.498870</code></pre>
     </article>
   </details>
 
@@ -138,7 +135,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         900.017
+CPU MHz:                         3513.521
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -168,36 +165,36 @@ Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtr
         <h2 class='title'>What's being executed</h2>
         <p class='subtitle'>Code executed:</p>
         <pre><code>function xyz({
-  firstname = "john",
+  firstname = &#34;john&#34;,
   lastname
 }) {
   console.log(firstname, lastname);
 }
 
-xyz("john", "doe");
+xyz(&#34;john&#34;, &#34;doe&#34;);
 </code></pre>
         <img src="graphs/RGVzdHJ1Y3Q=.png"/>
 
         
           
   <details>
-    <summary>FJB - time: 0:00:00.002268, output size: 315 bytes</summary>
+    <summary>FJB - time: 0:00:00.002980, output size: 315 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
       <pre><code>315 bytes</code></pre>
       <h3 class='title'>Time</h3>
       <p class='subtitle'>The command:</p>
-      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/destruct/index.js  > ./dist.js</code></pre>
+      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/destruct/index.js  &gt; ./dist.js</code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.002268</code></pre>
+      <pre><code>0:00:00.002980</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>esbuild - time: 0:00:00.003333, output size: 187 bytes</summary>
+    <summary>esbuild - time: 0:00:00.005278, output size: 187 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -206,14 +203,14 @@ xyz("john", "doe");
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/destruct/index.js  --bundle --outfile=./dist.js</code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.003333</code></pre>
+      <pre><code>0:00:00.005278</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>parcel - time: 0:00:00.484756, output size: 1228 bytes</summary>
+    <summary>parcel - time: 0:00:00.522494, output size: 1228 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -222,14 +219,14 @@ xyz("john", "doe");
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/destruct/index.js </code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.484756</code></pre>
+      <pre><code>0:00:00.522494</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>poi - time: 0:00:01.495568, output size: 4625 bytes</summary>
+    <summary>poi - time: 0:00:01.492245, output size: 4625 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -238,7 +235,7 @@ xyz("john", "doe");
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi /home/ianertson/workspace/fjb/tests/src/test_projects/destruct/index.js </code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:01.495568</code></pre>
+      <pre><code>0:00:01.492245</code></pre>
     </article>
   </details>
 
@@ -260,7 +257,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         1133.784
+CPU MHz:                         3789.683
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -289,7 +286,7 @@ Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtr
       <article>
         <h2 class='title'>What's being executed</h2>
         <p class='subtitle'>Code executed:</p>
-        <pre><code>import { subtract } from './helpers/math';
+        <pre><code>import { subtract } from &#39;./helpers/math&#39;;
 
 
 const x = 10;
@@ -302,23 +299,23 @@ console.log(r);
         
           
   <details>
-    <summary>FJB - time: 0:00:00.002110, output size: 489 bytes</summary>
+    <summary>FJB - time: 0:00:00.003054, output size: 489 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
       <pre><code>489 bytes</code></pre>
       <h3 class='title'>Time</h3>
       <p class='subtitle'>The command:</p>
-      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/es6/index.js  > ./dist.js</code></pre>
+      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/es6/index.js  &gt; ./dist.js</code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.002110</code></pre>
+      <pre><code>0:00:00.003054</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>esbuild - time: 0:00:00.003733, output size: 232 bytes</summary>
+    <summary>esbuild - time: 0:00:00.004709, output size: 232 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -327,14 +324,14 @@ console.log(r);
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/es6/index.js  --bundle --outfile=./dist.js</code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.003733</code></pre>
+      <pre><code>0:00:00.004709</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>parcel - time: 0:00:00.491703, output size: 1488 bytes</summary>
+    <summary>parcel - time: 0:00:00.524836, output size: 1488 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -343,14 +340,14 @@ console.log(r);
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/es6/index.js </code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.491703</code></pre>
+      <pre><code>0:00:00.524836</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>poi - time: 0:00:01.492353, output size: 5601 bytes</summary>
+    <summary>poi - time: 0:00:01.495034, output size: 5601 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -359,7 +356,7 @@ console.log(r);
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi /home/ianertson/workspace/fjb/tests/src/test_projects/es6/index.js </code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:01.492353</code></pre>
+      <pre><code>0:00:01.495034</code></pre>
     </article>
   </details>
 
@@ -381,7 +378,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         3743.735
+CPU MHz:                         3301.970
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -410,7 +407,7 @@ Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtr
       <article>
         <h2 class='title'>What's being executed</h2>
         <p class='subtitle'>Code executed:</p>
-        <pre><code>import { multiply as mul } from './utils';
+        <pre><code>import { multiply as mul } from &#39;./utils&#39;;
 
 
 const r = mul(5, 5);
@@ -422,23 +419,23 @@ console.log(r);
         
           
   <details>
-    <summary>FJB - time: 0:00:00.002902, output size: 448 bytes</summary>
+    <summary>FJB - time: 0:00:00.002621, output size: 448 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
       <pre><code>448 bytes</code></pre>
       <h3 class='title'>Time</h3>
       <p class='subtitle'>The command:</p>
-      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/alias_imports/index.js  > ./dist.js</code></pre>
+      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/alias_imports/index.js  &gt; ./dist.js</code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.002902</code></pre>
+      <pre><code>0:00:00.002621</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>esbuild - time: 0:00:00.005074, output size: 214 bytes</summary>
+    <summary>esbuild - time: 0:00:00.004164, output size: 214 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -447,14 +444,14 @@ console.log(r);
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/alias_imports/index.js  --bundle --outfile=./dist.js</code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.005074</code></pre>
+      <pre><code>0:00:00.004164</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>parcel - time: 0:00:00.507425, output size: 1383 bytes</summary>
+    <summary>parcel - time: 0:00:00.514154, output size: 1383 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -463,14 +460,14 @@ console.log(r);
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/alias_imports/index.js </code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.507425</code></pre>
+      <pre><code>0:00:00.514154</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>poi - time: 0:00:01.495892, output size: 5354 bytes</summary>
+    <summary>poi - time: 0:00:01.503458, output size: 5354 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -479,7 +476,7 @@ console.log(r);
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi /home/ianertson/workspace/fjb/tests/src/test_projects/alias_imports/index.js </code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:01.495892</code></pre>
+      <pre><code>0:00:01.503458</code></pre>
     </article>
   </details>
 
@@ -501,7 +498,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         3782.748
+CPU MHz:                         900.072
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -530,10 +527,10 @@ Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtr
       <article>
         <h2 class='title'>What's being executed</h2>
         <p class='subtitle'>Code executed:</p>
-        <pre><code>import style from './style.css';
+        <pre><code>import style from &#39;./style.css&#39;;
 
 
-const cssEl = document.createElement('style')
+const cssEl = document.createElement(&#39;style&#39;)
 cssEl.innerText = style;
 document.head.appendChild(cssEl);
 </code></pre>
@@ -542,23 +539,23 @@ document.head.appendChild(cssEl);
         
           
   <details>
-    <summary>FJB - time: 0:00:00.003547, output size: 752 bytes</summary>
+    <summary>FJB - time: 0:00:00.002225, output size: 752 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
       <pre><code>752 bytes</code></pre>
       <h3 class='title'>Time</h3>
       <p class='subtitle'>The command:</p>
-      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/css_import/index.js  > ./dist.js</code></pre>
+      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/css_import/index.js  &gt; ./dist.js</code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.003547</code></pre>
+      <pre><code>0:00:00.002225</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>esbuild - time: 0:00:00.005791, output size: 249 bytes</summary>
+    <summary>esbuild - time: 0:00:00.003899, output size: 249 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -567,14 +564,14 @@ document.head.appendChild(cssEl);
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/css_import/index.js  --bundle --outfile=./dist.js</code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.005791</code></pre>
+      <pre><code>0:00:00.003899</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>parcel - time: 0:00:00.566748, output size: 1383 bytes</summary>
+    <summary>parcel - time: 0:00:00.550447, output size: 1383 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -583,14 +580,14 @@ document.head.appendChild(cssEl);
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/css_import/index.js </code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.566748</code></pre>
+      <pre><code>0:00:00.550447</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>poi - time: 0:00:01.499357, output size: 18660 bytes</summary>
+    <summary>poi - time: 0:00:01.498393, output size: 18660 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -599,7 +596,7 @@ document.head.appendChild(cssEl);
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi /home/ianertson/workspace/fjb/tests/src/test_projects/css_import/index.js </code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:01.499357</code></pre>
+      <pre><code>0:00:01.498393</code></pre>
     </article>
   </details>
 
@@ -621,7 +618,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         899.940
+CPU MHz:                         3054.561
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -650,7 +647,7 @@ Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtr
       <article>
         <h2 class='title'>What's being executed</h2>
         <p class='subtitle'>Code executed:</p>
-        <pre><code>import people from './people.json';
+        <pre><code>import people from &#39;./people.json&#39;;
 
 console.log(people[0].first_name);
 </code></pre>
@@ -659,23 +656,23 @@ console.log(people[0].first_name);
         
           
   <details>
-    <summary>FJB - time: 0:00:00.002282, output size: 1466 bytes</summary>
+    <summary>FJB - time: 0:00:00.003466, output size: 1466 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
       <pre><code>1466 bytes</code></pre>
       <h3 class='title'>Time</h3>
       <p class='subtitle'>The command:</p>
-      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/json_import/index.js  > ./dist.js</code></pre>
+      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/json_import/index.js  &gt; ./dist.js</code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.002282</code></pre>
+      <pre><code>0:00:00.003466</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>esbuild - time: 0:00:00.003370, output size: 1003 bytes</summary>
+    <summary>esbuild - time: 0:00:00.006372, output size: 1003 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -684,14 +681,14 @@ console.log(people[0].first_name);
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/json_import/index.js  --bundle --outfile=./dist.js</code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.003370</code></pre>
+      <pre><code>0:00:00.006372</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>parcel - time: 0:00:00.491209, output size: 1822 bytes</summary>
+    <summary>parcel - time: 0:00:00.520854, output size: 1822 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -700,14 +697,14 @@ console.log(people[0].first_name);
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/json_import/index.js </code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.491209</code></pre>
+      <pre><code>0:00:00.520854</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>poi - time: 0:00:01.488438, output size: 5936 bytes</summary>
+    <summary>poi - time: 0:00:01.489364, output size: 5936 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -716,7 +713,7 @@ console.log(people[0].first_name);
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi /home/ianertson/workspace/fjb/tests/src/test_projects/json_import/index.js </code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:01.488438</code></pre>
+      <pre><code>0:00:01.489364</code></pre>
     </article>
   </details>
 
@@ -738,7 +735,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         3957.269
+CPU MHz:                         2671.761
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -767,7 +764,7 @@ Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtr
       <article>
         <h2 class='title'>What's being executed</h2>
         <p class='subtitle'>Code executed:</p>
-        <pre><code>import { ceil } from 'lodash';
+        <pre><code>import { ceil } from &#39;lodash&#39;;
 
 
 console.log(ceil(25.443));
@@ -777,7 +774,7 @@ console.log(ceil(25.443));
         
           
   <details>
-    <summary>esbuild - time: 0:00:00.017827, output size: 222632 bytes</summary>
+    <summary>esbuild - time: 0:00:00.018408, output size: 222632 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -786,30 +783,30 @@ console.log(ceil(25.443));
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/with_lodash/index.js  --bundle --outfile=./dist.js</code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.017827</code></pre>
+      <pre><code>0:00:00.018408</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>FJB - time: 0:00:00.404912, output size: 2223 bytes</summary>
+    <summary>FJB - time: 0:00:00.422360, output size: 2223 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
       <pre><code>2223 bytes</code></pre>
       <h3 class='title'>Time</h3>
       <p class='subtitle'>The command:</p>
-      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/with_lodash/index.js  > ./dist.js</code></pre>
+      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/with_lodash/index.js  &gt; ./dist.js</code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.404912</code></pre>
+      <pre><code>0:00:00.422360</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>parcel - time: 0:00:00.538706, output size: 94714 bytes</summary>
+    <summary>parcel - time: 0:00:00.570438, output size: 94714 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -818,14 +815,14 @@ console.log(ceil(25.443));
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/with_lodash/index.js </code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.538706</code></pre>
+      <pre><code>0:00:00.570438</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>poi - time: 0:00:01.489844, output size: 549705 bytes</summary>
+    <summary>poi - time: 0:00:01.494966, output size: 549705 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -834,7 +831,7 @@ console.log(ceil(25.443));
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi /home/ianertson/workspace/fjb/tests/src/test_projects/with_lodash/index.js </code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:01.489844</code></pre>
+      <pre><code>0:00:01.494966</code></pre>
     </article>
   </details>
 
@@ -856,7 +853,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         3974.609
+CPU MHz:                         3510.873
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -885,7 +882,7 @@ Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtr
       <article>
         <h2 class='title'>What's being executed</h2>
         <p class='subtitle'>Code executed:</p>
-        <pre><code>const $ = require('./jquery');
+        <pre><code>const $ = require(&#39;./jquery&#39;);
 
 console.log($);
 </code></pre>
@@ -894,7 +891,7 @@ console.log($);
         
           
   <details>
-    <summary>esbuild - time: 0:00:00.014298, output size: 149812 bytes</summary>
+    <summary>esbuild - time: 0:00:00.014603, output size: 149812 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -903,30 +900,30 @@ console.log($);
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/with_jquery/index.js  --bundle --outfile=./dist.js</code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.014298</code></pre>
+      <pre><code>0:00:00.014603</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>FJB - time: 0:00:00.230898, output size: 99964 bytes</summary>
+    <summary>FJB - time: 0:00:00.241833, output size: 99964 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
       <pre><code>99964 bytes</code></pre>
       <h3 class='title'>Time</h3>
       <p class='subtitle'>The command:</p>
-      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/with_jquery/index.js  > ./dist.js</code></pre>
+      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/with_jquery/index.js  &gt; ./dist.js</code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.230898</code></pre>
+      <pre><code>0:00:00.241833</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>parcel - time: 0:00:00.512618, output size: 90592 bytes</summary>
+    <summary>parcel - time: 0:00:00.564521, output size: 90592 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -935,14 +932,14 @@ console.log($);
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/with_jquery/index.js </code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.512618</code></pre>
+      <pre><code>0:00:00.564521</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>poi - time: 0:00:01.498751, output size: 143057 bytes</summary>
+    <summary>poi - time: 0:00:01.494154, output size: 143057 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -951,7 +948,7 @@ console.log($);
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi /home/ianertson/workspace/fjb/tests/src/test_projects/with_jquery/index.js </code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:01.498751</code></pre>
+      <pre><code>0:00:01.494154</code></pre>
     </article>
   </details>
 
@@ -973,7 +970,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         3886.403
+CPU MHz:                         2705.398
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -1002,14 +999,14 @@ Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtr
       <article>
         <h2 class='title'>What's being executed</h2>
         <p class='subtitle'>Code executed:</p>
-        <pre><code>import React from 'react';
+        <pre><code>import React from &#39;react&#39;;
 </code></pre>
         <img src="graphs/SW1wb3J0aW5nIGByZWFjdGAgZnJvbSByZWFjdA==.png"/>
 
         
           
   <details>
-    <summary>esbuild - time: 0:00:00.008241, output size: 76776 bytes</summary>
+    <summary>esbuild - time: 0:00:00.008042, output size: 76776 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -1018,30 +1015,30 @@ Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtr
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/react_import/index.jsx  --bundle --outfile=./dist.js</code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.008241</code></pre>
+      <pre><code>0:00:00.008042</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>FJB - time: 0:00:00.057751, output size: 42991 bytes</summary>
+    <summary>FJB - time: 0:00:00.041845, output size: 42991 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
       <pre><code>42991 bytes</code></pre>
       <h3 class='title'>Time</h3>
       <p class='subtitle'>The command:</p>
-      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/react_import/index.jsx  > ./dist.js</code></pre>
+      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/react_import/index.jsx  &gt; ./dist.js</code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.057751</code></pre>
+      <pre><code>0:00:00.041845</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>parcel - time: 0:00:00.515724, output size: 8574 bytes</summary>
+    <summary>parcel - time: 0:00:00.512222, output size: 8574 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -1050,14 +1047,14 @@ Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtr
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/react_import/index.jsx </code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.515724</code></pre>
+      <pre><code>0:00:00.512222</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>poi - time: 0:00:01.544448, output size: 80699 bytes</summary>
+    <summary>poi - time: 0:00:01.496816, output size: 80699 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -1066,7 +1063,7 @@ Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtr
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi /home/ianertson/workspace/fjb/tests/src/test_projects/react_import/index.jsx </code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:01.544448</code></pre>
+      <pre><code>0:00:01.496816</code></pre>
     </article>
   </details>
 
@@ -1088,7 +1085,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         1022.357
+CPU MHz:                         3284.258
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -1117,43 +1114,43 @@ Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtr
       <article>
         <h2 class='title'>What's being executed</h2>
         <p class='subtitle'>Code executed:</p>
-        <pre><code>import React, { Component } from "react";
-import { Card } from "./card";
-import style from "./style.css";
-import { render } from "react-dom";
+        <pre><code>import React, { Component } from &#34;react&#34;;
+import { Card } from &#34;./card&#34;;
+import style from &#34;./style.css&#34;;
+import { render } from &#34;react-dom&#34;;
 
 // unfortunately, need to manually append style tag right now
-const styleTag = document.createElement("style");
+const styleTag = document.createElement(&#34;style&#34;);
 styleTag.innerText = style;
 document.head.appendChild(styleTag);
 
-const SUBTITLE = "It's so simple!";
+const SUBTITLE = &#34;It&#39;s so simple!&#34;;
 const appStyle = {
-  width: "100%",
-  height: "100%",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
+  width: &#34;100%&#34;,
+  height: &#34;100%&#34;,
+  display: &#34;flex&#34;,
+  justifyContent: &#34;center&#34;,
+  alignItems: &#34;center&#34;,
 };
 
-const App = () => {
+const App = () =&gt; {
   return (
-    <div style={appStyle}>
-      <div>
-        <Card text={SUBTITLE} />
-      </div>
-    </div>
+    &lt;div style={appStyle}&gt;
+      &lt;div&gt;
+        &lt;Card text={SUBTITLE} /&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
   );
 };
 
-render(<App />, document.getElementById("root"));
+render(&lt;App /&gt;, document.getElementById(&#34;root&#34;));
 </code></pre>
         <img src="graphs/UmVhY3QgcHJvamVjdCB3aXRoIEpTWA==.png"/>
 
         
           
   <details>
-    <summary>esbuild - time: 0:00:00.042162, output size: 1105110 bytes</summary>
+    <summary>esbuild - time: 0:00:00.040479, output size: 1105110 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -1162,14 +1159,14 @@ render(<App />, document.getElementById("root"));
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/with_react/index.jsx  --bundle --outfile=./dist.js</code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.042162</code></pre>
+      <pre><code>0:00:00.040479</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>parcel - time: 0:00:00.614233, output size: 135732 bytes</summary>
+    <summary>parcel - time: 0:00:00.651024, output size: 135732 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -1178,30 +1175,30 @@ render(<App />, document.getElementById("root"));
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/with_react/index.jsx </code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:00.614233</code></pre>
+      <pre><code>0:00:00.651024</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>FJB - time: 0:00:01.235486, output size: 591434 bytes</summary>
+    <summary>FJB - time: 0:00:01.232247, output size: 591434 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
       <pre><code>591434 bytes</code></pre>
       <h3 class='title'>Time</h3>
       <p class='subtitle'>The command:</p>
-      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/with_react/index.jsx  > ./dist.js</code></pre>
+      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/with_react/index.jsx  &gt; ./dist.js</code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:01.235486</code></pre>
+      <pre><code>0:00:01.232247</code></pre>
     </article>
   </details>
 
         
           
   <details>
-    <summary>poi - time: 0:00:01.489629, output size: 1031602 bytes</summary>
+    <summary>poi - time: 0:00:01.506737, output size: 1031602 bytes</summary>
     <article>
       <h3 class='title'>Output size</h3>
       <p class='subtitle'>The size of the output is:</p>
@@ -1210,7 +1207,7 @@ render(<App />, document.getElementById("root"));
       <p class='subtitle'>The command:</p>
       <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi /home/ianertson/workspace/fjb/tests/src/test_projects/with_react/index.jsx </code></pre>
       <p class='subtitle'>finished in:</p>
-      <pre><code>0:00:01.489629</code></pre>
+      <pre><code>0:00:01.506737</code></pre>
     </article>
   </details>
 
@@ -1232,7 +1229,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         4171.181
+CPU MHz:                         3701.781
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00

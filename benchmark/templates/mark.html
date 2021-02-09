@@ -10,7 +10,7 @@
       <pre><code>{{ run.size }} bytes</code></pre>
       <h3 class='title'>Time</h3>
       <p class='subtitle'>The command:</p>
-      <pre><code>{{ run.cmd }}</code></pre>
+      <pre><code>{{ run.cmd | e }}</code></pre>
       <p class='subtitle'>finished in:</p>
       <pre><code>{{ run.time }}</code></pre>
     </article>
@@ -27,7 +27,7 @@
       <article>
         <h2 class='title'>What's being executed</h2>
         <p class='subtitle'>Code executed:</p>
-        <pre><code>{{ mark.source }}</code></pre>
+        <pre><code>{{ mark.source | e }}</code></pre>
         <img src="graphs/{{ mark.graph }}"/>
 
         {% for run in mark.runs %}
