@@ -1,6 +1,5 @@
 [submodule "external/libjson"]
 	path = external/libjson
-	url = git@github.com:sebbekarlsson/libjson.git
-[submodule "external/hashmap"]
-	path = external/hashmap
-	url = git@github.com:sebbekarlsson/hashmap.git
+	url = https://github.com/sebbekarlsson/libjson.git
+[submodule "external/hashmap/"]
+	url = https://github.com/sebbekarlsson/hashmap.git
