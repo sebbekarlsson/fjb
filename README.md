@@ -52,6 +52,7 @@ fjb index.js
 ### Planned Features
 - [ ] TypeScript support
 - [ ] Lazy imports
+- [ ] SCSS support
 
 ## Example
 > Below is an example of some code that is **100%** supported.  
