@@ -197,29 +197,28 @@ def set_graphname(mark, name):
     return mark
 
 
-def generate(document, results):
-    document_input, document_output = document
-
-    print('Generating {} ...'.format(document_output))
-    template = jinja_env.get_template(document_input)
-    print('Done')
-
+def generate(documents, results):
     marks = list(results)
-    graphs = generate_graphs(marks)
+    graphs = list(generate_graphs(marks))
     marks = [set_graphname(m, graphs[i]) for i, m in enumerate(marks)]
 
-    open(DUMP_NAME,
-         'w+').write(json.dumps(marks, default=str, sort_keys=True, indent=2))
-    contents = template.render(marks=marks, now=str(datetime.datetime.now()))
-    open(document_output, 'w+').write(contents)
+    for document in documents:
+        document_input, document_output = document
+
+        print('Generating {} ...'.format(document_output))
+        template = jinja_env.get_template(document_input)
+        print('Done')
+
+        open(DUMP_NAME,
+             'w+').write(
+                 json.dumps(marks, default=str, sort_keys=True, indent=2))
+        contents = template.render(
+            marks=marks, now=str(datetime.datetime.now()))
+        open(document_output, 'w+').write(contents)
 
 
 def run():
-    return list(
-        map(
-            lambda x: generate(x, run_benchmarks(BENCHMARKS)), OUTPUT_DOCUMENTS
-        )
-    )
+    generate(OUTPUT_DOCUMENTS, run_benchmarks(BENCHMARKS))
 
 
 if __name__ == '__main__':
