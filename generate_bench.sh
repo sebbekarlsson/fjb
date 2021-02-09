@@ -9,6 +9,4 @@ cd $OLD
 $BENCHPATH/venv/bin/python $BENCHPATH/generate.py $1 $2 $3 $4
 
 
-mkdir -p website
-cp ./benchmarks.html website/index.html
-cp -r ./graphs website/.
+./copy_bench.sh

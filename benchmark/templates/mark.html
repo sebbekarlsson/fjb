@@ -5,13 +5,13 @@
   <details>
     <summary>{{ run.title }} - time: {{ run.time }}, output size: {{ run.size }} bytes</summary>
     <article>
-      <h3>Output size</h3>
-      <p>The size of the output is:</p>
+      <h3 class='title'>Output size</h3>
+      <p class='subtitle'>The size of the output is:</p>
       <pre><code>{{ run.size }} bytes</code></pre>
-      <h3>Time</h3>
-      <p>The command:</p>
+      <h3 class='title'>Time</h3>
+      <p class='subtitle'>The command:</p>
       <pre><code>{{ run.cmd }}</code></pre>
-      <p>finished in:</p>
+      <p class='subtitle'>finished in:</p>
       <pre><code>{{ run.time }}</code></pre>
     </article>
   </details>
@@ -19,14 +19,14 @@
 
 
 {% block content %}
-  <h1>Benchmarks</h1>
-  <p>These benchmarks were generated at <b>{{ now }}</b></p>
+  <h1 class='title'>Benchmarks</h1>
+  <p class='subtitle'>These benchmarks were generated at <b>{{ now }}</b></p>
   {% for mark in marks %}
     <details>
       <summary>{{ mark.title }}</summary>
       <article>
-        <h2>What's being executed</h2>
-        <p>Code executed:</p>
+        <h2 class='title'>What's being executed</h2>
+        <p class='subtitle'>Code executed:</p>
         <pre><code>{{ mark.source }}</code></pre>
         <img src="graphs/{{ mark.graph }}"/>
 
@@ -34,7 +34,7 @@
           {{ renderRun(run) }}
         {% endfor %}
 
-        <h3>Executed on</h3>
+        <h3 class='title'>Executed on</h3>
         <pre><code>{{ mark.sysinfo }}</code></pre>
       </article>
     </details>
