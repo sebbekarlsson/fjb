@@ -40,6 +40,8 @@ AST_T* parser_parse_object(parser_T* parser, parser_options_T options);
 
 AST_T* parser_parse_destructor(parser_T* parser, parser_options_T options);
 
+AST_T* parser_parse_case(parser_T* parser, parser_options_T options);
+
 AST_T* parser_parse_expr(parser_T* parser, parser_options_T options);
 
 AST_T* parser_parse_definition(parser_T* parser, parser_options_T options);

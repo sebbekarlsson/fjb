@@ -300,6 +300,13 @@ token_T* lexer_next(lexer_T* lexer)
       }
     }
 
+    if (lexer->c == '?') {
+      if (lexer_peek(lexer, 1) == '.') {
+        token_T* tok = lexer_advance_token(lexer, init_token(strdup("?."), TOKEN_OPTIONAL_CHAIN));
+        return lexer_advance_token(lexer, tok);
+      }
+    }
+
     switch (lexer->c) {
       case '{': return lexer_advance_token(lexer, init_token(charstr(lexer->c), TOKEN_LBRACE));
       case '}': return lexer_advance_token(lexer, init_token(charstr(lexer->c), TOKEN_RBRACE));

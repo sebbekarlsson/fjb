@@ -1,0 +1,17 @@
+enum TOKEN_TYPE
+{
+  {{
+    join(map(tokenTypes, (@
+      {{ $0 }}
+
+    @)), ",")
+  }}
+};
+
+static const char * TOKEN_TYPE_STR[] = {
+  {{
+    join(map(tokenTypes, (@
+      "{{ $0 }}"
+    @)), ",")
+  }}
+};

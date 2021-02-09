@@ -15,6 +15,7 @@
 #include "include/js/function_class.js.h"
 #include "include/js/import.js.h"
 #include "include/js/module_requirement.js.h"
+#include "include/js/optional_chain.js.h"
 #include "include/js/require.js.h"
 #include "include/js/string.js.h"
 #include "include/js/switch_case.js.h"
@@ -279,11 +280,11 @@ char* emit(AST_T* ast, fjb_env_T* env)
   char* leftstr = 0;
   char* rightstr = 0;
 
-  if (ast->left && ast->type != AST_CLASS_FUNCTION) {
+  if (ast->left && ast->type != AST_CLASS_FUNCTION && ast->type != AST_BINOP) {
     leftstr = emit(ast->left, env);
   }
 
-  if (ast->right && ast->type != AST_DO) {
+  if (ast->right && ast->type != AST_DO && ast->type != AST_BINOP) {
     rightstr = emit(ast->right, env);
   }
 
@@ -485,8 +486,14 @@ char* emit_case(AST_T* ast, fjb_env_T* env)
   char* str = 0;
   char* condition_str = ast->condition ? emit(ast->condition, env) : strdup("");
   char* valuestr = ast->value ? emit(ast->value, env) : strdup("");
+  char* name = strdup(ast->name);
 
-  TEMPLATE(switch_case, str, strlen(condition_str) + strlen(valuestr), condition_str, valuestr);
+  TEMPLATE(switch_case,
+           str,
+           strlen(name) + strlen(condition_str) + strlen(valuestr),
+           name,
+           condition_str,
+           valuestr);
 
   return str;
 }
@@ -550,9 +557,9 @@ char* emit_compound(AST_T* ast, fjb_env_T* env)
       continue;
 
     if (child_ast->type != AST_IMPORT && child_ast->type != AST_UNDEFINED &&
-        child_ast->type != AST_NOOP && child_ast->type != AST_COLON_ASSIGNMENT &&
-        child_ast->type != AST_JSX_ELEMENT && child_ast->type != AST_DO && child_str &&
-        i < living->size - 1) {
+        child_ast->type != AST_LABEL && child_ast->type != AST_NOOP &&
+        child_ast->type != AST_COLON_ASSIGNMENT && child_ast->type != AST_JSX_ELEMENT &&
+        child_ast->type != AST_DO && child_str && i < living->size - 1) {
       child_str = str_append(&child_str, ";");
     }
 
@@ -848,14 +855,39 @@ char* emit_binop(AST_T* ast, fjb_env_T* env)
 {
   char* str = 0;
 
+  char* leftstr = 0;
+  char* rightstr = 0;
+
+  if (ast->left) {
+    leftstr = emit(ast->left, env);
+  }
+
+  if (ast->right) {
+    rightstr = emit(ast->right, env);
+  }
+
+  if (!leftstr)
+    leftstr = strdup("");
+  if (!rightstr)
+    rightstr = strdup("");
+
   if (ast->token) {
-    if (ast->token->type == TOKEN_DOT || ast->token->type == TOKEN_COMMA ||
-        ast->token->type == TOKEN_PLUS) {
-      str = str_append(&str, ast->token->value);
+    if (ast->token->type == TOKEN_OPTIONAL_CHAIN) {
+      TEMPLATE(
+        optional_chain, str, (strlen(leftstr) * 3) + (strlen(rightstr) * 3) + 1, leftstr, rightstr);
     } else {
-      str = str_append(&str, " ");
-      str = str_append(&str, ast->token->value);
-      str = str_append(&str, " ");
+      if (ast->token->type == TOKEN_DOT || ast->token->type == TOKEN_COMMA ||
+          ast->token->type == TOKEN_PLUS || ast->token->type == TOKEN_OPTIONAL_CHAIN) {
+        str = str_append(&str, leftstr);
+        str = str_append(&str, ast->token->value);
+        str = str_append(&str, rightstr);
+      } else {
+        str = str_append(&str, leftstr);
+        str = str_append(&str, " ");
+        str = str_append(&str, ast->token->value);
+        str = str_append(&str, " ");
+        str = str_append(&str, rightstr);
+      }
     }
   }
 
@@ -1029,18 +1061,7 @@ char* emit_noop(AST_T* ast, fjb_env_T* env)
 
 char* emit_label(AST_T* ast, fjb_env_T* env)
 {
-  char* str = 0;
-
-  if (ast->label_value) {
-    char* label_str = emit(ast->label_value, env);
-
-    if (label_str) {
-      str = str_append(&str, label_str);
-      free(label_str);
-    }
-  }
-
-  return str ? str : strdup("");
+  return strdup(":\n");
 }
 
 char* emit_ternary(AST_T* ast, fjb_env_T* env)
@@ -1052,6 +1073,7 @@ char* emit_ternary(AST_T* ast, fjb_env_T* env)
   if (valuestr) {
     str = str_append(&str, "?");
     str = str_append(&str, valuestr);
+    str = str_append(&str, ":");
     free(valuestr);
   }
 
