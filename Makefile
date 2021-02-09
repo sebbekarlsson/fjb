@@ -31,6 +31,7 @@ libfjb.a: $(objects_no_main)
 	gcc -c $(flags) $< -o $@
 
 %.js.h: %.js
+	mkdir -p ./src/include/js
 	mkdir -p .tmp
 	$(GPP_PATH) $^ | tr -d \\n | sed -e :a -e '/[^[:blank:]]/,$$!d; /^[[:space:]]*$$/{ $$d; N; ba' -e '}' > .tmp/$(notdir $^)
 	xxd -i .tmp/$(notdir $^) | sed 's/\([0-9a-f]\)$$/\0, 0x00/' > src/include/js/$(notdir $^.h)
