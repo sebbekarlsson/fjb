@@ -64,7 +64,7 @@ fjb index.js
 
 ## Benchmarks :rocket:
 > To see benchmarks, have a look at [benchmarks.md](benchmarks.md) :fire:  
-> You can also view them over at [https://fjbundler.com](fjbundler.com)
+> You can also view them over at [https://fjbundler.com](https://fjbundler.com)
 
 ## Installing
 ### Dependencies
