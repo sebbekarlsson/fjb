@@ -7,7 +7,6 @@
 #include "include/js/jsx_add_listener.js.h"
 #include "include/js/jsx_append.js.h"
 #include "include/js/jsx_attr.js.h"
-#include "include/js/jsx_close.js.h"
 #include "include/js/jsx_ptr.js.h"
 #include "include/js/jsx_react.js.h"
 #include "include/js/jsx_react_ptr.js.h"
