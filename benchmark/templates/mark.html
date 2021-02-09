@@ -1,0 +1,42 @@
+{% extends 'mark_base.html' %}
+
+
+{% macro renderRun(run) %}
+  <details>
+    <summary>{{ run.title }} - time: {{ run.time }}, output size: {{ run.size }} bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>{{ run.size }} bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>{{ run.cmd }}</code></pre>
+      <p>finished in:</p>
+      <pre><code>{{ run.time }}</code></pre>
+    </article>
+  </details>
+{% endmacro %}
+
+
+{% block content %}
+  <h1>Benchmarks</h1>
+  <p>These benchmarks were generated at <b>{{ now }}</b></p>
+  {% for mark in marks %}
+    <details>
+      <summary>{{ mark.title }}</summary>
+      <article>
+        <h2>What's being executed</h2>
+        <p>Code executed:</p>
+        <pre><code>{{ mark.source }}</code></pre>
+        <img src="graphs/{{ mark.graph }}"/>
+
+        {% for run in mark.runs %}
+          {{ renderRun(run) }}
+        {% endfor %}
+
+        <h3>Executed on</h3>
+        <pre><code>{{ mark.sysinfo }}</code></pre>
+      </article>
+    </details>
+  {% endfor %}
+{% endblock %}

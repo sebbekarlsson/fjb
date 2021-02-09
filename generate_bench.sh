@@ -6,4 +6,6 @@ rm -rf ./dist*
 virtualenv -p /usr/bin/python3.9 ./venv
 $BENCHPATH/venv/bin/python setup.py develop
 cd $OLD
-$BENCHPATH/venv/bin/python $BENCHPATH/generate.py
+$BENCHPATH/venv/bin/python $BENCHPATH/generate.py $1 $2 $3 $4
+
+cp ./benchmarks.html index.html

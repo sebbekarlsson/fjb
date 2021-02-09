@@ -4,10 +4,20 @@ import os
 import datetime
 import json
 import matplotlib.pyplot as plt
-
 import base64
+from argparse import ArgumentParser
+
+parser = ArgumentParser()
+parser.add_argument(
+    "--one", type=bool, default=False, help="Runs only one benchmark")
+args = parser.parse_args()
+
 
 PWD = os.getcwd()
+
+TMPL_PATH = PWD + '/benchmark/templates'
+
+jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(TMPL_PATH))
 
 ESBUILD_PATH = "/benchmark/node_modules/.bin/esbuild"
 ESBUILD_ARGS = ' --bundle --outfile=./dist.js'
@@ -20,13 +30,16 @@ POI_ARGS = ''
 FJB_PATH = "/fjb.out"
 FJB_ARGS = ' > ./dist.js'
 
-
 DUMP_NAME = PWD + '/bench.json'
 GRAPH_DIR = PWD + '/graphs'
 
+OUTPUT_DOCUMENTS = [
+    ('mark.md', PWD + '/benchmarks.md'),
+    ('mark.html', PWD + '/benchmarks.html')
+]
+
 if not os.path.isdir(GRAPH_DIR):
     os.mkdir(GRAPH_DIR)
-
 
 RUNS = [
     {
@@ -54,38 +67,38 @@ RUNS = [
 ]
 
 
+if args.one:
+    RUNS = [RUNS[0]]
+
+
 def create_mark(title, path, runs=RUNS):
-    return {
-        "title": title,
-        "path": PWD + path,
-        "runs": runs or RUNS
-    }
+    return {"title": title, "path": PWD + path, "runs": runs or RUNS}
 
 
 BENCHMARKS = [
     create_mark(
-        "Importing ES6 modules",
-        '/tests/src/test_projects/es6/index.js'
+        "Ternary operator", '/tests/src/test_projects/ternary/index.js'
+    ),
+    create_mark("Destruct", '/tests/src/test_projects/destruct/index.js'),
+    create_mark(
+        "Importing ES6 modules", '/tests/src/test_projects/es6/index.js'
     ),
     create_mark(
         "Importing aliased ES6 modules",
         '/tests/src/test_projects/alias_imports/index.js'
     ),
     create_mark(
-        "Importing CSS",
-        '/tests/src/test_projects/css_import/index.js'
+        "Importing CSS", '/tests/src/test_projects/css_import/index.js'
     ),
     create_mark(
-        "Importing JSON",
-        '/tests/src/test_projects/json_import/index.js'
+        "Importing JSON", '/tests/src/test_projects/json_import/index.js'
     ),
     create_mark(
         "Importing `ceil` from lodash, with tree shaking.",
         '/tests/src/test_projects/with_lodash/index.js'
     ),
     create_mark(
-        "Require `jquery`",
-        '/tests/src/test_projects/with_jquery/index.js'
+        "Require `jquery`", '/tests/src/test_projects/with_jquery/index.js'
     ),
     create_mark(
         "Importing `react` from react",
@@ -99,11 +112,7 @@ BENCHMARKS = [
 
 
 def get_sysinfo():
-    process = subprocess.Popen(
-        "lscpu",
-        stdout=subprocess.PIPE,
-        shell=True
-    )
+    process = subprocess.Popen("lscpu", stdout=subprocess.PIPE, shell=True)
     return process.communicate()[0].decode()
 
 
@@ -117,13 +126,10 @@ def run_entry(mark, entry):
     print(entry)
 
     cmd = "{exe} {path} {args}".format(
-            exe=entry['exec'], path=mark['path'], args=entry['args'])
-
-    process = subprocess.Popen(
-        cmd,
-        stdout=subprocess.PIPE,
-        shell=True
+        exe=entry['exec'], path=mark['path'], args=entry['args']
     )
+
+    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
     process.communicate()
 
     diff = datetime.datetime.now() - timebefore
@@ -142,12 +148,16 @@ def run_benchmark(mark):
 
 def run_benchmarks(marks):
     return map(
-        lambda x: dict(list(x.items()) + list(dict(
-            runs=list(sorted(run_benchmark(x), key=lambda x: x['time'])),
-            source=open(x['path']).read(),
-            sysinfo=get_sysinfo(),
-        ).items())),
-        marks
+        lambda x: dict(
+            list(x.items()) + list(
+                dict(
+                    runs=list(
+                        sorted(run_benchmark(x), key=lambda x: x['time'])),
+                    source=open(x['path']).read(),
+                    sysinfo=get_sysinfo(),
+                ).items()
+            )
+        ), marks
     )
 
 
@@ -187,22 +197,29 @@ def set_graphname(mark, name):
     return mark
 
 
-def generate(results):
-    template = jinja2.Template(open(
-        PWD + '/benchmark/templates/mark.md').read())
+def generate(document, results):
+    document_input, document_output = document
+
+    print('Generating {} ...'.format(document_output))
+    template = jinja_env.get_template(document_input)
+    print('Done')
 
     marks = list(results)
     graphs = generate_graphs(marks)
     marks = [set_graphname(m, graphs[i]) for i, m in enumerate(marks)]
 
-    open(DUMP_NAME, 'w+').write(json.dumps(
-        marks, default=str, sort_keys=True, indent=2))
+    open(DUMP_NAME,
+         'w+').write(json.dumps(marks, default=str, sort_keys=True, indent=2))
     contents = template.render(marks=marks, now=str(datetime.datetime.now()))
-    open(os.getcwd() + '/benchmarks.md', 'w+').write(contents)
+    open(document_output, 'w+').write(contents)
 
 
 def run():
-    generate(run_benchmarks(BENCHMARKS))
+    return list(
+        map(
+            lambda x: generate(x, run_benchmarks(BENCHMARKS)), OUTPUT_DOCUMENTS
+        )
+    )
 
 
 if __name__ == '__main__':

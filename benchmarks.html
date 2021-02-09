@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset='UTF-8'/>
+        <meta name='viewport' content='width=device-width, initial-scale=1'>
+        <style>
+        * {
+  margin: 0;
+  padding: 0;
+  font-family: Sans-Serif;
+}
+
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #928374;
+}
+
+#main {
+  box-sizing: border-box;
+  padding: 1rem;
+  width: 90vw;
+  min-height: 100vh;
+  background-color: white;
+  position: relative;
+}
+
+#main img {
+  max-width: 100%;
+  object-fit: cover;
+}
+
+details {
+  position: relative;
+}
+
+details > article {
+  margin-left: 1rem;
+  border-left-color: lightgray;
+  border-left-style: solid;
+  border-left-width: 1px;
+  box-sizing: boder-box;
+  padding-left: 1rem;
+}
+
+h1, h2, h3, h4, p, details, pre, summary {
+  margin-bottom: 1rem;
+}
+
+pre code {
+  background-color: #282828;
+  color: #fbf1c7;
+  display: block;
+  padding: 1rem;
+  box-sizing: border-box;
+  max-width: 100%;
+  white-space: break-spaces;
+  font-family: Inconsolata, Courier, FreeMono, Monaco, Monospace, Serif;
+}
+        </style>
+    </head>
+    <body>
+      <div id='main'>
+        
+  <h1>Benchmarks</h1>
+  <p>These benchmarks were generated at <b>2021-02-09 14:44:49.432120</b></p>
+  
+    <details>
+      <summary>Ternary operator</summary>
+      <article>
+        <h2>What's being executed</h2>
+        <p>Code executed:</p>
+        <pre><code>function getNumber(x)
+{
+  switch (x) {
+    case "hello": return 1; break;
+    case "world": return 2; break;
+    default: return 0; break;
+  }
+}
+
+
+const y = 4;
+
+const x = y > 3 ? y : z;
+
+const g = x > 0 ? { name: "john" } : { name: "sarah" };
+</code></pre>
+        <img src="graphs/VGVybmFyeSBvcGVyYXRvcg==.png"/>
+
+        
+          
+  <details>
+    <summary>FJB - time: 0:00:00.004644, output size: 409 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>409 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/ternary/index.js  > ./dist.js</code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.004644</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>esbuild - time: 0:00:00.005126, output size: 151 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>151 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/ternary/index.js  --bundle --outfile=./dist.js</code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.005126</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>parcel - time: 0:00:00.572416, output size: 1265 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>1265 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/ternary/index.js </code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.572416</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>poi - time: 0:00:01.520315, output size: 4670 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>4670 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi /home/ianertson/workspace/fjb/tests/src/test_projects/ternary/index.js </code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:01.520315</code></pre>
+    </article>
+  </details>
+
+        
+
+        <h3>Executed on</h3>
+        <pre><code>Architecture:                    x86_64
+CPU op-mode(s):                  32-bit, 64-bit
+Byte Order:                      Little Endian
+Address sizes:                   39 bits physical, 48 bits virtual
+CPU(s):                          16
+On-line CPU(s) list:             0-15
+Thread(s) per core:              2
+Core(s) per socket:              8
+Socket(s):                       1
+NUMA node(s):                    1
+Vendor ID:                       GenuineIntel
+CPU family:                      6
+Model:                           158
+Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+Stepping:                        13
+CPU MHz:                         3730.119
+CPU max MHz:                     5000.0000
+CPU min MHz:                     800.0000
+BogoMIPS:                        4800.00
+Virtualization:                  VT-x
+L1d cache:                       256 KiB
+L1i cache:                       256 KiB
+L2 cache:                        2 MiB
+L3 cache:                        16 MiB
+NUMA node0 CPU(s):               0-15
+Vulnerability Itlb multihit:     KVM: Mitigation: VMX disabled
+Vulnerability L1tf:              Not affected
+Vulnerability Mds:               Not affected
+Vulnerability Meltdown:          Not affected
+Vulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp
+Vulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling
+Vulnerability Srbds:             Mitigation; TSX disabled
+Vulnerability Tsx async abort:   Mitigation; TSX disabled
+Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities
+</code></pre>
+      </article>
+    </details>
+  
+    <details>
+      <summary>Destruct</summary>
+      <article>
+        <h2>What's being executed</h2>
+        <p>Code executed:</p>
+        <pre><code>function xyz({
+  firstname = "john",
+  lastname
+}) {
+  console.log(firstname, lastname);
+}
+
+xyz("john", "doe");
+</code></pre>
+        <img src="graphs/RGVzdHJ1Y3Q=.png"/>
+
+        
+          
+  <details>
+    <summary>FJB - time: 0:00:00.004461, output size: 315 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>315 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/destruct/index.js  > ./dist.js</code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.004461</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>esbuild - time: 0:00:00.006340, output size: 187 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>187 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/destruct/index.js  --bundle --outfile=./dist.js</code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.006340</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>parcel - time: 0:00:00.576957, output size: 1228 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>1228 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/destruct/index.js </code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.576957</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>poi - time: 0:00:01.537702, output size: 4625 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>4625 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi /home/ianertson/workspace/fjb/tests/src/test_projects/destruct/index.js </code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:01.537702</code></pre>
+    </article>
+  </details>
+
+        
+
+        <h3>Executed on</h3>
+        <pre><code>Architecture:                    x86_64
+CPU op-mode(s):                  32-bit, 64-bit
+Byte Order:                      Little Endian
+Address sizes:                   39 bits physical, 48 bits virtual
+CPU(s):                          16
+On-line CPU(s) list:             0-15
+Thread(s) per core:              2
+Core(s) per socket:              8
+Socket(s):                       1
+NUMA node(s):                    1
+Vendor ID:                       GenuineIntel
+CPU family:                      6
+Model:                           158
+Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+Stepping:                        13
+CPU MHz:                         3808.758
+CPU max MHz:                     5000.0000
+CPU min MHz:                     800.0000
+BogoMIPS:                        4800.00
+Virtualization:                  VT-x
+L1d cache:                       256 KiB
+L1i cache:                       256 KiB
+L2 cache:                        2 MiB
+L3 cache:                        16 MiB
+NUMA node0 CPU(s):               0-15
+Vulnerability Itlb multihit:     KVM: Mitigation: VMX disabled
+Vulnerability L1tf:              Not affected
+Vulnerability Mds:               Not affected
+Vulnerability Meltdown:          Not affected
+Vulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp
+Vulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling
+Vulnerability Srbds:             Mitigation; TSX disabled
+Vulnerability Tsx async abort:   Mitigation; TSX disabled
+Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities
+</code></pre>
+      </article>
+    </details>
+  
+    <details>
+      <summary>Importing ES6 modules</summary>
+      <article>
+        <h2>What's being executed</h2>
+        <p>Code executed:</p>
+        <pre><code>import { subtract } from './helpers/math';
+
+
+const x = 10;
+const y = 5;
+const r = subtract(x, y);
+console.log(r);
+</code></pre>
+        <img src="graphs/SW1wb3J0aW5nIEVTNiBtb2R1bGVz.png"/>
+
+        
+          
+  <details>
+    <summary>FJB - time: 0:00:00.004987, output size: 489 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>489 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/es6/index.js  > ./dist.js</code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.004987</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>esbuild - time: 0:00:00.007863, output size: 232 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>232 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/es6/index.js  --bundle --outfile=./dist.js</code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.007863</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>parcel - time: 0:00:00.587083, output size: 1488 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>1488 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/es6/index.js </code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.587083</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>poi - time: 0:00:01.530189, output size: 5601 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>5601 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi /home/ianertson/workspace/fjb/tests/src/test_projects/es6/index.js </code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:01.530189</code></pre>
+    </article>
+  </details>
+
+        
+
+        <h3>Executed on</h3>
+        <pre><code>Architecture:                    x86_64
+CPU op-mode(s):                  32-bit, 64-bit
+Byte Order:                      Little Endian
+Address sizes:                   39 bits physical, 48 bits virtual
+CPU(s):                          16
+On-line CPU(s) list:             0-15
+Thread(s) per core:              2
+Core(s) per socket:              8
+Socket(s):                       1
+NUMA node(s):                    1
+Vendor ID:                       GenuineIntel
+CPU family:                      6
+Model:                           158
+Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+Stepping:                        13
+CPU MHz:                         3702.208
+CPU max MHz:                     5000.0000
+CPU min MHz:                     800.0000
+BogoMIPS:                        4800.00
+Virtualization:                  VT-x
+L1d cache:                       256 KiB
+L1i cache:                       256 KiB
+L2 cache:                        2 MiB
+L3 cache:                        16 MiB
+NUMA node0 CPU(s):               0-15
+Vulnerability Itlb multihit:     KVM: Mitigation: VMX disabled
+Vulnerability L1tf:              Not affected
+Vulnerability Mds:               Not affected
+Vulnerability Meltdown:          Not affected
+Vulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp
+Vulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling
+Vulnerability Srbds:             Mitigation; TSX disabled
+Vulnerability Tsx async abort:   Mitigation; TSX disabled
+Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities
+</code></pre>
+      </article>
+    </details>
+  
+    <details>
+      <summary>Importing aliased ES6 modules</summary>
+      <article>
+        <h2>What's being executed</h2>
+        <p>Code executed:</p>
+        <pre><code>import { multiply as mul } from './utils';
+
+
+const r = mul(5, 5);
+
+console.log(r);
+</code></pre>
+        <img src="graphs/SW1wb3J0aW5nIGFsaWFzZWQgRVM2IG1vZHVsZXM=.png"/>
+
+        
+          
+  <details>
+    <summary>FJB - time: 0:00:00.004280, output size: 448 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>448 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/alias_imports/index.js  > ./dist.js</code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.004280</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>esbuild - time: 0:00:00.004323, output size: 214 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>214 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/alias_imports/index.js  --bundle --outfile=./dist.js</code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.004323</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>parcel - time: 0:00:00.559616, output size: 1383 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>1383 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/alias_imports/index.js </code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.559616</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>poi - time: 0:00:01.522348, output size: 5354 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>5354 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi /home/ianertson/workspace/fjb/tests/src/test_projects/alias_imports/index.js </code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:01.522348</code></pre>
+    </article>
+  </details>
+
+        
+
+        <h3>Executed on</h3>
+        <pre><code>Architecture:                    x86_64
+CPU op-mode(s):                  32-bit, 64-bit
+Byte Order:                      Little Endian
+Address sizes:                   39 bits physical, 48 bits virtual
+CPU(s):                          16
+On-line CPU(s) list:             0-15
+Thread(s) per core:              2
+Core(s) per socket:              8
+Socket(s):                       1
+NUMA node(s):                    1
+Vendor ID:                       GenuineIntel
+CPU family:                      6
+Model:                           158
+Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+Stepping:                        13
+CPU MHz:                         4477.111
+CPU max MHz:                     5000.0000
+CPU min MHz:                     800.0000
+BogoMIPS:                        4800.00
+Virtualization:                  VT-x
+L1d cache:                       256 KiB
+L1i cache:                       256 KiB
+L2 cache:                        2 MiB
+L3 cache:                        16 MiB
+NUMA node0 CPU(s):               0-15
+Vulnerability Itlb multihit:     KVM: Mitigation: VMX disabled
+Vulnerability L1tf:              Not affected
+Vulnerability Mds:               Not affected
+Vulnerability Meltdown:          Not affected
+Vulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp
+Vulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling
+Vulnerability Srbds:             Mitigation; TSX disabled
+Vulnerability Tsx async abort:   Mitigation; TSX disabled
+Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities
+</code></pre>
+      </article>
+    </details>
+  
+    <details>
+      <summary>Importing CSS</summary>
+      <article>
+        <h2>What's being executed</h2>
+        <p>Code executed:</p>
+        <pre><code>import style from './style.css';
+
+
+const cssEl = document.createElement('style')
+cssEl.innerText = style;
+document.head.appendChild(cssEl);
+</code></pre>
+        <img src="graphs/SW1wb3J0aW5nIENTUw==.png"/>
+
+        
+          
+  <details>
+    <summary>FJB - time: 0:00:00.003295, output size: 752 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>752 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/css_import/index.js  > ./dist.js</code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.003295</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>esbuild - time: 0:00:00.004867, output size: 249 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>249 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/css_import/index.js  --bundle --outfile=./dist.js</code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.004867</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>parcel - time: 0:00:00.587929, output size: 1383 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>1383 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/css_import/index.js </code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.587929</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>poi - time: 0:00:01.523212, output size: 18660 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>18660 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi /home/ianertson/workspace/fjb/tests/src/test_projects/css_import/index.js </code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:01.523212</code></pre>
+    </article>
+  </details>
+
+        
+
+        <h3>Executed on</h3>
+        <pre><code>Architecture:                    x86_64
+CPU op-mode(s):                  32-bit, 64-bit
+Byte Order:                      Little Endian
+Address sizes:                   39 bits physical, 48 bits virtual
+CPU(s):                          16
+On-line CPU(s) list:             0-15
+Thread(s) per core:              2
+Core(s) per socket:              8
+Socket(s):                       1
+NUMA node(s):                    1
+Vendor ID:                       GenuineIntel
+CPU family:                      6
+Model:                           158
+Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+Stepping:                        13
+CPU MHz:                         1095.566
+CPU max MHz:                     5000.0000
+CPU min MHz:                     800.0000
+BogoMIPS:                        4800.00
+Virtualization:                  VT-x
+L1d cache:                       256 KiB
+L1i cache:                       256 KiB
+L2 cache:                        2 MiB
+L3 cache:                        16 MiB
+NUMA node0 CPU(s):               0-15
+Vulnerability Itlb multihit:     KVM: Mitigation: VMX disabled
+Vulnerability L1tf:              Not affected
+Vulnerability Mds:               Not affected
+Vulnerability Meltdown:          Not affected
+Vulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp
+Vulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling
+Vulnerability Srbds:             Mitigation; TSX disabled
+Vulnerability Tsx async abort:   Mitigation; TSX disabled
+Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities
+</code></pre>
+      </article>
+    </details>
+  
+    <details>
+      <summary>Importing JSON</summary>
+      <article>
+        <h2>What's being executed</h2>
+        <p>Code executed:</p>
+        <pre><code>import people from './people.json';
+
+console.log(people[0].first_name);
+</code></pre>
+        <img src="graphs/SW1wb3J0aW5nIEpTT04=.png"/>
+
+        
+          
+  <details>
+    <summary>FJB - time: 0:00:00.010722, output size: 1466 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>1466 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/json_import/index.js  > ./dist.js</code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.010722</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>esbuild - time: 0:00:00.017775, output size: 1003 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>1003 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/json_import/index.js  --bundle --outfile=./dist.js</code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.017775</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>parcel - time: 0:00:00.579234, output size: 1822 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>1822 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/json_import/index.js </code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.579234</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>poi - time: 0:00:01.532504, output size: 5936 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>5936 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi /home/ianertson/workspace/fjb/tests/src/test_projects/json_import/index.js </code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:01.532504</code></pre>
+    </article>
+  </details>
+
+        
+
+        <h3>Executed on</h3>
+        <pre><code>Architecture:                    x86_64
+CPU op-mode(s):                  32-bit, 64-bit
+Byte Order:                      Little Endian
+Address sizes:                   39 bits physical, 48 bits virtual
+CPU(s):                          16
+On-line CPU(s) list:             0-15
+Thread(s) per core:              2
+Core(s) per socket:              8
+Socket(s):                       1
+NUMA node(s):                    1
+Vendor ID:                       GenuineIntel
+CPU family:                      6
+Model:                           158
+Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+Stepping:                        13
+CPU MHz:                         4141.817
+CPU max MHz:                     5000.0000
+CPU min MHz:                     800.0000
+BogoMIPS:                        4800.00
+Virtualization:                  VT-x
+L1d cache:                       256 KiB
+L1i cache:                       256 KiB
+L2 cache:                        2 MiB
+L3 cache:                        16 MiB
+NUMA node0 CPU(s):               0-15
+Vulnerability Itlb multihit:     KVM: Mitigation: VMX disabled
+Vulnerability L1tf:              Not affected
+Vulnerability Mds:               Not affected
+Vulnerability Meltdown:          Not affected
+Vulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp
+Vulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling
+Vulnerability Srbds:             Mitigation; TSX disabled
+Vulnerability Tsx async abort:   Mitigation; TSX disabled
+Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities
+</code></pre>
+      </article>
+    </details>
+  
+    <details>
+      <summary>Importing `ceil` from lodash, with tree shaking.</summary>
+      <article>
+        <h2>What's being executed</h2>
+        <p>Code executed:</p>
+        <pre><code>import { ceil } from 'lodash';
+
+
+console.log(ceil(25.443));
+</code></pre>
+        <img src="graphs/SW1wb3J0aW5nIGBjZWlsYCBmcm9tIGxvZGFzaCwgd2l0aCB0cmVlIHNoYWtpbmcu.png"/>
+
+        
+          
+  <details>
+    <summary>esbuild - time: 0:00:00.022657, output size: 222632 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>222632 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/with_lodash/index.js  --bundle --outfile=./dist.js</code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.022657</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>FJB - time: 0:00:00.429900, output size: 2223 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>2223 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/with_lodash/index.js  > ./dist.js</code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.429900</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>parcel - time: 0:00:00.622850, output size: 94714 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>94714 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/with_lodash/index.js </code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.622850</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>poi - time: 0:00:01.530002, output size: 549705 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>549705 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi /home/ianertson/workspace/fjb/tests/src/test_projects/with_lodash/index.js </code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:01.530002</code></pre>
+    </article>
+  </details>
+
+        
+
+        <h3>Executed on</h3>
+        <pre><code>Architecture:                    x86_64
+CPU op-mode(s):                  32-bit, 64-bit
+Byte Order:                      Little Endian
+Address sizes:                   39 bits physical, 48 bits virtual
+CPU(s):                          16
+On-line CPU(s) list:             0-15
+Thread(s) per core:              2
+Core(s) per socket:              8
+Socket(s):                       1
+NUMA node(s):                    1
+Vendor ID:                       GenuineIntel
+CPU family:                      6
+Model:                           158
+Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+Stepping:                        13
+CPU MHz:                         3796.927
+CPU max MHz:                     5000.0000
+CPU min MHz:                     800.0000
+BogoMIPS:                        4800.00
+Virtualization:                  VT-x
+L1d cache:                       256 KiB
+L1i cache:                       256 KiB
+L2 cache:                        2 MiB
+L3 cache:                        16 MiB
+NUMA node0 CPU(s):               0-15
+Vulnerability Itlb multihit:     KVM: Mitigation: VMX disabled
+Vulnerability L1tf:              Not affected
+Vulnerability Mds:               Not affected
+Vulnerability Meltdown:          Not affected
+Vulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp
+Vulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling
+Vulnerability Srbds:             Mitigation; TSX disabled
+Vulnerability Tsx async abort:   Mitigation; TSX disabled
+Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities
+</code></pre>
+      </article>
+    </details>
+  
+    <details>
+      <summary>Require `jquery`</summary>
+      <article>
+        <h2>What's being executed</h2>
+        <p>Code executed:</p>
+        <pre><code>const $ = require('./jquery');
+
+console.log($);
+</code></pre>
+        <img src="graphs/UmVxdWlyZSBganF1ZXJ5YA==.png"/>
+
+        
+          
+  <details>
+    <summary>esbuild - time: 0:00:00.016015, output size: 149812 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>149812 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/with_jquery/index.js  --bundle --outfile=./dist.js</code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.016015</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>FJB - time: 0:00:00.243866, output size: 99964 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>99964 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/with_jquery/index.js  > ./dist.js</code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.243866</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>parcel - time: 0:00:00.572880, output size: 90592 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>90592 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/with_jquery/index.js </code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.572880</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>poi - time: 0:00:01.528200, output size: 143057 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>143057 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi /home/ianertson/workspace/fjb/tests/src/test_projects/with_jquery/index.js </code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:01.528200</code></pre>
+    </article>
+  </details>
+
+        
+
+        <h3>Executed on</h3>
+        <pre><code>Architecture:                    x86_64
+CPU op-mode(s):                  32-bit, 64-bit
+Byte Order:                      Little Endian
+Address sizes:                   39 bits physical, 48 bits virtual
+CPU(s):                          16
+On-line CPU(s) list:             0-15
+Thread(s) per core:              2
+Core(s) per socket:              8
+Socket(s):                       1
+NUMA node(s):                    1
+Vendor ID:                       GenuineIntel
+CPU family:                      6
+Model:                           158
+Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+Stepping:                        13
+CPU MHz:                         3174.532
+CPU max MHz:                     5000.0000
+CPU min MHz:                     800.0000
+BogoMIPS:                        4800.00
+Virtualization:                  VT-x
+L1d cache:                       256 KiB
+L1i cache:                       256 KiB
+L2 cache:                        2 MiB
+L3 cache:                        16 MiB
+NUMA node0 CPU(s):               0-15
+Vulnerability Itlb multihit:     KVM: Mitigation: VMX disabled
+Vulnerability L1tf:              Not affected
+Vulnerability Mds:               Not affected
+Vulnerability Meltdown:          Not affected
+Vulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp
+Vulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling
+Vulnerability Srbds:             Mitigation; TSX disabled
+Vulnerability Tsx async abort:   Mitigation; TSX disabled
+Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities
+</code></pre>
+      </article>
+    </details>
+  
+    <details>
+      <summary>Importing `react` from react</summary>
+      <article>
+        <h2>What's being executed</h2>
+        <p>Code executed:</p>
+        <pre><code>import React from 'react';
+</code></pre>
+        <img src="graphs/SW1wb3J0aW5nIGByZWFjdGAgZnJvbSByZWFjdA==.png"/>
+
+        
+          
+  <details>
+    <summary>esbuild - time: 0:00:00.009334, output size: 76776 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>76776 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/react_import/index.jsx  --bundle --outfile=./dist.js</code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.009334</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>FJB - time: 0:00:00.048115, output size: 42991 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>42991 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/react_import/index.jsx  > ./dist.js</code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.048115</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>parcel - time: 0:00:00.550237, output size: 8574 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>8574 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/react_import/index.jsx </code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.550237</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>poi - time: 0:00:01.516945, output size: 80699 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>80699 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi /home/ianertson/workspace/fjb/tests/src/test_projects/react_import/index.jsx </code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:01.516945</code></pre>
+    </article>
+  </details>
+
+        
+
+        <h3>Executed on</h3>
+        <pre><code>Architecture:                    x86_64
+CPU op-mode(s):                  32-bit, 64-bit
+Byte Order:                      Little Endian
+Address sizes:                   39 bits physical, 48 bits virtual
+CPU(s):                          16
+On-line CPU(s) list:             0-15
+Thread(s) per core:              2
+Core(s) per socket:              8
+Socket(s):                       1
+NUMA node(s):                    1
+Vendor ID:                       GenuineIntel
+CPU family:                      6
+Model:                           158
+Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+Stepping:                        13
+CPU MHz:                         3522.004
+CPU max MHz:                     5000.0000
+CPU min MHz:                     800.0000
+BogoMIPS:                        4800.00
+Virtualization:                  VT-x
+L1d cache:                       256 KiB
+L1i cache:                       256 KiB
+L2 cache:                        2 MiB
+L3 cache:                        16 MiB
+NUMA node0 CPU(s):               0-15
+Vulnerability Itlb multihit:     KVM: Mitigation: VMX disabled
+Vulnerability L1tf:              Not affected
+Vulnerability Mds:               Not affected
+Vulnerability Meltdown:          Not affected
+Vulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp
+Vulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling
+Vulnerability Srbds:             Mitigation; TSX disabled
+Vulnerability Tsx async abort:   Mitigation; TSX disabled
+Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities
+</code></pre>
+      </article>
+    </details>
+  
+    <details>
+      <summary>React project with JSX</summary>
+      <article>
+        <h2>What's being executed</h2>
+        <p>Code executed:</p>
+        <pre><code>import React, { Component } from "react";
+import { Card } from "./card";
+import style from "./style.css";
+import { render } from "react-dom";
+
+// unfortunately, need to manually append style tag right now
+const styleTag = document.createElement("style");
+styleTag.innerText = style;
+document.head.appendChild(styleTag);
+
+const SUBTITLE = "It's so simple!";
+const appStyle = {
+  width: "100%",
+  height: "100%",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+};
+
+const App = () => {
+  return (
+    <div style={appStyle}>
+      <div>
+        <Card text={SUBTITLE} />
+      </div>
+    </div>
+  );
+};
+
+render(<App />, document.getElementById("root"));
+</code></pre>
+        <img src="graphs/UmVhY3QgcHJvamVjdCB3aXRoIEpTWA==.png"/>
+
+        
+          
+  <details>
+    <summary>esbuild - time: 0:00:00.047038, output size: 1105110 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>1105110 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/with_react/index.jsx  --bundle --outfile=./dist.js</code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.047038</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>parcel - time: 0:00:00.684577, output size: 135732 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>135732 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/parcel build /home/ianertson/workspace/fjb/tests/src/test_projects/with_react/index.jsx </code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:00.684577</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>FJB - time: 0:00:01.355731, output size: 591434 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>591434 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/with_react/index.jsx  > ./dist.js</code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:01.355731</code></pre>
+    </article>
+  </details>
+
+        
+          
+  <details>
+    <summary>poi - time: 0:00:01.515455, output size: 1031602 bytes</summary>
+    <article>
+      <h3>Output size</h3>
+      <p>The size of the output is:</p>
+      <pre><code>1031602 bytes</code></pre>
+      <h3>Time</h3>
+      <p>The command:</p>
+      <pre><code>/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/poi /home/ianertson/workspace/fjb/tests/src/test_projects/with_react/index.jsx </code></pre>
+      <p>finished in:</p>
+      <pre><code>0:00:01.515455</code></pre>
+    </article>
+  </details>
+
+        
+
+        <h3>Executed on</h3>
+        <pre><code>Architecture:                    x86_64
+CPU op-mode(s):                  32-bit, 64-bit
+Byte Order:                      Little Endian
+Address sizes:                   39 bits physical, 48 bits virtual
+CPU(s):                          16
+On-line CPU(s) list:             0-15
+Thread(s) per core:              2
+Core(s) per socket:              8
+Socket(s):                       1
+NUMA node(s):                    1
+Vendor ID:                       GenuineIntel
+CPU family:                      6
+Model:                           158
+Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+Stepping:                        13
+CPU MHz:                         3332.148
+CPU max MHz:                     5000.0000
+CPU min MHz:                     800.0000
+BogoMIPS:                        4800.00
+Virtualization:                  VT-x
+L1d cache:                       256 KiB
+L1i cache:                       256 KiB
+L2 cache:                        2 MiB
+L3 cache:                        16 MiB
+NUMA node0 CPU(s):               0-15
+Vulnerability Itlb multihit:     KVM: Mitigation: VMX disabled
+Vulnerability L1tf:              Not affected
+Vulnerability Mds:               Not affected
+Vulnerability Meltdown:          Not affected
+Vulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp
+Vulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling
+Vulnerability Srbds:             Mitigation; TSX disabled
+Vulnerability Tsx async abort:   Mitigation; TSX disabled
+Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities
+</code></pre>
+      </article>
+    </details>
+  
+
+      </div>
+    </body>
+</html>
