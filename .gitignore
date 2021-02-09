@@ -142,6 +142,7 @@ typings/
 # Nuxt.js build / generate output
 .nuxt
 dist
+!website/dist
 
 # Gatsby files
 .cache/
@@ -223,6 +224,7 @@ __pycache__/
 build/
 develop-eggs/
 dist/
+!website/dist
 downloads/
 eggs/
 .eggs/
