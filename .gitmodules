@@ -2,4 +2,5 @@
 	path = external/libjson
 	url = https://github.com/sebbekarlsson/libjson.git
 [submodule "external/hashmap/"]
+	path = external/hashmap
 	url = https://github.com/sebbekarlsson/hashmap.git
