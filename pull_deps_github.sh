@@ -1,9 +1,11 @@
+P=$(pwd)
 sudo apt-get update -y
 sudo apt-get install --yes build-essential
 sudo apt-get install --yes gcc
-sudo apt-get install --yes g++
 
 ./pull_deps.sh
+
+cd $P
 
 sudo mkdir -p /usr/local
 sudo mkdir -p /usr/local/lib
@@ -18,3 +20,5 @@ sudo cp -r external/libjson/src/include /usr/local/include/libjson
 
 cp -r external/hashmap/*.a tests/.
 cp -r external/libjson/*.a tests/.
+
+cd $P
