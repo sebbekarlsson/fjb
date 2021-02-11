@@ -9,12 +9,6 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
-    - name: fix submodules
-      run: git submodule init ; git submodule update; git submodule sync
-    - name: install dependencies
-      run: sudo ./pull_deps_github.sh 
-    - name: make
-      run: ./github_make.sh 
     - name: tests
-      run: cd tests && sudo make && sudo ./test.out
+      run: ./workflow.sh 
 
