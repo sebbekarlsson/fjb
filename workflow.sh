@@ -1,5 +1,4 @@
-sudo apt update --yes
-sudo apt upgrade --yes
+sudo apt install gcc --yes
 
 P=$(pwd)
 
@@ -13,5 +12,10 @@ make install
 
 cd $P
 
+ls -lart
+
 cd tests
+
+ls -lart
+
 make && ./test.out
