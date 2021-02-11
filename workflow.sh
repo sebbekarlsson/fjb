@@ -7,6 +7,8 @@ P=$(pwd)
 cd $P
 
 mkdir -p $HOME/.local/lib && mkdir -p $HOME/.local/bin && mkdir -p $HOME/.local/include
+export PATH=$PATH:$HOME/.local/bin
+
 
 cd ./external/hashmap
 make
@@ -31,5 +33,6 @@ ls -lart
 ../pull_deps.sh
 
 cp ./gpp.out $HOME/.local/bin/gpp
+sudo cp ./gpp.out /usr/bin/gpp
 
 make && ./test.out
