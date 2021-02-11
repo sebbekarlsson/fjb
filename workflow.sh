@@ -37,6 +37,7 @@ cd src/test_projects/with_lodash/
 yarn install
 
 cd $P
+cd tests
 
 ls -lart
 
