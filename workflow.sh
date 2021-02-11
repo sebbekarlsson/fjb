@@ -36,6 +36,8 @@ cd tests
 cd src/test_projects/with_lodash/
 yarn install
 
+cd $P
+
 ls -lart
 
 ../pull_deps.sh
