@@ -11,7 +11,9 @@ jsheaders = $(jsfiles:.js=.js.h)
 gppfiles = $(wildcard src/enums/*.gpp)
 gppheaders = $(gppfiles:.gpp=.h)
 
+ifndef GPP_PATH
 GPP_PATH=$(or $(shell test -f ./gpp.out && echo ./gpp.out), gpp)
+endif
 
 ifdef DEBUG
 flags += -D DEBUG -pg -Wall -g
