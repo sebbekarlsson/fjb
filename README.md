@@ -6,6 +6,8 @@
   <h1>Fast Javascript Bundler</h1>
 </p>
 
+![Compile and test](https://github.com/sebbekarlsson/fjb/workflows/Compile%20and%20test/badge.svg?branch=master)
+
 ## What?
 > It is what it says it is.  
 > However, this bundler aims to be a monolithic does-it-all type of bundler;
