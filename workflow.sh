@@ -28,4 +28,6 @@ cd tests
 
 ls -lart
 
+../pull_deps.sh
+
 make && ./test.out

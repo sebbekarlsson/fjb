@@ -15,3 +15,4 @@ cd $P
 cp gpp/a.out ./gpp.out
 cp gpp/a.out ./tests/gpp.out
 cd $P
+rm -rf ./gpp
