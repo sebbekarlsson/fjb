@@ -12,7 +12,7 @@ jobs:
     - name: fix submodules
       run: git submodule init ; git submodule update; git submodule sync
     - name: install dependencies
-      run: sudo apt-get update -y ; sudo apt-get install --yes build-essential ; sudo apt-get install --yes cmake ; sudo apt-get install --yes gcc ; sudo apt-get install --yes g++\
+      run: sudo apt-get update -y ; sudo apt-get install --yes build-essential ; sudo apt-get install --yes cmake ; sudo apt-get install --yes gcc ; sudo apt-get install --yes g++ ; \
         ./pull_deps_github.sh
     - name: create directories
       run: mkdir -p $HOME/.local/include ; mkdir -p $HOME/.local/lib ; mkdir -p $HOME/.local/bin ; sudo mkdir -p /root/.local/lib ; sudo mkdir -p /root/.local/include ; sudo mkdir -p /root/.local/bin
