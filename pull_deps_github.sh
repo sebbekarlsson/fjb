@@ -1,4 +1,17 @@
 P=$(pwd)
+
+sudo mkdir -p $HOME/.local/lib
+sudo mkdir -p $HOME/.local/bin
+sudo mkdir -p $HOME/.local/include
+
+sudo mkdir -p /home/runner/.local/lib
+sudo mkdir -p /home/runner/.local/bin
+sudo mkdir -p /home/runner/.local/include
+sudo mkdir -p /usr/local
+sudo mkdir -p /usr/local/lib
+sudo mkdir -p /usr/local/include
+sudo mkdir -p /usr/local/bin
+
 sudo apt-get update -y
 sudo apt-get install --yes build-essential
 sudo apt-get install --yes gcc
@@ -7,11 +20,6 @@ sudo apt-get install --yes gcc
 sudo cp gpp/a.out /usr/local/bin/gpp
 
 cd $P
-
-sudo mkdir -p /usr/local
-sudo mkdir -p /usr/local/lib
-sudo mkdir -p /usr/local/include
-sudo mkdir -p /usr/local/bin
 
 sudo cp external/hashmap/*.a /usr/local/lib
 sudo cp -r external/hashmap/src/include /usr/local/include/hashmap

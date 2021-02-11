@@ -7,7 +7,7 @@ $(exec): $(objects) libfjb.a
 	gcc $(objects) $(flags) -o $(exec)
 
 libfjb.a: libjson.a libhashmap.a
-	cd .. && make clean; make install && mv libfjb.a tests/.
+	cd .. && make clean; make install && cp libfjb.a tests/.
 	ar rcs $@ $^
 
 libjson.a:
