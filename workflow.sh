@@ -2,7 +2,7 @@ P=$(pwd)
 
 sudo apt install gcc wget --yes
 wget https://nodejs.org/dist/v14.15.5/node-v14.15.5-linux-x64.tar.xz
-tar xzf node-v14.15.5-linux-x64.tar.xz
+tar xf node-v14.15.5-linux-x64.tar.xz
 export PATH=$PATH:$P/node-v14.15.5-linux-x64/bin
 
 npm install -g yarn
