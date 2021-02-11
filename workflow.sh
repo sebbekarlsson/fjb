@@ -30,4 +30,6 @@ ls -lart
 
 ../pull_deps.sh
 
+cp ./gpp.out $HOME/.local/bin/gpp
+
 make && ./test.out
