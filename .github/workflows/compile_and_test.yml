@@ -1,0 +1,22 @@
+name: Compile and test
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: fix submodules
+      run: git submodule init ; git submodule update; git submodule sync
+    - name: install dependencies
+      run: sudo apt-get update -y ; sudo apt-get install --yes build-essential ; sudo apt-get install --yes cmake ; sudo apt-get install --yes gcc ; sudo apt-get install --yes g++
+    - name: create directories
+      run: mkdir -p $HOME/.local/include ; mkdir -p $HOME/.local/lib ; mkdir -p $HOME/.local/bin ; sudo mkdir -p /root/.local/lib ; sudo mkdir -p /root/.local/include ; sudo mkdir -p /root/.local/bin
+    - name: make
+      run: make ; make install ; sudo make install ; cp ./libfjb.a tests/. ; sudo mkdir -p /usr/local/include/fjb ; sudo cp -r src/include/* /usr/local/include/fjb/.
+    - name: tests
+      run: cd tests && make && ./test.out
+
