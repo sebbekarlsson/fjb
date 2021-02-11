@@ -5,12 +5,12 @@ sudo make install GPP_PATH=./gpp.out
 echo "Building dependecy: libhashmap"
 cd ./external/hashmap
 make
-cd ..
+cd ../../
 
 echo "Building dependecy: libjson"
 cd ./external/libjson
 make
-cd ..
+cd ../../
 
 sudo cp *.a /usr/local/lib/.
 sudo cp -r src/include /usr/local/include/fjb
