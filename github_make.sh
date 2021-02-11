@@ -1,7 +1,7 @@
 P=$(pwd)
-make GPP_PATH=./gpp.out
-make install GPP_PATH=./gpp.out
-sudo make install GPP_PATH=./gpp.out
+make
+make install
+sudo make install
 cd $P
 
 echo "Building dependecy: libhashmap"

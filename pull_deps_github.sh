@@ -4,6 +4,7 @@ sudo apt-get install --yes build-essential
 sudo apt-get install --yes gcc
 
 ./pull_deps.sh
+sudo cp gpp/a.out /usr/local/bin/gpp
 
 cd $P
 

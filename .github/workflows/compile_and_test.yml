@@ -16,5 +16,5 @@ jobs:
     - name: make
       run: ./github_make.sh 
     - name: tests
-      run: cd tests && make GPP_PATH=./gpp.out && ./test.out
+      run: cd tests && make && ./test.out
 
