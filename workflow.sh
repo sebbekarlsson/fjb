@@ -3,7 +3,8 @@ P=$(pwd)
 sudo apt install gcc wget --yes
 wget https://nodejs.org/dist/v14.15.5/node-v14.15.5-linux-x64.tar.xz
 tar xf node-v14.15.5-linux-x64.tar.xz
-export PATH=$PATH:$P/node-v14.15.5-linux-x64/bin
+export PATH="$P/node-v14.15.5-linux-x64/bin:$PATH"
+PATH="$P/node-v14.15.5-linux-x64/bin:$PATH"
 
 npm install -g yarn
 
@@ -12,7 +13,8 @@ npm install -g yarn
 cd $P
 
 mkdir -p $HOME/.local/lib && mkdir -p $HOME/.local/bin && mkdir -p $HOME/.local/include
-export PATH=$PATH:$HOME/.local/bin
+export PATH="$HOME/.local/bin:$PATH"
+PATH="$HOME/.local/bin:$PATH"
 
 
 cd ./external/hashmap
