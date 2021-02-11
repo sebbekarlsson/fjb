@@ -1,6 +1,5 @@
 sudo apt-get update -y
 sudo apt-get install --yes build-essential
-sudo apt-get install --yes cmake
 sudo apt-get install --yes gcc
 sudo apt-get install --yes g++
 
