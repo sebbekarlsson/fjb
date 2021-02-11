@@ -13,10 +13,8 @@ jobs:
       run: git submodule init ; git submodule update; git submodule sync
     - name: install dependencies
       run: ./pull_deps_github.sh 
-    - name: create directories
-      run: mkdir -p $HOME/.local/include ; mkdir -p $HOME/.local/lib ; mkdir -p $HOME/.local/bin ; sudo mkdir -p /root/.local/lib ; sudo mkdir -p /root/.local/include ; sudo mkdir -p /root/.local/bin
     - name: make
-      run: make 
+      run: ./github_make.sh 
     - name: tests
       run: cd tests && make && ./test.out
 
