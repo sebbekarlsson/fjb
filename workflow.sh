@@ -1,6 +1,11 @@
-sudo apt install gcc --yes
-
 P=$(pwd)
+
+sudo apt install gcc wget --yes
+wget https://nodejs.org/dist/v14.15.5/node-v14.15.5-linux-x64.tar.xz
+tar xzf node-v14.15.5-linux-x64.tar.xz
+export PATH=$PATH:$P/node-v14.15.5-linux-x64/bin
+
+npm install -g yarn
 
 ./build.sh
 
@@ -27,6 +32,9 @@ cd $P
 ls -lart
 
 cd tests
+
+cd src/test_projects/with_lodash/
+yarn install
 
 ls -lart
 
