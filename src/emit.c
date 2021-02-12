@@ -429,12 +429,12 @@ char* emit_assignment(AST_T* ast, fjb_env_T* env)
   char* expose_str = 0;
   char* typedatastr = 0;
 
-  if (ast->typedata)
-  {
+  if (ast->typedata) {
     typedatastr = emit(ast->typedata, env);
   }
 
-  if (!typedatastr) typedatastr = strdup("");
+  if (!typedatastr)
+    typedatastr = strdup("");
 
   if (ast->value) {
     if (ast->value->dead)

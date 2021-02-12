@@ -19,9 +19,8 @@ lexer_T* init_lexer(char* source, const char* filepath)
   lexer->cstr[1] = '\0';
   lexer->line = 1;
   lexer->filepath = filepath;
-  
-  if (filepath)
-  {
+
+  if (filepath) {
     char* ext = (char*)get_filename_ext((char*)filepath);
     lexer->is_using_ts = (strcmp(ext, ".ts") == 0 || strcmp(ext, ".tsx") == 0);
   }
@@ -613,9 +612,7 @@ token_T* lexer_switch_id(lexer_T* lexer, token_T* token)
   else if (strcmp(token->value, "get") == 0)
     token->type = TOKEN_GET;
 
-  
-  if (0 && lexer->is_using_ts)
-  {
+  if (0 && lexer->is_using_ts) {
     if (strcmp(token->value, "string") == 0)
       token->type = TOKEN_TYPE_STRING;
     else if (strcmp(token->value, "number") == 0)

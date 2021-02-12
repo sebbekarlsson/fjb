@@ -4,15 +4,14 @@
 #include "include/gc.h"
 #include "include/io.h"
 #include "include/jsx.h"
-#include "include/parse_typescript.h"
 #include "include/node.h"
+#include "include/parse_typescript.h"
 #include "include/string_utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 extern AST_T* NOOP;
-
 
 parser_T* init_parser(lexer_T* lexer, fjb_env_T* env)
 {
@@ -394,14 +393,13 @@ AST_T* parser_parse_definition(parser_T* parser, parser_options_T options)
 
   AST_T* type_hints = 0;
 
-  /*if (parser->token->type == TOKEN_COLON)
-  {
+  if (parser->token->type == TOKEN_COLON) {
     type_hints = parser_parse_typehints(parser, options);
-  }*/
+  }
 
   AST_T* assignment = parser_parse_assignment(parser, options, left);
   assignment->flags = flags;
-  //assignment->typedata = type_hints;
+  assignment->typedata = type_hints;
 
   return assignment;
 }
@@ -517,8 +515,6 @@ AST_T* parser_parse_class(parser_T* parser, parser_options_T options)
 
   return ast;
 }
-
-
 
 AST_T* parser_parse_condition(parser_T* parser, parser_options_T options)
 {
@@ -977,7 +973,7 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
     case TOKEN_DO: left = parser_parse_do(parser, options); break;
     case TOKEN_LBRACKET: left = parser_parse_array(parser, options); break;
     case TOKEN_FUNCTION: left = parser_parse_function(parser, options); break;
-    //case TOKEN_INTERFACE: left = parser_parse_interface(parser, options); break;
+    case TOKEN_INTERFACE: left = parser_parse_interface(parser, options); break;
     case TOKEN_LT: left = parser_parse_jsx_element(parser, options); break;
     case TOKEN_RETURN:
     case TOKEN_DELETE:
@@ -1257,7 +1253,7 @@ AST_T* parser_parse_statement(parser_T* parser, parser_options_T options)
     case TOKEN_ELSE: left = parser_parse_condition(parser, options); break;
     case TOKEN_TRY: left = parser_parse_try(parser, options); break;
     case TOKEN_CLASS: left = parser_parse_class(parser, options); break;
-    //case TOKEN_INTERFACE: left = parser_parse_interface(parser, options); break;
+    case TOKEN_INTERFACE: left = parser_parse_interface(parser, options); break;
     case TOKEN_WHILE: left = parser_parse_while(parser, options); break;
     case TOKEN_LBRACE: left = parser_parse_scope(parser, options); break;
     case TOKEN_RETURN:

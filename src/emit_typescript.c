@@ -1,7 +1,7 @@
 #include "include/emit_typescript.h"
-#include "include/js/data_type.js.h"
 #include "include/emit.h"
 #include "include/env.h"
+#include "include/js/data_type.js.h"
 #include "include/string_utils.h"
 #include <stdio.h>
 #include <string.h>
@@ -12,19 +12,18 @@ extern fjb_env_T* FJB_ENV;
   tmpname = calloc(_tmp_##template_name##_js_len + len + 128, sizeof(char));                       \
   sprintf(tmpname, (const char*)_tmp_##template_name##_js, __VA_ARGS__);
 
-
 char* emit_ts(AST_T* ast, fjb_env_T* env)
 {
   char* body = 0;
 
-    switch (ast->type) {
-      case AST_INTERFACE: body = emit_interface(ast, env); break;
-      case AST_DATA_TYPE: body = emit_data_type(ast, env); break;
-      default: {
-        printf("[Gen(Typescript)]: Missing emiterator for `%d`\n", ast->type);
-        exit(1);
-      } break;
-    }
+  switch (ast->type) {
+    case AST_INTERFACE: body = emit_interface(ast, env); break;
+    case AST_DATA_TYPE: body = emit_data_type(ast, env); break;
+    default: {
+      printf("[Gen(Typescript)]: Missing emiterator for `%d`\n", ast->type);
+      exit(1);
+    } break;
+  }
 
   return body;
 }

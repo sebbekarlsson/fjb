@@ -1,6 +1,6 @@
 #include "include/parse_typescript.h"
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 
 AST_T* parser_parse_interface_child(parser_T* parser, parser_options_T options)
 {
@@ -51,8 +51,8 @@ AST_T* parser_parse_interface(parser_T* parser, parser_options_T options)
     AST_T* child = parser_parse_interface_child(parser, options);
     list_push(ast->list_value, child);
 
-    while ((parser->token->type == TOKEN_SEMI ||
-           parser->token->type == TOKEN_COMMA) && parser->token->type != TOKEN_RBRACE) {
+    while ((parser->token->type == TOKEN_SEMI || parser->token->type == TOKEN_COMMA) &&
+           parser->token->type != TOKEN_RBRACE) {
       if (parser->token->type == TOKEN_SEMI)
         EAT(TOKEN_SEMI);
       else if (parser->token->type == TOKEN_COMMA)
@@ -90,12 +90,14 @@ AST_T* parser_parse_hint(parser_T* parser, parser_options_T options)
 {
   AST_T* left = 0;
 
-  switch (parser->token->type)
-  {
+  switch (parser->token->type) {
     case TOKEN_TYPE_NUMBER:
     case TOKEN_TYPE_STRING: left = parser_parse_type(parser, options); break;
     case TOKEN_ID: left = parser_parse_custom_type(parser, options); break;
-    default: { printf("[Typescript parser]: Unexpected token `%s`", token_to_str(parser->token)); exit(1); }
+    default: {
+      printf("[Typescript parser]: Unexpected token `%s`", token_to_str(parser->token));
+      exit(1);
+    }
   }
 
   return left;
@@ -106,20 +108,14 @@ AST_T* parser_parse_typehints(parser_T* parser, parser_options_T options)
   AST_T* hint = 0;
   AST_T* left = 0;
 
-  if (parser->token->type == TOKEN_COLON)
-  {
+  if (parser->token->type == TOKEN_COLON) {
     EAT(TOKEN_COLON);
   }
 
   left = parser_parse_hint(parser, options);
 
-  while (
-      parser->token->type == TOKEN_PIPE ||
-      parser->token->type == TOKEN_PIPE_PIPE ||
-      parser->token->type == TOKEN_AND ||
-      parser->token->type == TOKEN_AND_AND
-  )
-  {
+  while (parser->token->type == TOKEN_PIPE || parser->token->type == TOKEN_PIPE_PIPE ||
+         parser->token->type == TOKEN_AND || parser->token->type == TOKEN_AND_AND) {
     AST_T* binop = init_ast_line(AST_BINOP, parser->lexer->line);
     binop->left = left;
     binop->token = token_clone(parser->token);
