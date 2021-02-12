@@ -4,3 +4,6 @@
 [submodule "hashmap"]
 	path = external/hashmap
 	url = https://github.com/sebbekarlsson/hashmap.git
+[submodule "external/scss"]
+	path = external/scss
+	url = https://github.com/sebbekarlsson/scss.git

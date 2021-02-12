@@ -27,6 +27,11 @@ make
 make install
 cd $P
 
+cd ./external/scss
+make
+make install
+cd $P
+
 make install
 
 cd $P

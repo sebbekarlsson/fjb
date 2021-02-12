@@ -45,6 +45,7 @@ fjb index.js
 - [x] JSX support
 - [x] Importing JSON
 - [x] Importing CSS
+- [x] Importing & transpiling SCSS
 - [x] Automatic JSX format detection
 - [x] [Plugin support](PLUGINS.md)
 - [x] Removing dead code (Tree shaking)
@@ -54,7 +55,6 @@ fjb index.js
 ### Planned Features
 - [ ] TypeScript support
 - [ ] Lazy imports
-- [ ] SCSS support
 
 ## Example
 > Below is an example of some code that is **100%** supported.  

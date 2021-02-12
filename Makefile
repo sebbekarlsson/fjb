@@ -1,7 +1,7 @@
 exec = fjb.out
 sources = $(wildcard src/*.c) $(wildcard src/hooks/*.c)
 objects = $(sources:.c=.o)
-flags = -I$$HOME/.local/include -lm -ldl -fPIC -rdynamic -L$$HOME/.local/lib -lhashmap -ljson
+flags = -I$$HOME/.local/include -lm -ldl -fPIC -rdynamic -L$$HOME/.local/lib -lhashmap -ljson -lscss
 
 objects_no_main = $(filter-out src/main.o, $(objects))
 
@@ -18,7 +18,7 @@ flags += -D DEBUG -pg -Wall -g
 endif
 
 
-$(exec): $(jsheaders) $(gppheaders) $(objects) libjson.a libhashmap.a
+$(exec): $(jsheaders) $(gppheaders) $(objects) libjson.a libhashmap.a libscss.a
 	gcc $(objects) $(flags) -g -o $(exec)
 
 libfjb.a: $(objects_no_main)
@@ -43,6 +43,9 @@ libfjb.a: $(objects_no_main)
  
 libjson.a:
 	cd external/libjson ; make clean ; make ; make install; mv ./libjson.a ../../.
+
+libscss.a:
+	cd external/scss ; make clean ; make ; make install; mv ./libscss.a ../../.
 
 libhashmap.a:
 	cd external/hashmap ; make clean ; make ; make install ; mv ./libhashmap.a ../../.
