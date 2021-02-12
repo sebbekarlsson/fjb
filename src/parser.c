@@ -847,6 +847,11 @@ AST_T* parser_parse_function(parser_T* parser, parser_options_T options)
     }
 
     parser_eat(parser, TOKEN_RPAREN);
+
+    if (parser->token->type == TOKEN_COLON) {
+      ast->typedata = parser_parse_typehints(parser, options);
+    }
+
     parser_eat(parser, TOKEN_LBRACE);
     ast->list_value = list_value;
   }

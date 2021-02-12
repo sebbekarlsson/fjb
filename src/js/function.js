@@ -1,1 +1,1 @@
-function %s %s{%s} %s
+function %s %s%s{%s} %s

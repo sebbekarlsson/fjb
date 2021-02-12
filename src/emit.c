@@ -727,6 +727,15 @@ char* emit_function(AST_T* ast, fjb_env_T* env)
   char* args_str = 0;
   char* expose_str = 0;
 
+  char* typedatastr = 0;
+
+  if (ast->typedata) {
+    typedatastr = emit(ast->typedata, env);
+  }
+
+  if (!typedatastr)
+    typedatastr = strdup("");
+
   char* name = ast_get_string_copy(ast);
 
   if (!name) {
@@ -765,8 +774,10 @@ char* emit_function(AST_T* ast, fjb_env_T* env)
 
     TEMPLATE(function,
              str,
-             strlen(name) + strlen(args_str) + strlen(body_str) + strlen(expose_str),
+             strlen(name) + strlen(typedatastr) + strlen(args_str) + strlen(body_str) +
+               strlen(expose_str),
              name,
+             typedatastr,
              args_str,
              body_str,
              expose_str);
