@@ -7,6 +7,7 @@
 </p>
 
 ![Compile and test](https://github.com/sebbekarlsson/fjb/workflows/Compile%20and%20test/badge.svg?branch=master)
+[https://fjbundler.com](https://fjbundler.com)
 
 ## What?
 > It is what it says it is.  
