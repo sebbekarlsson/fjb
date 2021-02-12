@@ -24,7 +24,6 @@ list_T* get_imported_symbols(AST_T* lookup)
 
   int types[] = { AST_ASSIGNMENT, AST_FUNCTION };
   size_t nr_types = 2;
-  query_T data;
 
   char** keys;
   unsigned int len;
@@ -38,16 +37,11 @@ list_T* get_imported_symbols(AST_T* lookup)
     if (list_contains_str(FJB_ENV->resolved_imports, key))
       continue;
 
-    AST_T* child = 0;
     imported_T* imp = (imported_T*)map_get_value(FJB_ENV->imports, key);
     if (!imp)
       continue;
 
     for (unsigned int k = 0; k < nr_types; k++) {
-
-      data.type = types[k];
-      data.name = key;
-
       if (!resolved) {
         if (types[k] == AST_FUNCTION) {
           resolved = (AST_T*)map_get_value(FJB_ENV->functions, key);

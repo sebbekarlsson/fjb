@@ -39,8 +39,7 @@ void load_hooks_from_directory(const char* directory)
     return;
   }
 
-  char filename_qfd[100];
-  char new_name_qfd[100];
+  char filename_qfd[360];
 
   while ((dp = readdir(dfd)) != NULL) {
     struct stat stbuf;

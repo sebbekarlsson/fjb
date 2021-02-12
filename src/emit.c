@@ -173,7 +173,7 @@ char* emit_tuple(list_T* list_value, fjb_env_T* env)
   return str ? str : strdup("");
 }
 
-static char* emit_semi_tuple(list_T* list_value, fjb_env_T* env)
+/*static char* emit_semi_tuple(list_T* list_value, fjb_env_T* env)
 {
   char* str = 0;
 
@@ -197,7 +197,7 @@ static char* emit_semi_tuple(list_T* list_value, fjb_env_T* env)
   }
 
   return str ? str : strdup("");
-}
+}*/
 
 char* emit(AST_T* ast, fjb_env_T* env)
 {

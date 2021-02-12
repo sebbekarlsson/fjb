@@ -748,6 +748,8 @@ AST_T* parser_parse_object_child(parser_T* parser, parser_options_T options)
   }
 
   gc_mark(parser->env->GC, colon_ass);
+
+  return colon_ass;
 }
 
 AST_T* parser_parse_object(parser_T* parser, parser_options_T options)

@@ -170,8 +170,6 @@ AST_T* parse_jsx(parser_T* parser, parser_options_T options)
   ast->parent = options.parent;
   ast->options = NEW_STACK;
   ast->list_value = NEW_STACK;
-  char* innerText = 0;
-  unsigned int innerText_is_template = 0;
 
   parser_eat(parser, TOKEN_LT);
 

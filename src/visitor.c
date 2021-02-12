@@ -199,7 +199,7 @@ AST_T* visitor_visit_import(visitor_T* visitor, AST_T* ast, list_T* stack)
 
   for (unsigned int i = 0; i < ast->list_value->size; i++) {
     AST_T* id = ast->list_value->items[i];
-    char* name = ast_get_string(id);
+    // char* name = ast_get_string(id);
     map_unset(FJB_ENV->imports, id->name);
   }
 
@@ -243,8 +243,8 @@ AST_T* visitor_visit_assignment(visitor_T* visitor, AST_T* ast, list_T* stack)
     }
   }
 
-  if ((ast->value && ast->value->dead) || (ast->left && ast->left->dead) ||
-      ast->right && ast->right->dead) {
+  if (((ast->value && ast->value->dead) || (ast->left && ast->left->dead)) ||
+      (ast->right && ast->right->dead)) {
     ast->type = AST_NOOP;
     ast->left = 0;
     ast->right = 0;
