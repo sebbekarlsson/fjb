@@ -31,7 +31,6 @@ compiler_result_T* _fjb()
   if (FJB_ENV->source)
     fjb_set_source(fjb_call_all_hooks(HOOK_RECEIVE_SOURCE, FJB_ENV->source, FJB_ENV));
 
-  unsigned int old_level = FJB_ENV->level;
   NOOP = init_ast(AST_NOOP);
   gc_mark(FJB_ENV->GC, NOOP);
 

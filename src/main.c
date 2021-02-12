@@ -6,14 +6,14 @@
 #include <stdio.h>
 #include <string.h>
 
-unsigned int getarg(int argc, char* argv[], const char* key)
+/*unsigned int getarg(int argc, char* argv[], const char* key)
 {
   for (int i = argc == 1 ? 0 : 1; i < argc; i++)
     if (strcmp(argv[i], key) == 0)
       return 1;
 
   return 0;
-}
+}*/
 
 void show_help()
 {
@@ -35,7 +35,6 @@ int main(int argc, char* argv[])
   }
 
   char* source = fjb_read_file(filepath);
-  unsigned int should_dump = getarg(argc, argv, "-d");
 
   fjb_set_source(source);
   fjb_set_filepath(filepath);

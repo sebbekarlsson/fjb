@@ -20,10 +20,6 @@ AST_T* eval_jsx_element(visitor_T* visitor, AST_T* ast, list_T* stack)
 
   LOOP_NODES(ast->options, i, child, visitor_visit(visitor, child, stack););
 
-  query_T query;
-  query.name = ast_get_string(ast);
-  query.type = AST_FUNCTION;
-
   ast->body = eval_jsx(visitor, ast->body, stack);
 
   AST_T* def = (AST_T*)map_get_value(ast->stack_frame, ast->name);
