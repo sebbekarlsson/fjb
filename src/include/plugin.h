@@ -4,8 +4,6 @@
 
 enum PLUGIN_HOOKS
 {
-  HOOK_BEFORE_IMPORT,
-
   HOOK_RECEIVE_FILEPATH,
   HOOK_RECEIVE_SOURCE,
 
@@ -15,7 +13,8 @@ enum PLUGIN_HOOKS
   HOOK_BEFORE_GENERATE,
   HOOK_AFTER_GENERATE,
 
-  HOOK_BEFORE_COMPILE
+  HOOK_BEFORE_COMPILE,
+  HOOK_BEFORE_IMPORT
 };
 
 typedef void* (*plugin_hook)(int action, void* ptr, fjb_env_T* env);
