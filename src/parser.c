@@ -12,6 +12,8 @@
 
 extern AST_T* NOOP;
 
+#define EAT(token_type) parser_eat(parser, token_type)
+
 parser_T* init_parser(lexer_T* lexer, fjb_env_T* env)
 {
   parser_T* parser = calloc(1, sizeof(struct FJB_PARSER_STRUCT));
@@ -507,6 +509,40 @@ AST_T* parser_parse_class(parser_T* parser, parser_options_T options)
   return ast;
 }
 
+AST_T* parser_parse_interface(parser_T* parser, parser_options_T options)
+{
+  AST_T* ast = init_ast_line(AST_INTERFACE, parser->lexer->line);
+  ast->list_value = NEW_STACK;
+  EAT(TOKEN_INTERFACE);
+
+  if (parser->token->type == TOKEN_ID) {
+    ast->name = strdup(parser->token->value);
+    EAT(TOKEN_ID);
+  }
+
+  EAT(TOKEN_LBRACE);
+
+  if (parser->token->type != TOKEN_RBRACE) {
+    AST_T* child = parser_parse_object_child(parser, options);
+    list_push(ast->list_value, child);
+
+    while (parser->token->type == TOKEN_SEMI ||
+           parser->token->type == TOKEN_COMMA && parser->token->type != TOKEN_RBRACE) {
+      if (parser->token->type == TOKEN_SEMI)
+        EAT(TOKEN_SEMI);
+      else if (parser->token->type == TOKEN_COMMA)
+        EAT(TOKEN_COMMA);
+
+      AST_T* child = parser_parse_object_child(parser, options);
+      list_push(ast->list_value, child);
+    }
+  }
+
+  EAT(TOKEN_RBRACE);
+
+  return ast;
+}
+
 AST_T* parser_parse_condition(parser_T* parser, parser_options_T options)
 {
   AST_T* ast = init_ast_line(AST_CONDITION, parser->lexer->line);
@@ -962,6 +998,7 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
     case TOKEN_DO: left = parser_parse_do(parser, options); break;
     case TOKEN_LBRACKET: left = parser_parse_array(parser, options); break;
     case TOKEN_FUNCTION: left = parser_parse_function(parser, options); break;
+    case TOKEN_INTERFACE: left = parser_parse_interface(parser, options); break;
     case TOKEN_LT: left = parser_parse_jsx_element(parser, options); break;
     case TOKEN_RETURN:
     case TOKEN_DELETE:
@@ -1241,6 +1278,7 @@ AST_T* parser_parse_statement(parser_T* parser, parser_options_T options)
     case TOKEN_ELSE: left = parser_parse_condition(parser, options); break;
     case TOKEN_TRY: left = parser_parse_try(parser, options); break;
     case TOKEN_CLASS: left = parser_parse_class(parser, options); break;
+    case TOKEN_INTERFACE: left = parser_parse_interface(parser, options); break;
     case TOKEN_WHILE: left = parser_parse_while(parser, options); break;
     case TOKEN_LBRACE: left = parser_parse_scope(parser, options); break;
     case TOKEN_RETURN:

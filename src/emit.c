@@ -21,6 +21,7 @@
 #include "include/js/switch_case.js.h"
 #include "include/js/switch_statement.js.h"
 #include "include/js/template_string.js.h"
+#include "include/js/typescript_interface.js.h"
 #include "include/js/while_loop.js.h"
 #include "include/js/while_loop_no_brace.js.h"
 #include "include/package.h"
@@ -198,6 +199,29 @@ static char* emit_semi_tuple(list_T* list_value, fjb_env_T* env)
   return str ? str : strdup("");
 }
 
+static char* emit_semi_tuple_2(list_T* list_value, fjb_env_T* env)
+{
+  char* str = 0;
+
+  list_T* living = list_value;
+
+  for (unsigned int i = 0; i < living->size; i++) {
+    AST_T* child = (AST_T*)living->items[i];
+
+    char* child_str = emit(child, env);
+
+    if (!child_str)
+      continue;
+
+    str = str_append(&str, child_str);
+    str = str_append(&str, ";");
+
+    free(child_str);
+  }
+
+  return str ? str : strdup("");
+}
+
 char* emit(AST_T* ast, fjb_env_T* env)
 {
   if (!ast) {
@@ -239,6 +263,7 @@ char* emit(AST_T* ast, fjb_env_T* env)
     case AST_CALL: body = emit_call(ast, env); break;
     case AST_CLASS_FUNCTION:
     case AST_FUNCTION: body = emit_function(ast, env); break;
+    case AST_INTERFACE: body = emit_interface(ast, env); break;
     case AST_SCOPE: body = emit_scope(ast, env); break;
     case AST_SIGNATURE: body = emit_signature(ast, env); break;
     case AST_NAME: body = emit_name(ast, env); break;
@@ -262,7 +287,7 @@ char* emit(AST_T* ast, fjb_env_T* env)
     case AST_JSX_ELEMENT: body = emit_jsx(ast, env); break;
     case AST_NOOP: body = emit_noop(ast, env); break;
     default: {
-      printf("[Gen]: missing emiterator for `%d`", ast->type);
+      printf("[Gen]: missing emiterator for `%d`\n", ast->type);
       exit(1);
     } break;
   }
@@ -775,6 +800,24 @@ char* emit_function(AST_T* ast, fjb_env_T* env)
 #endif
 
   return str;
+}
+
+// typescript
+char* emit_interface(AST_T* ast, fjb_env_T* env)
+{
+  char* str = 0;
+  char* namestr = ast->name ? strdup(ast->name) : strdup("");
+  char* liststr =
+    ast->list_value && ast->list_value->size ? emit_semi_tuple_2(ast->list_value, env) : strdup("");
+
+  TEMPLATE(typescript_interface, str, strlen(namestr) + strlen(liststr), namestr, liststr);
+
+  if (namestr)
+    free(namestr);
+  if (liststr)
+    free(liststr);
+
+  return str ? str : strdup("");
 }
 
 char* emit_scope(AST_T* ast, fjb_env_T* env)

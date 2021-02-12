@@ -564,6 +564,8 @@ token_T* lexer_switch_id(lexer_T* lexer, token_T* token)
     token->type = TOKEN_VAR;
   else if (strcmp(token->value, "function") == 0)
     token->type = TOKEN_FUNCTION;
+  else if (strcmp(token->value, "interface") == 0)
+    token->type = TOKEN_INTERFACE;
   else if (strcmp(token->value, "try") == 0)
     token->type = TOKEN_TRY;
   else if (strcmp(token->value, "catch") == 0)
