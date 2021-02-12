@@ -28,7 +28,6 @@ char* emit_import(AST_T* ast, fjb_env_T* env);
 char* emit_undefined(AST_T* ast, fjb_env_T* env);
 char* emit_call(AST_T* ast, fjb_env_T* env);
 char* emit_function(AST_T* ast, fjb_env_T* env);
-char* emit_interface(AST_T* ast, fjb_env_T* env);
 char* emit_scope(AST_T* ast, fjb_env_T* env);
 char* emit_signature(AST_T* ast, fjb_env_T* env);
 char* emit_name(AST_T* ast, fjb_env_T* env);

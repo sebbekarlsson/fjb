@@ -1,5 +1,7 @@
 {
     "tokenTypes": [
+        "TOKEN_TYPE_STRING",
+        "TOKEN_TYPE_NUMBER",
         "TOKEN_ID",
         "TOKEN_LBRACE",
         "TOKEN_RBRACE",
@@ -99,6 +101,7 @@
         "TOKEN_TEMPLATE_STRING"
     ],
     "astEnums": [
+        "AST_DATA_TYPE",
         "AST_CASE",
         "AST_BOOL",
         "AST_ARROW_DEFINITION",

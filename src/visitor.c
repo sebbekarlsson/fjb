@@ -168,7 +168,7 @@ AST_T* visitor_visit_import(visitor_T* visitor, AST_T* ast, list_T* stack)
   fjb_set_aliased_import(ast->alias != 0);
   free(contents);
 
-  fjb_set_filepath(fjb_call_all_hooks(HOOK_BEFORE_IMPORT, final_file_to_read, FJB_ENV));
+  //fjb_set_filepath(fjb_call_all_hooks(HOOK_BEFORE_IMPORT, final_file_to_read, FJB_ENV));
 
   char* ext = (char*)get_filename_ext(FJB_ENV->filepath);
 
