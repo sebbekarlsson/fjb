@@ -37,5 +37,7 @@ char* get_slashed_path(char* path);
 
 char char_tolower(unsigned char ch);
 
+char* strip_ext(char* filepath);
+
 int strcasecmp(const char* s1, const char* s2);
 #endif

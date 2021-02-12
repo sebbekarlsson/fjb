@@ -204,6 +204,18 @@ void test_css_import()
   destroy_fjb_env();
 }
 
+void test_scss_import()
+{
+  init_fjb_env();
+  const char* filepath = "./src/test_projects/scss_import/index.js";
+
+  MSG();
+
+  AST_T* root = run_get_ast(filepath, 1);
+  assert_node_not_exists(root, AST_TEMPLATE_STRING, 0, "test AST_TEMPLATE_STRING exists.");
+  destroy_fjb_env();
+}
+
 void test_destruct()
 {
   init_fjb_env();
@@ -248,6 +260,7 @@ int main(int argc, char* argv[])
   test_jsx_custom();
   test_json_import();
   test_css_import();
+  test_scss_import();
   test_destruct();
   test_ternary();
 
