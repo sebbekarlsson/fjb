@@ -81,6 +81,7 @@
         "TOKEN_VAR",
         "TOKEN_PLUS",
         "TOKEN_IN",
+        "TOKEN_OF",
         "TOKEN_STAR",
         "TOKEN_MINUS",
         "TOKEN_DIV",

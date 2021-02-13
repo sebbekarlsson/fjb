@@ -38,6 +38,8 @@ AST_T* parser_parse_call(parser_T* parser, parser_options_T options);
 
 AST_T* parser_parse_id(parser_T* parser, parser_options_T options);
 
+AST_T* parser_parse_function_signature_argument(parser_T* parser, parser_options_T options);
+
 AST_T* parser_parse_object(parser_T* parser, parser_options_T options);
 
 AST_T* parser_parse_object_child(parser_T* parser, parser_options_T options);
