@@ -179,7 +179,7 @@ AST_T* parse_jsx(parser_T* parser, parser_options_T options)
   //  ast->name = strdup(ast->name_ast->right->name);
   // parser_eat(parser, TOKEN_ID);
 
-  while (parser->token->type == TOKEN_ID) {
+  while (parser->token->type == TOKEN_ID || parser->token->type == TOKEN_CLASS) {
     AST_T* assignment = parse_jsx_attr(parser, options);
     list_push(ast->options, assignment);
   }

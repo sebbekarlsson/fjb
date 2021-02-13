@@ -951,6 +951,7 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
     case TOKEN_DEFAULT:
     case TOKEN_CLASS:
     case TOKEN_IN:
+    case TOKEN_OF:
     case TOKEN_GET:
     case TOKEN_FOR: left = parser_parse_id(parser, options); break;
     case TOKEN_INT: left = parser_parse_int(parser, options); break;
@@ -1130,7 +1131,7 @@ AST_T* parser_parse_expr(parser_T* parser, parser_options_T options)
   while (parser->token->type == TOKEN_LT || parser->token->type == TOKEN_LT_EQUALS ||
          parser->token->type == TOKEN_GT || parser->token->type == TOKEN_GT_EQUALS ||
          parser->token->type == TOKEN_PIPE_PIPE || parser->token->type == TOKEN_IN ||
-         parser->token->type == TOKEN_EQUALS_EQUALS ||
+         parser->token->type == TOKEN_OF || parser->token->type == TOKEN_EQUALS_EQUALS ||
          parser->token->type == TOKEN_EQUALS_EQUALS_EQUALS ||
          parser->token->type == TOKEN_NOT_EQUALS ||
          parser->token->type == TOKEN_NOT_EQUALS_EQUALS) {
