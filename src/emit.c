@@ -743,7 +743,7 @@ char* emit_function(AST_T* ast, fjb_env_T* env)
   } else {
     if ((name && !ast->anon && ast->not_exported == 0 &&
          (ast->exported || map_get(env->imports, name))) ||
-        map_get(env->imports, name)) {
+        (ast->exported || map_get(env->imports, name))) {
       TEMPLATE(expose_def, expose_str, (strlen(name) * 2) + 16, name, name);
     } else {
       expose_str = strdup("");
