@@ -101,31 +101,16 @@ AST_T* eval_binop(visitor_T* visitor, AST_T* ast)
   // integers
   else if (ast->left->type == AST_INT && ast->right->type == AST_INT) {
     res = _eval_number(ast->left->int_value, ast->right->int_value, ast->token->type);
-  } else if (ast->left->ptr && ast->left->ptr->type == AST_INT && ast->right->type == AST_INT) {
-    res = _eval_number(ast->left->ptr->int_value, ast->right->int_value, ast->token->type);
-  } else if (ast->left->type == AST_INT && ast->right->ptr && ast->right->ptr->type == AST_INT) {
-    res = _eval_number(ast->left->int_value, ast->right->ptr->int_value, ast->token->type);
   }
 
   // integers
   else if (ast->left->type == AST_INT_MIN && ast->right->type == AST_INT_MIN) {
     res = _eval_number(ast->left->int_value, ast->right->int_value, ast->token->type);
-  } else if (ast->left->ptr && ast->left->ptr->type == AST_INT_MIN &&
-             ast->right->type == AST_INT_MIN) {
-    res = _eval_number(ast->left->ptr->int_value, ast->right->int_value, ast->token->type);
-  } else if (ast->left->type == AST_INT_MIN && ast->right->ptr &&
-             ast->right->ptr->type == AST_INT_MIN) {
-    res = _eval_number(ast->left->int_value, ast->right->ptr->int_value, ast->token->type);
   }
 
   // floats
   else if (ast->left->type == AST_FLOAT && ast->right->type == AST_FLOAT) {
     res = _eval_number(ast->left->int_value, ast->right->int_value, ast->token->type);
-  } else if (ast->left->ptr && ast->left->ptr->type == AST_FLOAT && ast->right->type == AST_FLOAT) {
-    res = _eval_number(ast->left->ptr->int_value, ast->right->int_value, ast->token->type);
-  } else if (ast->left->type == AST_FLOAT && ast->right->ptr &&
-             ast->right->ptr->type == AST_FLOAT) {
-    res = _eval_number(ast->left->int_value, ast->right->ptr->int_value, ast->token->type);
   }
 
   if (!res)

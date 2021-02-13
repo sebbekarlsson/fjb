@@ -107,6 +107,14 @@ AST_T* init_ast_string(char* string_value)
   return ast;
 }
 
+AST_T* init_ast_name(char* name)
+{
+  AST_T* ast = init_ast(AST_NAME);
+  ast->name = name ? strdup(name) : strdup(" ");
+
+  return ast;
+}
+
 char* ast_encode_strings(list_T* strings)
 {
   char* str = 0;

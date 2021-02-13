@@ -80,6 +80,8 @@ AST_T* init_assignment(char* name, AST_T* value);
 
 AST_T* init_ast_string(char* string_value);
 
+AST_T* init_ast_name(char* name);
+
 void ast_init_parent_lists(AST_T* ast);
 
 unsigned int ast_is_in_list(AST_T* ast, list_T* list);

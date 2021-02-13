@@ -578,6 +578,8 @@ token_T* lexer_switch_id(lexer_T* lexer, token_T* token)
     token->type = TOKEN_TYPEOF;
   else if (strcmp(token->value, "in") == 0)
     token->type = TOKEN_IN;
+  else if (strcmp(token->value, "of") == 0)
+    token->type = TOKEN_OF;
   else if (strcmp(token->value, "do") == 0)
     token->type = TOKEN_DO;
   else if (strcmp(token->value, "switch") == 0)
