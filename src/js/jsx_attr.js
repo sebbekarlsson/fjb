@@ -1,1 +1,1 @@
-this.ref.setAttribute("%s",%s);
+this.ref.setAttribute("%s", %s);
