@@ -34,6 +34,9 @@ typedef struct FJB_ENV_STRUCT
 
   map_T* compiled_imports;
 
+  struct FJB_LEXER_STRUCT* lexer;
+  struct FJB_PARSER_STRUCT* parser;
+
   gc_T* GC;
 } fjb_env_T;
 

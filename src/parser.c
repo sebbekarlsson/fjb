@@ -570,7 +570,7 @@ AST_T* parser_parse_condition(parser_T* parser, parser_options_T options)
     parser_eat(parser, TOKEN_IF);
 
     parser_eat(parser, TOKEN_LPAREN);
-    ast->expr = parser_parse_expr(parser, options);
+    ast->expr = parser_parse_statement_or_expr(parser, options);
     parser_eat(parser, TOKEN_RPAREN);
   }
 
@@ -1424,9 +1424,9 @@ AST_T* parser_parse_call(parser_T* parser, parser_options_T options)
   AST_T* ast_call = init_ast_line(AST_CALL, parser->lexer->line);
   ast_call->parent = options.parent;
   options.parent = ast_call;
-  options.stop_token = TOKEN_COMMA;
+  // options.stop_token = TOKEN_COMMA;
   ast_call->list_value = parse_args(parser, options);
-  options.stop_token = -1;
+  // options.stop_token = -1;
   ast_call->from_module = parser->env->filepath ? strdup(parser->env->filepath) : 0;
 
   if (parser->token->type == TOKEN_ARROW_RIGHT) {

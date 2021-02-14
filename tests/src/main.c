@@ -40,8 +40,20 @@ void test_with_lodash()
 
   AST_T* root = run_get_ast(filepath, 1);
 
-  // assert_node_exists(root, AST_ASSIGNMENT, "ceil", "test AST_ASSIGNMENT exists");
   assert_node_exists(root, AST_FUNCTION, "createRound", "test AST_FUNCTION exists");
+  destroy_fjb_env();
+}
+
+void test_highlightjs()
+{
+  init_fjb_env();
+  const char* filepath = "./src/test_projects/highlightjs/index.js";
+
+  MSG();
+
+  AST_T* root = run_get_ast(filepath, 1);
+
+  assert_node_exists(root, AST_ASSIGNMENT, "hljs", "test AST_ASSIGNMENT exists");
   destroy_fjb_env();
 }
 
@@ -311,6 +323,7 @@ int main(int argc, char* argv[])
   test_es6();
   test_simple();
   test_with_lodash();
+  test_highlightjs();
   test_with_jquery();
   test_no_imports();
   test_with_assignment();

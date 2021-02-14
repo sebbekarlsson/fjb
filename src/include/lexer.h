@@ -11,6 +11,7 @@ typedef struct FJB_LEXER_STRUCT
   char cstr[2];
   unsigned int i;
   int line;
+  int x;
   const char* filepath;
   token_T* prev_token;
 } lexer_T;
