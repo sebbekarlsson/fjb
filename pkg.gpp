@@ -1,0 +1,9 @@
+{{ data = load("pkg.json") }}
+
+Package: {{ data.pkgname }} {{ newline() }}
+Version: {{ data.version }} {{ newline() }}
+Section: base
+Priority: optional
+Architecture: {{ data.arch }} {{ newline() }}
+Maintainer: ianertson@gmail.com
+Description: {{ data.description }}
