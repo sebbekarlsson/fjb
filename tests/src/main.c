@@ -223,7 +223,7 @@ void test_destruct()
 
   MSG();
 
-  AST_T* root = run_get_ast(filepath, 1);
+  AST_T* root = run_get_ast(filepath, 0);
   assert_node_exists(root, AST_FUNCTION, "xyz", "test AST_FUNCTION exists.");
   assert_node_exists(root, AST_CALL, "xyz", "test AST_CALL exists.");
   destroy_fjb_env();
@@ -236,10 +236,25 @@ void test_ternary()
 
   MSG();
 
-  AST_T* root = run_get_ast(filepath, 1);
+  AST_T* root = run_get_ast(filepath, 0);
   assert_node_exists(root, AST_SWITCH, 0, "test AST_SWITCH exists.");
   assert_node_exists(root, AST_TERNARY, 0, "test AST_TERNARY exists.");
   assert_node_exists(root, AST_OBJECT, 0, "test AST_OBJECT exists.");
+  destroy_fjb_env();
+}
+
+void test_array_access()
+{
+  init_fjb_env();
+  const char* filepath = "./src/test_projects/array_access/index.js";
+
+  MSG();
+
+  AST_T* root = run_get_ast(filepath, 0);
+  assert_node_exists(root, AST_FUNCTION, 0, "test AST_FUNCTION exists.");
+  assert_node_exists(root, AST_NAME, "a", "test AST_NAME exists.");
+  assert_node_exists(root, AST_NAME, "b", "test AST_NAME exists.");
+  assert_node_exists(root, AST_NAME, "c", "test AST_NAME exists.");
   destroy_fjb_env();
 }
 
@@ -263,6 +278,7 @@ int main(int argc, char* argv[])
   test_scss_import();
   test_destruct();
   test_ternary();
+  test_array_access();
 
   return 0;
 }

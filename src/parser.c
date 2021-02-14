@@ -928,14 +928,21 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
     parser_eat(parser, TOKEN_RPAREN);
     left = expr;
 
-    while (parser->token->type == TOKEN_LPAREN) {
-      AST_T* ast_call = parser_parse_call(parser, options);
-      ast_call->parent = options.parent;
-      if (left && left->name) {
-        ast_call->name = strdup(left->name);
+    while (parser->token->type == TOKEN_LPAREN || parser->token->type == TOKEN_LBRACKET) {
+      if (parser->token->type == TOKEN_LPAREN) {
+        AST_T* ast_call = parser_parse_call(parser, options);
+        ast_call->parent = options.parent;
+        if (left && left->name) {
+          ast_call->name = strdup(left->name);
+        }
+        ast_call->left = left;
+        left = ast_call;
+      } else {
+        AST_T* ast_arr = parser_parse_array(parser, options);
+        ast_arr->parent = options.parent;
+        ast_arr->left = left;
+        left = ast_arr;
       }
-      ast_call->left = left;
-      left = ast_call;
     }
   }
 
