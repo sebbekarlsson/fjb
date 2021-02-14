@@ -108,7 +108,27 @@ BENCHMARKS = [
     create_mark(
         "React project with JSX",
         '/tests/src/test_projects/with_react/index.jsx'
-    )
+    ),
+    create_mark(
+        "Importing cookie banner (dobarkod/cookie-banner)",
+        '/tests/src/test_projects/cookie_banner/index.js'
+    ),
+    create_mark(
+        "Simple regex",
+        '/tests/src/test_projects/regex/index.js'
+    ),
+    create_mark(
+        "Array access",
+        '/tests/src/test_projects/array_access/index.js'
+    ),
+    create_mark(
+        "Simple bundle with zero imports",
+        '/tests/src/test_projects/noimports/index.js'
+    ),
+    create_mark(
+        "Escaped strings",
+        '/tests/src/test_projects/strings/index.js'
+    ),
 ]
 
 
