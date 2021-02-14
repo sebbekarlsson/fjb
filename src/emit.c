@@ -479,7 +479,7 @@ char* emit_colon_assignment(AST_T* ast, fjb_env_T* env)
     if (ast->name && !ast->left) {
       str = str_append(&str, ast->name);
     }
-    str = str_append(&str, " ");
+    str = str_append(&str, "");
 
     if (ast->expr) {
       char* exprstr = emit(ast->expr, env);
@@ -898,7 +898,15 @@ char* emit_binop(AST_T* ast, fjb_env_T* env)
   if (!rightstr)
     rightstr = strdup("");
 
-  if (ast->token) {
+  char* tokstr = 0;
+
+  if (ast->left->type == AST_DATA_TYPE || ast->right->type == AST_DATA_TYPE)
+    tokstr = strdup(" ");
+
+  if (!tokstr && ast->token && ast->token->value)
+    tokstr = strdup(ast->token->value);
+
+  if (ast->token && tokstr) {
     if (ast->token->type == TOKEN_OPTIONAL_CHAIN) {
       TEMPLATE(
         optional_chain, str, (strlen(leftstr) * 3) + (strlen(rightstr) * 3) + 1, leftstr, rightstr);
@@ -906,17 +914,20 @@ char* emit_binop(AST_T* ast, fjb_env_T* env)
       if (ast->token->type == TOKEN_DOT || ast->token->type == TOKEN_COMMA ||
           ast->token->type == TOKEN_PLUS || ast->token->type == TOKEN_OPTIONAL_CHAIN) {
         str = str_append(&str, leftstr);
-        str = str_append(&str, ast->token->value);
+        str = str_append(&str, tokstr);
         str = str_append(&str, rightstr);
       } else {
         str = str_append(&str, leftstr);
         str = str_append(&str, " ");
-        str = str_append(&str, ast->token->value);
+        str = str_append(&str, tokstr);
         str = str_append(&str, " ");
         str = str_append(&str, rightstr);
       }
     }
   }
+
+  if (tokstr)
+    free(tokstr);
 
   return str ? str : strdup("");
 }

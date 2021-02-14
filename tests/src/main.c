@@ -270,6 +270,42 @@ void test_typescript_class()
   destroy_fjb_env();
 }
 
+void test_typescript_union()
+{
+  init_fjb_env();
+  const char* filepath = "./src/test_projects/ts_union/index.ts";
+
+  MSG();
+
+  AST_T* root = run_get_ast(filepath, 0);
+  assert_node_exists(root, AST_NAME, "firstname", "test AST_NAME exists.");
+  destroy_fjb_env();
+}
+
+void test_typescript_intersect()
+{
+  init_fjb_env();
+  const char* filepath = "./src/test_projects/ts_intersect/index.ts";
+
+  MSG();
+
+  AST_T* root = run_get_ast(filepath, 0);
+  assert_node_exists(root, AST_NAME, "ab", "test AST_NAME exists.");
+  destroy_fjb_env();
+}
+
+void test_typescript_interface_extends()
+{
+  init_fjb_env();
+  const char* filepath = "./src/test_projects/typescript_interface_extends/index.ts";
+
+  MSG();
+
+  AST_T* root = run_get_ast(filepath, 0);
+  assert_node_exists(root, AST_COMPOUND, 0, "test AST_COMPOUND exists.");
+  destroy_fjb_env();
+}
+
 int main(int argc, char* argv[])
 {
   test_es6();
@@ -292,6 +328,9 @@ int main(int argc, char* argv[])
   test_ternary();
   test_array_access();
   test_typescript_class();
+  test_typescript_union();
+  test_typescript_intersect();
+  test_typescript_interface_extends();
 
   return 0;
 }
