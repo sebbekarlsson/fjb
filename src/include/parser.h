@@ -19,6 +19,8 @@ typedef struct FJB_PARSER_OPTIONS_STRUCT
   unsigned int not_exported;
 } parser_options_T;
 
+#define EAT(token_type) parser_eat(parser, token_type)
+
 #define EMPTY_PARSER_OPTIONS                                                                       \
   {                                                                                                \
     -1, 0                                                                                          \
@@ -39,6 +41,8 @@ AST_T* parser_parse_id(parser_T* parser, parser_options_T options);
 AST_T* parser_parse_function_signature_argument(parser_T* parser, parser_options_T options);
 
 AST_T* parser_parse_object(parser_T* parser, parser_options_T options);
+
+AST_T* parser_parse_object_child(parser_T* parser, parser_options_T options);
 
 AST_T* parser_parse_destructor(parser_T* parser, parser_options_T options);
 

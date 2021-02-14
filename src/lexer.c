@@ -20,6 +20,11 @@ lexer_T* init_lexer(char* source, const char* filepath)
   lexer->line = 1;
   lexer->filepath = filepath;
 
+  if (filepath) {
+    char* ext = (char*)get_filename_ext((char*)filepath);
+    lexer->is_using_ts = (strcmp(ext, ".ts") == 0 || strcmp(ext, ".tsx") == 0);
+  }
+
   return lexer;
 }
 
@@ -564,6 +569,8 @@ token_T* lexer_switch_id(lexer_T* lexer, token_T* token)
     token->type = TOKEN_VAR;
   else if (strcmp(token->value, "function") == 0)
     token->type = TOKEN_FUNCTION;
+  else if (strcmp(token->value, "interface") == 0)
+    token->type = TOKEN_INTERFACE;
   else if (strcmp(token->value, "try") == 0)
     token->type = TOKEN_TRY;
   else if (strcmp(token->value, "catch") == 0)
@@ -606,6 +613,17 @@ token_T* lexer_switch_id(lexer_T* lexer, token_T* token)
     token->type = TOKEN_EXTENDS;
   else if (strcmp(token->value, "get") == 0)
     token->type = TOKEN_GET;
+  else if (strcmp(token->value, "public") == 0)
+    token->type = TOKEN_PUBLIC;
+  else if (strcmp(token->value, "private") == 0)
+    token->type = TOKEN_PRIVATE;
+
+  if (0 && lexer->is_using_ts) {
+    if (strcmp(token->value, "string") == 0)
+      token->type = TOKEN_TYPE_STRING;
+    else if (strcmp(token->value, "number") == 0)
+      token->type = TOKEN_TYPE_NUMBER;
+  }
 
   return ret_tok(lexer, token);
 }

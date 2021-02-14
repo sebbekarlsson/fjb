@@ -1,5 +1,6 @@
 #include "include/emit.h"
 #include "include/emit_jsx.h"
+#include "include/emit_typescript.h"
 #include "include/io.h"
 #include "include/js/arrow_definition.js.h"
 #include "include/js/arrow_definition_no_brace.js.h"
@@ -60,7 +61,7 @@ static char* emit_args(list_T* list_value, fjb_env_T* env)
 
   str = str_append(&str, ")");
 
-  return str;
+  return str ? str : strdup("");
 }
 
 static char* emit_semi_args(list_T* list_value, fjb_env_T* env)
@@ -89,7 +90,7 @@ static char* emit_semi_args(list_T* list_value, fjb_env_T* env)
 
   str = str_append(&str, ")");
 
-  return str;
+  return str ? str : strdup("");
 }
 
 static char* emit_list(list_T* list_value, fjb_env_T* env)
@@ -117,7 +118,7 @@ static char* emit_list(list_T* list_value, fjb_env_T* env)
 
   str = str_append(&str, "]");
 
-  return str;
+  return str ? str : strdup("");
 }
 
 char* emit_spaced_list(list_T* list_value, fjb_env_T* env)
@@ -144,7 +145,7 @@ char* emit_spaced_list(list_T* list_value, fjb_env_T* env)
     free(child_str);
   }
 
-  return str;
+  return str ? str : strdup("");
 }
 
 char* emit_tuple(list_T* list_value, fjb_env_T* env)
@@ -169,7 +170,7 @@ char* emit_tuple(list_T* list_value, fjb_env_T* env)
     free(child_str);
   }
 
-  return str;
+  return str ? str : strdup("");
 }
 
 /*static char* emit_semi_tuple(list_T* list_value, fjb_env_T* env)
@@ -217,6 +218,8 @@ char* emit(AST_T* ast, fjb_env_T* env)
   }
 
   switch (ast->type) {
+    case AST_DATA_TYPE:
+    case AST_INTERFACE: body = emit_ts(ast, env); break;
     case AST_ARRAY: body = emit_array(ast, env); break;
     case AST_TUPLE: body = emit_tuple_ast(ast, env); break;
     case AST_HEX: body = emit_int(ast, env); break;
@@ -262,7 +265,7 @@ char* emit(AST_T* ast, fjb_env_T* env)
     case AST_JSX_ELEMENT: body = emit_jsx(ast, env); break;
     case AST_NOOP: body = emit_noop(ast, env); break;
     default: {
-      printf("[Gen]: missing emiterator for `%d`", ast->type);
+      printf("[Gen]: missing emiterator for `%d`\n", ast->type);
       exit(1);
     } break;
   }
@@ -336,7 +339,7 @@ char* emit(AST_T* ast, fjb_env_T* env)
 
   str = fjb_call_all_hooks(HOOK_AFTER_GENERATE, str, env);
 
-  return str;
+  return str ? str : strdup("");
 }
 char* emit_array(AST_T* ast, fjb_env_T* env)
 {
@@ -387,7 +390,7 @@ char* emit_string(AST_T* ast, fjb_env_T* env)
   if (m)
     free(m);
 
-  return str;
+  return str ? str : strdup("");
 }
 
 char* emit_template_string(AST_T* ast, fjb_env_T* env)
@@ -424,6 +427,14 @@ char* emit_assignment(AST_T* ast, fjb_env_T* env)
   char* str = 0;
   char* valuestr = 0;
   char* expose_str = 0;
+  char* typedatastr = 0;
+
+  if (ast->typedata) {
+    typedatastr = emit(ast->typedata, env);
+  }
+
+  if (!typedatastr)
+    typedatastr = strdup("");
 
   if (ast->value) {
     if (ast->value->dead)
@@ -446,14 +457,18 @@ char* emit_assignment(AST_T* ast, fjb_env_T* env)
 
   TEMPLATE(assignment,
            str,
-           strlen(valuestr) + (expose_str ? strlen(expose_str) : 0),
+           strlen(valuestr) + (expose_str ? strlen(expose_str) : 0) + strlen(typedatastr),
+           typedatastr,
            valuestr,
            expose_str ? expose_str : "");
 
   if (valuestr)
     free(valuestr);
 
-  return str;
+  if (typedatastr)
+    free(typedatastr);
+
+  return str ? str : strdup("");
 }
 
 char* emit_colon_assignment(AST_T* ast, fjb_env_T* env)
@@ -464,7 +479,7 @@ char* emit_colon_assignment(AST_T* ast, fjb_env_T* env)
     if (ast->name && !ast->left) {
       str = str_append(&str, ast->name);
     }
-    str = str_append(&str, " ");
+    str = str_append(&str, "");
 
     if (ast->expr) {
       char* exprstr = emit(ast->expr, env);
@@ -478,7 +493,7 @@ char* emit_colon_assignment(AST_T* ast, fjb_env_T* env)
       str = str_append(&str, ":");
   }
 
-  return str;
+  return str ? str : strdup("");
 }
 
 char* emit_case(AST_T* ast, fjb_env_T* env)
@@ -495,7 +510,7 @@ char* emit_case(AST_T* ast, fjb_env_T* env)
            condition_str,
            valuestr);
 
-  return str;
+  return str ? str : strdup("");
 }
 
 char* emit_while(AST_T* ast, fjb_env_T* env)
@@ -518,7 +533,7 @@ char* emit_while(AST_T* ast, fjb_env_T* env)
   if (body_str)
     free(body_str);
 
-  return str;
+  return str ? str : strdup("");
 }
 
 char* emit_for(AST_T* ast, fjb_env_T* env)
@@ -534,7 +549,7 @@ char* emit_for(AST_T* ast, fjb_env_T* env)
   if (args_str)
     free(args_str);
 
-  return str;
+  return str ? str : strdup("");
 }
 
 char* emit_compound(AST_T* ast, fjb_env_T* env)
@@ -553,7 +568,7 @@ char* emit_compound(AST_T* ast, fjb_env_T* env)
       continue;
 
     char* child_str = emit(child_ast, env);
-    if (!child_str)
+    if (!child_str || (child_str && strlen(child_str) == 0))
       continue;
 
     if (child_ast->type != AST_IMPORT && child_ast->type != AST_UNDEFINED &&
@@ -568,7 +583,7 @@ char* emit_compound(AST_T* ast, fjb_env_T* env)
     free(child_str);
   }
 
-  return str;
+  return str ? str : strdup("");
 }
 
 char* emit_import(AST_T* ast, fjb_env_T* env)
@@ -642,7 +657,7 @@ char* emit_import(AST_T* ast, fjb_env_T* env)
 
   char* options_str = ast->options ? emit_tuple(ast->options, env) : strdup("");
 
-  char* value;
+  char* value = 0;
 
   char* headers = ast->headers ? strdup(ast->headers) : strdup("");
 
@@ -680,7 +695,7 @@ char* emit_import(AST_T* ast, fjb_env_T* env)
   if (headers)
     free(headers);
 
-  return value;
+  return value ? value : strdup("");
 }
 
 char* emit_undefined(AST_T* ast, fjb_env_T* env)
@@ -702,7 +717,7 @@ char* emit_call(AST_T* ast, fjb_env_T* env)
 
   str = emit_args(ast->list_value, env);
 
-  return str;
+  return str ? str : strdup("");
 }
 
 char* emit_function(AST_T* ast, fjb_env_T* env)
@@ -711,6 +726,15 @@ char* emit_function(AST_T* ast, fjb_env_T* env)
   char* body_str = 0;
   char* args_str = 0;
   char* expose_str = 0;
+
+  char* typedatastr = 0;
+
+  if (ast->typedata) {
+    typedatastr = emit(ast->typedata, env);
+  }
+
+  if (!typedatastr)
+    typedatastr = strdup("");
 
   char* name = ast_get_string_copy(ast);
 
@@ -751,8 +775,10 @@ char* emit_function(AST_T* ast, fjb_env_T* env)
 
     TEMPLATE(function,
              str,
-             strlen(name) + strlen(args_str) + strlen(body_str) + strlen(expose_str),
+             strlen(name) + strlen(typedatastr) + strlen(args_str) + strlen(body_str) +
+               strlen(expose_str),
              name,
+             typedatastr,
              args_str,
              body_str,
              expose_str);
@@ -775,7 +801,7 @@ char* emit_function(AST_T* ast, fjb_env_T* env)
   }
 #endif
 
-  return str;
+  return str ? str : strdup("");
 }
 
 char* emit_scope(AST_T* ast, fjb_env_T* env)
@@ -785,7 +811,7 @@ char* emit_scope(AST_T* ast, fjb_env_T* env)
   char* str;
   TEMPLATE(braced, str, strlen(body_str), body_str);
 
-  return str;
+  return str ? str : strdup("");
 }
 
 char* emit_signature(AST_T* ast, fjb_env_T* env)
@@ -849,7 +875,7 @@ char* emit_state(AST_T* ast, fjb_env_T* env)
     }
   }
 
-  return str;
+  return str ? str : strdup("");
 }
 
 char* emit_binop(AST_T* ast, fjb_env_T* env)
@@ -872,7 +898,15 @@ char* emit_binop(AST_T* ast, fjb_env_T* env)
   if (!rightstr)
     rightstr = strdup("");
 
-  if (ast->token) {
+  char* tokstr = 0;
+
+  if (ast->left->type == AST_DATA_TYPE || ast->right->type == AST_DATA_TYPE)
+    tokstr = strdup(" ");
+
+  if (!tokstr && ast->token && ast->token->value)
+    tokstr = strdup(ast->token->value);
+
+  if (ast->token && tokstr) {
     if (ast->token->type == TOKEN_OPTIONAL_CHAIN) {
       TEMPLATE(
         optional_chain, str, (strlen(leftstr) * 3) + (strlen(rightstr) * 3) + 1, leftstr, rightstr);
@@ -880,17 +914,20 @@ char* emit_binop(AST_T* ast, fjb_env_T* env)
       if (ast->token->type == TOKEN_DOT || ast->token->type == TOKEN_COMMA ||
           ast->token->type == TOKEN_PLUS || ast->token->type == TOKEN_OPTIONAL_CHAIN) {
         str = str_append(&str, leftstr);
-        str = str_append(&str, ast->token->value);
+        str = str_append(&str, tokstr);
         str = str_append(&str, rightstr);
       } else {
         str = str_append(&str, leftstr);
         str = str_append(&str, " ");
-        str = str_append(&str, ast->token->value);
+        str = str_append(&str, tokstr);
         str = str_append(&str, " ");
         str = str_append(&str, rightstr);
       }
     }
   }
+
+  if (tokstr)
+    free(tokstr);
 
   return str ? str : strdup("");
 }
@@ -961,7 +998,7 @@ char* emit_object(AST_T* ast, fjb_env_T* env)
 
   str = str_append(&str, "}");
 
-  return str;
+  return str ? str : strdup("");
 }
 
 char* emit_try(AST_T* ast, fjb_env_T* env)
@@ -995,7 +1032,7 @@ char* emit_class(AST_T* ast, fjb_env_T* env)
            options_str,
            bodystr);
 
-  return str;
+  return str ? str : strdup("");
 }
 
 char* emit_condition(AST_T* ast, fjb_env_T* env)
@@ -1036,7 +1073,7 @@ char* emit_condition(AST_T* ast, fjb_env_T* env)
     str = str_append(&str, " else ");
   }
 
-  return str;
+  return str ? str : strdup("");
 }
 
 char* emit_switch(AST_T* ast, fjb_env_T* env)
@@ -1052,7 +1089,7 @@ char* emit_switch(AST_T* ast, fjb_env_T* env)
   if (body_str)
     free(body_str);
 
-  return str;
+  return str ? str : strdup("");
 }
 
 char* emit_noop(AST_T* ast, fjb_env_T* env)
@@ -1100,5 +1137,5 @@ char* emit_do(AST_T* ast, fjb_env_T* env)
   if (rightstr)
     free(rightstr);
 
-  return str;
+  return str ? str : strdup("");
 }

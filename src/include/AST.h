@@ -29,6 +29,7 @@ typedef struct FJB_AST_STRUCT
   struct FJB_AST_STRUCT* condition;
   struct FJB_AST_STRUCT* module_root;
   struct FJB_AST_STRUCT* name_ast;
+  struct FJB_AST_STRUCT* typedata;
   token_T* token;
 
   int int_value;

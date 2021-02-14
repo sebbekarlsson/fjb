@@ -6,6 +6,7 @@ typedef struct FJB_LEXER_STRUCT
 {
   char* source;
   unsigned int source_size;
+  unsigned int is_using_ts;
   char c;
   char cstr[2];
   unsigned int i;

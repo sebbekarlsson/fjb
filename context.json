@@ -1,5 +1,9 @@
 {
     "tokenTypes": [
+        "TOKEN_TYPE_STRING",
+        "TOKEN_TYPE_NUMBER",
+        "TOKEN_PUBLIC",
+        "TOKEN_PRIVATE",
         "TOKEN_ID",
         "TOKEN_LBRACE",
         "TOKEN_RBRACE",
@@ -54,6 +58,7 @@
         "TOKEN_ELSE",
         "TOKEN_FOR",
         "TOKEN_FUNCTION",
+        "TOKEN_INTERFACE",
         "TOKEN_TRY",
         "TOKEN_CATCH",
         "TOKEN_FINALLY",
@@ -99,11 +104,13 @@
         "TOKEN_TEMPLATE_STRING"
     ],
     "astEnums": [
+        "AST_DATA_TYPE",
         "AST_CASE",
         "AST_BOOL",
         "AST_ARROW_DEFINITION",
         "AST_CALL",
         "AST_FUNCTION",
+        "AST_INTERFACE",
         "AST_ARRAY",
         "AST_STRING",
         "AST_INT",

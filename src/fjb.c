@@ -7,6 +7,7 @@
 #include "include/io.h"
 #include "include/js/headers.js.h"
 #include "include/js/jsx_headers.js.h"
+#include "include/js/optional_chain_headers.js.h"
 #include "include/lexer.h"
 #include "include/list.h"
 #include "include/parser.h"
@@ -109,6 +110,9 @@ compiler_result_T* _fjb()
 
 compiler_result_T* fjb()
 {
+  if (!FJB_ENV->filepath)
+    return 0;
+
   if (FJB_ENV->filepath)
     fjb_set_filepath(fjb_call_all_hooks(HOOK_RECEIVE_FILEPATH, FJB_ENV->filepath, FJB_ENV));
 
@@ -166,6 +170,10 @@ char* fjb_get_headers(fjb_env_T* env)
   char* str = 0;
 
   str = str_append(&str, strdup((char*)_tmp_headers_js));
+
+  if (FJB_ENV->is_using_optional_chain) {
+    str = str_append(&str, strdup((char*)_tmp_optional_chain_headers_js));
+  }
 
   if (FJB_ENV->is_using_jsx) {
     str = str_append(&str, strdup((char*)_tmp_jsx_headers_js));

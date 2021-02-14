@@ -7,6 +7,7 @@
 typedef struct FJB_ENV_STRUCT
 {
   unsigned int is_using_jsx;
+  unsigned int is_using_optional_chain;
   unsigned int aliased_import;
   unsigned long int level;
   unsigned long int ticks;
