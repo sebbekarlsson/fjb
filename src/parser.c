@@ -3,8 +3,8 @@
 #include "include/fjb.h"
 #include "include/gc.h"
 #include "include/io.h"
-#include "include/jsx.h"
 #include "include/node.h"
+#include "include/parse_jsx.h"
 #include "include/parse_typescript.h"
 #include "include/string_utils.h"
 #include <stdio.h>
