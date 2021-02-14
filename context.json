@@ -2,6 +2,8 @@
     "tokenTypes": [
         "TOKEN_TYPE_STRING",
         "TOKEN_TYPE_NUMBER",
+        "TOKEN_PUBLIC",
+        "TOKEN_PRIVATE",
         "TOKEN_ID",
         "TOKEN_LBRACE",
         "TOKEN_RBRACE",

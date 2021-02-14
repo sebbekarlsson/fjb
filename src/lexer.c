@@ -613,6 +613,10 @@ token_T* lexer_switch_id(lexer_T* lexer, token_T* token)
     token->type = TOKEN_EXTENDS;
   else if (strcmp(token->value, "get") == 0)
     token->type = TOKEN_GET;
+  else if (strcmp(token->value, "public") == 0)
+    token->type = TOKEN_PUBLIC;
+  else if (strcmp(token->value, "private") == 0)
+    token->type = TOKEN_PRIVATE;
 
   if (0 && lexer->is_using_ts) {
     if (strcmp(token->value, "string") == 0)

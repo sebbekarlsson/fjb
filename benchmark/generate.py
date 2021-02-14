@@ -6,6 +6,7 @@ import json
 import matplotlib.pyplot as plt
 import base64
 from argparse import ArgumentParser
+from functools import reduce
 
 parser = ArgumentParser()
 parser.add_argument(
@@ -107,7 +108,27 @@ BENCHMARKS = [
     create_mark(
         "React project with JSX",
         '/tests/src/test_projects/with_react/index.jsx'
-    )
+    ),
+    create_mark(
+        "Importing cookie banner (dobarkod/cookie-banner)",
+        '/tests/src/test_projects/cookie_banner/index.js'
+    ),
+    create_mark(
+        "Simple regex",
+        '/tests/src/test_projects/regex/index.js'
+    ),
+    create_mark(
+        "Array access",
+        '/tests/src/test_projects/array_access/index.js'
+    ),
+    create_mark(
+        "Simple bundle with zero imports",
+        '/tests/src/test_projects/noimports/index.js'
+    ),
+    create_mark(
+        "Escaped strings",
+        '/tests/src/test_projects/strings/index.js'
+    ),
 ]
 
 
@@ -188,7 +209,51 @@ def generate_graph(mark):
     return filename
 
 
+def generate_overview_graph(marks):
+    plt.figure()
+
+    data = {}
+
+    for mark in marks:
+        for r in mark['runs']:
+            if r['title'] not in data:
+                data[r['title']] = []
+            data[r['title']].append(r)
+
+    graph_data = dict(zip(data.keys(), [{} for x in data.keys()]))
+
+    for k, v in data.items():
+        times = list(map(lambda x: x['time'], v))
+        average_time = reduce(lambda a, b: a + b, times) / len(times)
+        graph_data[k]['average_time'] = average_time
+
+        sizes = list(map(lambda x: x['size'], v))
+        average_size = reduce(lambda a, b: a + b, sizes) / len(sizes)
+        graph_data[k]['average_size'] = average_size
+
+    x = data.keys()
+    y = [graph_data[k]['average_time'].microseconds for k in x]
+    y2 = [graph_data[k]['average_size'] for k in x]
+
+    C = 48 / 255
+    colors = [(C, C, C) for k in x]
+
+    plt.subplot(1, 2, 1)
+    plt.bar(x, y, label="Average time (microseconds)", color=colors)
+    plt.legend()
+    plt.subplot(1, 2, 2)
+    plt.bar(x, y2, label="Average output size (bytes)", color=colors)
+    plt.legend()
+
+    plt.tight_layout()
+    plt.savefig(
+        '{}/{}'.format(GRAPH_DIR, "overview.svg"), dpi=99, transparent=True)
+
+    print(graph_data)
+
+
 def generate_graphs(marks):
+    generate_overview_graph(marks)
     return list(map(generate_graph, marks))
 
 

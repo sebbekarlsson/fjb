@@ -270,6 +270,13 @@ AST_T* parser_parse_id(parser_T* parser, parser_options_T options)
     parser_eat(parser, TOKEN_ID);
   }
 
+  if (options.parent &&
+      (options.parent->type == AST_CALL || options.parent->type == AST_CLASS ||
+       options.parent->type == AST_FUNCTION) &&
+      parser->lexer->is_using_ts && parser->token->type == TOKEN_COLON) {
+    ast->typedata = parser_parse_typehints(parser, options);
+  }
+
   gc_mark(parser->env->GC, ast);
 
   return ast;
@@ -465,6 +472,12 @@ AST_T* parser_parse_assignment(parser_T* parser, parser_options_T options, AST_T
 
 AST_T* parser_parse_state(parser_T* parser, parser_options_T options)
 {
+  if (parser->lexer->is_using_ts &&
+      (parser->token->type == TOKEN_PUBLIC || parser->token->type == TOKEN_PRIVATE)) {
+    parser_eat(parser, parser->token->type);
+    return parser_parse_statement_or_expr(parser, options);
+  }
+
   AST_T* ast = init_ast_line(AST_STATE, parser->lexer->line);
   ast->parent = options.parent;
   ast->token = token_clone(parser->token);
@@ -477,7 +490,11 @@ AST_T* parser_parse_state(parser_T* parser, parser_options_T options)
     if (parser->token->type == TOKEN_DEFAULT) {
       parser_eat(parser, TOKEN_DEFAULT);
     }
-    ast->value = parser_parse_expr(parser, options);
+    if (parser->token->type == TOKEN_CLASS) {
+      ast->value = parser_parse_statement_or_expr(parser, options);
+    } else {
+      ast->value = parser_parse_expr(parser, options);
+    }
 
     if (ast->value && (ast->token->type == TOKEN_EXPORT || ast->token->type == TOKEN_DEFAULT))
       ast->value->exported = 1;
@@ -515,6 +532,7 @@ AST_T* parser_parse_try(parser_T* parser, parser_options_T options)
 AST_T* parser_parse_class(parser_T* parser, parser_options_T options)
 {
   AST_T* ast = init_ast_line(AST_CLASS, parser->lexer->line);
+  ast->parent = options.parent;
   ast->token = token_clone(parser->token);
   ast->options = NEW_STACK;
   parser_eat(parser, TOKEN_CLASS);
@@ -529,7 +547,9 @@ AST_T* parser_parse_class(parser_T* parser, parser_options_T options)
   }
 
   parser_eat(parser, TOKEN_LBRACE);
+  options.parent = ast;
   ast->body = parser_parse(parser, options);
+  options.parent = ast->parent;
   parser_eat(parser, TOKEN_RBRACE);
 
   gc_mark(parser->env->GC, ast);
@@ -873,7 +893,7 @@ AST_T* parser_parse_function(parser_T* parser, parser_options_T options)
 
     parser_eat(parser, TOKEN_RPAREN);
 
-    if (parser->token->type == TOKEN_COLON) {
+    if (parser->token->type == TOKEN_COLON && parser->lexer->is_using_ts) {
       ast->typedata = parser_parse_typehints(parser, options);
     }
 
@@ -894,6 +914,8 @@ AST_T* parser_parse_function(parser_T* parser, parser_options_T options)
   }
 
   gc_mark(parser->env->GC, ast);
+
+  options.parent = ast->parent;
 
   return ast;
 }
@@ -942,14 +964,21 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
     parser_eat(parser, TOKEN_RPAREN);
     left = expr;
 
-    while (parser->token->type == TOKEN_LPAREN) {
-      AST_T* ast_call = parser_parse_call(parser, options);
-      ast_call->parent = options.parent;
-      if (left && left->name) {
-        ast_call->name = strdup(left->name);
+    while (parser->token->type == TOKEN_LPAREN || parser->token->type == TOKEN_LBRACKET) {
+      if (parser->token->type == TOKEN_LPAREN) {
+        AST_T* ast_call = parser_parse_call(parser, options);
+        ast_call->parent = options.parent;
+        if (left && left->name) {
+          ast_call->name = strdup(left->name);
+        }
+        ast_call->left = left;
+        left = ast_call;
+      } else {
+        AST_T* ast_arr = parser_parse_array(parser, options);
+        ast_arr->parent = options.parent;
+        ast_arr->left = left;
+        left = ast_arr;
       }
-      ast_call->left = left;
-      left = ast_call;
     }
   }
 
@@ -1003,6 +1032,8 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
     case TOKEN_IN:
     case TOKEN_OF:
     case TOKEN_GET:
+    case TOKEN_PUBLIC:
+    case TOKEN_PRIVATE:
     case TOKEN_FOR: left = parser_parse_id(parser, options); break;
     case TOKEN_INT: left = parser_parse_int(parser, options); break;
     case TOKEN_INT_MIN: left = parser_parse_int_min(parser, options); break;
@@ -1239,6 +1270,7 @@ AST_T* parser_parse_expr(parser_T* parser, parser_options_T options)
   }
 
   while (parser->token->type == TOKEN_OPTIONAL_CHAIN) {
+    parser->env->is_using_optional_chain = 1;
     binop = init_ast_line(AST_BINOP, parser->lexer->line);
     binop->parent = options.parent;
     binop->left = left;
@@ -1309,6 +1341,8 @@ AST_T* parser_parse_statement(parser_T* parser, parser_options_T options)
     case TOKEN_VOID:
     case TOKEN_ASYNC:
     case TOKEN_AWAIT:
+    case TOKEN_PUBLIC:
+    case TOKEN_PRIVATE:
     // case TOKEN_DEFAULT:
     case TOKEN_EXTENDS:
     case TOKEN_GET:
@@ -1389,6 +1423,7 @@ AST_T* parser_parse_call(parser_T* parser, parser_options_T options)
 {
   AST_T* ast_call = init_ast_line(AST_CALL, parser->lexer->line);
   ast_call->parent = options.parent;
+  options.parent = ast_call;
   options.stop_token = TOKEN_COMMA;
   ast_call->list_value = parse_args(parser, options);
   options.stop_token = -1;
@@ -1407,10 +1442,13 @@ AST_T* parser_parse_call(parser_T* parser, parser_options_T options)
     } else {
       ast_call->body = parser_parse_statement_or_expr(parser, options);
     }
+  } else if (parser->token->type == TOKEN_COLON && parser->lexer->is_using_ts) {
+    ast_call->typedata = parser_parse_typehints(parser, options);
   }
 
   if (parser->token->type == TOKEN_LBRACE) {
     ast_call->type = AST_CLASS_FUNCTION;
+
     if (parser->token->type == TOKEN_LBRACE) {
       parser_eat(parser, TOKEN_LBRACE);
       if (parser->token->type != TOKEN_RBRACE) {
@@ -1421,6 +1459,8 @@ AST_T* parser_parse_call(parser_T* parser, parser_options_T options)
   }
 
   gc_mark(parser->env->GC, ast_call);
+
+  options.parent = ast_call->parent;
 
   return ast_call;
 }
