@@ -44,6 +44,7 @@ fjb index.js
 - [x] Aliased imports
 - [x] Wildcard imports
 - [x] JSX support
+- [x] TypeScript support (currently unstable and under development)
 - [x] Importing JSON
 - [x] Importing CSS
 - [x] Importing & transpiling SCSS
@@ -54,7 +55,6 @@ fjb index.js
 - [x] Importing _anything_, even when it's not exported, no matter how deeply nested it is
 
 ### Planned Features
-- [ ] TypeScript support
 - [ ] Lazy imports
 
 ## Example
@@ -141,9 +141,8 @@ make install
 ### What if I find a bug?
 > If you find a bug, please report it here: [https://github.com/sebbekarlsson/fjb/issues](https://github.com/sebbekarlsson/fjb/issues)
 
-### When will TypeScript support be added?
-> The process of implementing this will come soon,  
-> it's important that we have a stable foundation first.
+### Does it support Typescript?
+> Yes, but this feature is under development... so expect bugs.
 
 ### What license is FJB under?
 > GPL-3.0, [LICENSE.md](LICENSE.md)
