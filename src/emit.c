@@ -406,9 +406,9 @@ char* emit_arrow_definition(AST_T* ast, fjb_env_T* env)
   char* str = 0;
 
   char* args_str = emit_args(ast->list_value, env);
-  char* bodystr = emit(ast->body, env);
+  char* bodystr = ast->body ? emit(ast->body, env) : strdup("");
 
-  if (ast->body && ast->body->type == AST_COMPOUND) {
+  if ((ast->body && ast->body->type == AST_COMPOUND) || !ast->body) {
     TEMPLATE(arrow_definition, str, strlen(args_str) + strlen(bodystr), args_str, bodystr);
   } else if (ast->body) {
     TEMPLATE(arrow_definition_no_brace, str, strlen(args_str) + strlen(bodystr), args_str, bodystr);
@@ -444,29 +444,34 @@ char* emit_assignment(AST_T* ast, fjb_env_T* env)
     return strdup("");
   }
 
-  if (ast->not_exported == 0) {
-    if ((ast->parent && ast->parent->type == AST_FUNCTION && env->imports && ast->name &&
-         ast->flags) ||
-        ast->exported) {
+  unsigned int imported = ast->name && map_get(env->imports, ast->name) != 0;
+  if (ast->not_exported == 0 || imported) {
+    if ((env->imports && ast->name && ast->flags) || (ast->exported || imported)) {
       TEMPLATE(expose_def, expose_str, strlen(ast->name) * 2, ast->name, ast->name);
     }
   }
+
+  if (!expose_str)
+    expose_str = strdup("");
 
   if (!valuestr)
     valuestr = strdup("");
 
   TEMPLATE(assignment,
            str,
-           strlen(valuestr) + (expose_str ? strlen(expose_str) : 0) + strlen(typedatastr),
+           strlen(valuestr) + (strlen(expose_str)) + strlen(typedatastr),
            typedatastr,
            valuestr,
-           expose_str ? expose_str : "");
+           expose_str);
 
   if (valuestr)
     free(valuestr);
 
   if (typedatastr)
     free(typedatastr);
+
+  if (expose_str)
+    free(expose_str);
 
   return str ? str : strdup("");
 }

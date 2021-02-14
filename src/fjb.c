@@ -13,6 +13,7 @@
 #include "include/parser.h"
 #include "include/plugin.h"
 #include "include/string_utils.h"
+#include "include/timer.h"
 #include "include/visitor.h"
 #include <stdio.h>
 #include <string.h>
@@ -37,12 +38,14 @@ compiler_result_T* _fjb()
 
   /* ==== Lexing ==== */
   lexer_T* lexer = init_lexer(FJB_ENV->source, FJB_ENV->filepath);
+  FJB_ENV->lexer = lexer;
 #ifdef DEBUG
   printf("/* Lexer done. */\n");
 #endif
 
   /* ==== Parsing ==== */
   parser_T* parser = init_parser(lexer, FJB_ENV);
+  FJB_ENV->parser = parser;
   parser_options_T options = EMPTY_PARSER_OPTIONS;
   AST_T* root = parser_parse(parser, options);
 #ifdef DEBUG
@@ -112,6 +115,8 @@ compiler_result_T* fjb()
 {
   if (!FJB_ENV->filepath)
     return 0;
+
+  timer_thread_start();
 
   if (FJB_ENV->filepath)
     fjb_set_filepath(fjb_call_all_hooks(HOOK_RECEIVE_FILEPATH, FJB_ENV->filepath, FJB_ENV));

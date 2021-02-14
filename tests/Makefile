@@ -1,7 +1,7 @@
 exec = test.out
 sources = $(wildcard src/*.c)
 objects = $(sources:.c=.o)
-flags = -I$$HOME/.local/include -I./../src/include/ -I./external/libjson/src/include -g -Wall -lm -Wl,--no-as-needed -ldl -fPIC -rdynamic -L$$HOME/.local/lib -lfjb -lhashmap -ljson -lscss
+flags = -I$$HOME/.local/include -I./../src/include/ -I./external/libjson/src/include -g -Wall -lm -Wl,--no-as-needed -ldl -fPIC -rdynamic -L$$HOME/.local/lib -lfjb -lhashmap -ljson -lscss -lpthread
 
 $(exec): $(objects) libfjb.a
 	gcc $(objects) $(flags) -o $(exec)

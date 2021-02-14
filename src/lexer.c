@@ -32,6 +32,7 @@ void lexer_advance(lexer_T* lexer)
 {
   if (lexer->c == '\n') {
     lexer->line += 1;
+    lexer->x = 0;
   }
 
   if (lexer->c != '\0' && lexer->i < lexer->source_size) {
@@ -40,6 +41,7 @@ void lexer_advance(lexer_T* lexer)
 
     lexer->cstr[0] = lexer->c;
     lexer->cstr[1] = '\0';
+    lexer->x += 1;
   }
 }
 

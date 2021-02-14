@@ -99,6 +99,10 @@ BENCHMARKS = [
         '/tests/src/test_projects/with_lodash/index.js'
     ),
     create_mark(
+        "Importing `hljs` from hightlight.min.js, with tree shaking.",
+        '/tests/src/test_projects/highlightjs/index.js'
+    ),
+    create_mark(
         "Require `jquery`", '/tests/src/test_projects/with_jquery/index.js'
     ),
     create_mark(
