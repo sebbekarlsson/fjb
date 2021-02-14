@@ -190,6 +190,7 @@ AST_T* new_compound(AST_T* lookup, fjb_env_T* env)
 
   AST_T* parent = 0;
 
+  // TODO: make this prettier
   if (imported_symbols && imported_symbols->size)
     parent = ((AST_T*)imported_symbols->items[0])->parent;
 
@@ -202,6 +203,10 @@ AST_T* new_compound(AST_T* lookup, fjb_env_T* env)
   unsigned int prev = 0;
   unsigned int pushed = 1;
 
+  /**
+   * While we have dependencies to resolve,
+   * then continue fetching more.
+   */
   while ((get_deps(compound, args, env) || (args.saved && args.saved->size != prev)) && pushed) {
     pushed = 0;
     prev = args.saved ? args.saved->size : 0;

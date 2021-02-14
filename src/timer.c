@@ -9,10 +9,17 @@
 
 pthread_t timer_thread;
 
+// the time we allow the compilation to run.
 const int TIME_LIMIT_SECONDS = 4;
 
 extern fjb_env_T* FJB_ENV;
 
+/**
+ * The purpose of this:
+ *  - Strictly prohibit long compilation times
+ *  - Provide an easy way to see where the bundler got stuck
+ *    (if there's a parsing bug etc)
+ */
 void* timer_thread_run(void* ptr)
 {
   time_t start, current;
@@ -56,5 +63,8 @@ void timer_thread_start()
 
   if (pthread_create(&timer_thread, 0, timer_thread_run, 0)) {
     printf("Error creating timer_thread.\n");
+    /**
+     * We dont necessarily need to die here.
+     */
   }
 }
