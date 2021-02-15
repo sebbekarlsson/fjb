@@ -3,7 +3,7 @@
 </p>
 
 <p align='center' style='text-align: center;'>
-  <h1>Fast Javascript Bundler</h1>
+  <h1>Fast JavaScript Bundler</h1>
 </p>
 
 ![Compile and test](https://github.com/sebbekarlsson/fjb/workflows/Compile%20and%20test/badge.svg?branch=master)
@@ -18,7 +18,7 @@
 1. A bundler should not need excessive attention.
 2. A bundler should not get in the way of a developers workflow.
 3. A bundler should be fast.
-4. A bundler should not be written in Javascript / Node.
+4. A bundler should not be written in JavaScript / Node.
 5. Commonly used features among JS developers should be supported out of the box.
 6. The output of the bundler should work everywhere. (to an extent which is possible of course)
 
@@ -146,14 +146,14 @@ make install
 ### How do I create a plugin for it?
 > Have a look at this [guide](PLUGINS.md)
 
-### Will you add support for writing plugins in Javascript?
-> No. I don't think Javascript belongs in a bundler.  
-> The reason why most bundlers today are slow, is because they are written in Javascript.
+### Will you add support for writing plugins in JavaScript?
+> No. I don't think JavaScript belongs in a bundler.  
+> The reason why most bundlers today are slow, is because they are written in JavaScript.
 
 ### What if I find a bug?
 > If you find a bug, please report it here: [https://github.com/sebbekarlsson/fjb/issues](https://github.com/sebbekarlsson/fjb/issues)
 
-### Does it support Typescript?
+### Does it support TypeScript?
 > Yes, but this feature is under development... so expect bugs.
 
 ### How do I change the JSX format?
