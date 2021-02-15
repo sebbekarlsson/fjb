@@ -105,6 +105,7 @@
     ],
     "astEnums": [
         "AST_DATA_TYPE",
+        "AST_GENERIC",
         "AST_CASE",
         "AST_BOOL",
         "AST_ARROW_DEFINITION",

@@ -39,6 +39,11 @@ AST_T* parser_parse_interface(parser_T* parser, parser_options_T options)
     EAT(TOKEN_ID);
   }
 
+  if (parser->token->type == TOKEN_LT) {
+    AST_T* generic = parser_parse_generic(parser, options);
+    list_push(ast->options, generic);
+  }
+
   // extends ... etc
   while (parser->token->type != TOKEN_LBRACE) {
     AST_T* statement = parser_parse_statement(parser, options);
@@ -64,6 +69,20 @@ AST_T* parser_parse_interface(parser_T* parser, parser_options_T options)
   }
 
   EAT(TOKEN_RBRACE);
+
+  return ast;
+}
+
+AST_T* parser_parse_generic(parser_T* parser, parser_options_T options)
+{
+  AST_T* ast = init_ast_line(AST_DATA_TYPE, parser->lexer->line);
+  parser_eat(parser, TOKEN_LT);
+
+  if (parser->token->type != TOKEN_GT) {
+    ast->typedata = parser_parse_typehints(parser, options);
+  }
+
+  parser_eat(parser, TOKEN_GT);
 
   return ast;
 }
@@ -97,6 +116,11 @@ AST_T* parser_parse_hint(parser_T* parser, parser_options_T options)
     default: {
       left = 0;
     }
+  }
+
+  if (left && parser->token->type == TOKEN_LT) {
+    AST_T* generic = parser_parse_generic(parser, options);
+    left->typedata = generic;
   }
 
   return left;
