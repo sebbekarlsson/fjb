@@ -156,6 +156,10 @@ make install
 ### Does it support Typescript?
 > Yes, but this feature is under development... so expect bugs.
 
+### How do I change the JSX format?
+> There's no need to worry about that, FJB knows if you're using React or not,
+> and automatically takes care of it for you.
+
 ### What license is FJB under?
 > GPL-3.0, [LICENSE.md](LICENSE.md)
 
