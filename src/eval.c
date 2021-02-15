@@ -15,18 +15,6 @@ AST_T* eval(visitor_T* visitor, AST_T* ast)
 
 AST_T* eval_name(visitor_T* visitor, AST_T* ast)
 {
-  if (!ast->from_obj && ast->name) {
-    if (strcmp(ast->name, "false") == 0) {
-      AST_T* new_name = init_ast(AST_INT);
-      new_name->int_value = 0;
-      return new_name;
-    } else if (strcmp(ast->name, "true") == 0) {
-      AST_T* new_name = init_ast(AST_INT);
-      new_name->int_value = 1;
-      return new_name;
-    }
-  }
-
   return ast;
 }
 
@@ -49,12 +37,14 @@ static AST_T* _eval_string(char* leftstr, char* rightstr, int token_type)
     case TOKEN_NOT_EQUALS_EQUALS: ast->bool_value = strcmp(leftstr, rightstr) != 0; break;
     case TOKEN_PLUS: {
       char* str = 0;
-      str_append(&str, leftstr);
-      str_append(&str, rightstr);
+      str = str_append(&str, leftstr);
+      str = str_append(&str, rightstr);
       ast->string_value = str;
 
-      if (str)
+      if (str) {
         ast->type = AST_STRING;
+      }
+
     } break;
     default: ast->type = AST_NOOP; break;
   }

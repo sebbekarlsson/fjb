@@ -1,10 +1,14 @@
-import Vue from 'vue';
+const Vue = require('vue/dist/vue.js');
 
 var app = new Vue({
-  render(h)
-  {
-    return h('div', this.hi)
+  el: '#root',
+  data: {
+    message: "hello"
   }
+  /*render(h)
+  {
+    return h('div', "Hello")
+  }*/
 });
 
 console.log(app);

@@ -357,7 +357,7 @@ char* emit_int(AST_T* ast, fjb_env_T* env)
 
 char* emit_bool(AST_T* ast, fjb_env_T* env)
 {
-  return int_to_str(ast->bool_value);
+  return strdup(ast->bool_value ? "true" : "false");
 }
 
 char* emit_int_min(AST_T* ast, fjb_env_T* env)
@@ -445,10 +445,8 @@ char* emit_assignment(AST_T* ast, fjb_env_T* env)
   }
 
   unsigned int imported = ast->name && map_get(env->imports, ast->name) != 0;
-  if (ast->not_exported == 0 || imported) {
-    if ((env->imports && ast->name && ast->flags) || (ast->exported || imported)) {
-      TEMPLATE(expose_def, expose_str, strlen(ast->name) * 2, ast->name, ast->name);
-    }
+  if (ast->exported || (ast->not_exported == 0 && ast->flags && ast->name && imported)) {
+    TEMPLATE(expose_def, expose_str, strlen(ast->name) * 2, ast->name, ast->name);
   }
 
   if (!expose_str)
