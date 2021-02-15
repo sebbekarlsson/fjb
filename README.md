@@ -6,7 +6,7 @@
   <h1>Fast JavaScript Bundler</h1>
 </p>
 
-![Compile and test](https://github.com/sebbekarlsson/fjb/workaflows/Compile%20and%20test/badge.svg?branch=master)
+![Compile and test](https://github.com/sebbekarlsson/fjb/workflows/Compile%20and%20test/badge.svg?branch=master)
 [https://fjbundler.com](https://fjbundler.com)
 
 ## What?
