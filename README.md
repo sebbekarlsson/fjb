@@ -37,6 +37,10 @@
 ```bash
 fjb index.js
 ```
+## What if I want the output in a file?
+```bash
+fjb index.js > dist.js
+```
 
 ### Features
 - [x] Being fast
@@ -52,7 +56,6 @@ fjb index.js
 - [x] [Plugin support](PLUGINS.md)
 - [x] Removing dead code (Tree shaking)
 - [x] Supports package.json
-- [x] Importing _anything_, even when it's not exported, no matter how deeply nested it is
 
 ### Planned Features
 - [ ] Lazy imports
@@ -70,7 +73,16 @@ fjb index.js
 > To see benchmarks, have a look at [benchmarks.md](benchmarks.md) :fire:  
 > You can also view them over at [https://fjbundler.com](https://fjbundler.com)
 
-## Installing
+## Installing the easy way
+### Using apt
+> The easiest way to install FJB is to head over to [releases](https://github.com/sebbekarlsson/fjb/releases) and
+> download a `.deb` file that suits you.  
+> Then you can simply run:
+```bash
+sudo apt install ./<filename>.deb
+```
+
+## Installing the complicated way
 ### Dependencies
 > To build `fjb` you will need the following:
 1. A C compiler (I would suggest gcc)
