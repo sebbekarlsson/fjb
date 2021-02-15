@@ -46,6 +46,12 @@ yarn install
 cd $P
 cd tests
 
+cd src/test_projects/with_vue/
+yarn install
+
+cd $P
+cd tests
+
 ls -lart
 
 ../pull_deps.sh

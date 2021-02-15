@@ -761,7 +761,7 @@ AST_T* parser_parse_object_child(parser_T* parser, parser_options_T options)
     token_T* next_tok = lexer_peek_next_token(parser->lexer);
 
     if (next_tok->type != TOKEN_COLON)
-      return parser_parse_state(parser, options);
+      return parser_parse_expr(parser, options);
   }
 
   AST_T* colon_ass = init_ast_line(AST_COLON_ASSIGNMENT, parser->lexer->line);
@@ -1034,6 +1034,8 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
     case TOKEN_GET:
     case TOKEN_PUBLIC:
     case TOKEN_PRIVATE:
+    case TOKEN_EXTENDS:
+    case TOKEN_IF:
     case TOKEN_FOR: left = parser_parse_id(parser, options); break;
     case TOKEN_INT: left = parser_parse_int(parser, options); break;
     case TOKEN_INT_MIN: left = parser_parse_int_min(parser, options); break;
@@ -1471,9 +1473,10 @@ void parser_eat(parser_T* parser, int token_type)
     token_free(parser->token);
     parser->token = lexer_next(parser->lexer);
   } else {
-    printf("[Parser] (%s):%d: Unexpected token `%s` (%d), was expecting `%s`\n",
+    printf("[Parser] (%s):%d:%d Unexpected token `%s` (%d), was expecting `%s`\n",
            parser->env->filepath,
            parser->lexer->line,
+           parser->lexer->x,
            parser->token->value,
            parser->token->type,
            token_type_to_str(token_type));
