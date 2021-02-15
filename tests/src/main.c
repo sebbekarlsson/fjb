@@ -318,6 +318,18 @@ void test_typescript_interface_extends()
   destroy_fjb_env();
 }
 
+void test_typescript_generic()
+{
+  init_fjb_env();
+  const char* filepath = "./src/test_projects/ts_generics/index.ts";
+
+  MSG();
+
+  AST_T* root = run_get_ast(filepath, 0);
+  assert_node_exists(root, AST_NAME, "book", "test AST_NAME exists.");
+  destroy_fjb_env();
+}
+
 int main(int argc, char* argv[])
 {
   test_es6();
@@ -344,6 +356,7 @@ int main(int argc, char* argv[])
   test_typescript_union();
   test_typescript_intersect();
   test_typescript_interface_extends();
+  test_typescript_generic();
 
   return 0;
 }
