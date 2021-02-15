@@ -21,7 +21,7 @@ TMPL_PATH = PWD + '/benchmark/templates'
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(TMPL_PATH))
 
 ESBUILD_PATH = "/benchmark/node_modules/.bin/esbuild"
-ESBUILD_ARGS = ' --bundle --outfile=./dist.js'
+ESBUILD_ARGS = ' --bundle --define:\'process.env.NODE_ENV=\"dev\"\' --minify --outfile=./dist.js'
 PARCEL_PATH = '/benchmark/node_modules/.bin/parcel build'
 PARCEL_DIST = '/dist/index.js'
 PARCEL_ARGS = ''

@@ -1,5 +1,5 @@
 # Benchmarks
-> These benchmarks were generated at **2021-02-15 14:13:30.380597**
+> These benchmarks were generated at **2021-02-15 14:30:16.779515**
 
 
 
@@ -33,7 +33,7 @@ const g = x > 0 ? { name: "john" } : { name: "sarah" };
 
   
 <details>
-  <summary>FJB - time: 0:00:00.003342, output size: 299 bytes</summary>
+  <summary>FJB - time: 0:00:00.003132, output size: 299 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -47,35 +47,35 @@ const g = x > 0 ? { name: "john" } : { name: "sarah" };
 ````
 > finished in:
 ```
-0:00:00.003342
+0:00:00.003132
 ```
 </details>
 
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.035164, output size: 151 bytes</summary>
+  <summary>esbuild - time: 0:00:00.004113, output size: 65 bytes</summary>
 
 #### Output size
 > The size of the output is:
 ```
-151 bytes
+65 bytes
 ```
 #### Time
 > The command:
 ```
-/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/ternary/index.js  --bundle --outfile=./dist.js
+/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/ternary/index.js  --bundle --define:'process.env.NODE_ENV="dev"' --minify --outfile=./dist.js
 ````
 > finished in:
 ```
-0:00:00.035164
+0:00:00.004113
 ```
 </details>
 
 
   
 <details>
-  <summary>parcel - time: 0:00:00.818072, output size: 1265 bytes</summary>
+  <summary>parcel - time: 0:00:00.518263, output size: 1265 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -89,14 +89,14 @@ const g = x > 0 ? { name: "john" } : { name: "sarah" };
 ````
 > finished in:
 ```
-0:00:00.818072
+0:00:00.518263
 ```
 </details>
 
 
   
 <details>
-  <summary>poi - time: 0:00:01.723440, output size: 4670 bytes</summary>
+  <summary>poi - time: 0:00:01.519767, output size: 4670 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -110,7 +110,7 @@ const g = x > 0 ? { name: "john" } : { name: "sarah" };
 ````
 > finished in:
 ```
-0:00:01.723440
+0:00:01.519767
 ```
 </details>
 
@@ -133,7 +133,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         4239.857
+CPU MHz:                         1000.024
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -178,7 +178,7 @@ xyz("john", "doe");
 
   
 <details>
-  <summary>FJB - time: 0:00:00.002427, output size: 207 bytes</summary>
+  <summary>FJB - time: 0:00:00.007233, output size: 207 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -192,35 +192,35 @@ xyz("john", "doe");
 ````
 > finished in:
 ```
-0:00:00.002427
+0:00:00.007233
 ```
 </details>
 
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.004422, output size: 187 bytes</summary>
+  <summary>esbuild - time: 0:00:00.009957, output size: 89 bytes</summary>
 
 #### Output size
 > The size of the output is:
 ```
-187 bytes
+89 bytes
 ```
 #### Time
 > The command:
 ```
-/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/destruct/index.js  --bundle --outfile=./dist.js
+/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/destruct/index.js  --bundle --define:'process.env.NODE_ENV="dev"' --minify --outfile=./dist.js
 ````
 > finished in:
 ```
-0:00:00.004422
+0:00:00.009957
 ```
 </details>
 
 
   
 <details>
-  <summary>parcel - time: 0:00:00.559232, output size: 1228 bytes</summary>
+  <summary>parcel - time: 0:00:00.541246, output size: 1228 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -234,14 +234,14 @@ xyz("john", "doe");
 ````
 > finished in:
 ```
-0:00:00.559232
+0:00:00.541246
 ```
 </details>
 
 
   
 <details>
-  <summary>poi - time: 0:00:01.560097, output size: 4625 bytes</summary>
+  <summary>poi - time: 0:00:01.502131, output size: 4625 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -255,7 +255,7 @@ xyz("john", "doe");
 ````
 > finished in:
 ```
-0:00:01.560097
+0:00:01.502131
 ```
 </details>
 
@@ -278,7 +278,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         4000.012
+CPU MHz:                         1900.007
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -322,7 +322,7 @@ console.log(r);
 
   
 <details>
-  <summary>FJB - time: 0:00:00.003728, output size: 381 bytes</summary>
+  <summary>FJB - time: 0:00:00.006562, output size: 381 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -336,35 +336,35 @@ console.log(r);
 ````
 > finished in:
 ```
-0:00:00.003728
+0:00:00.006562
 ```
 </details>
 
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.003754, output size: 232 bytes</summary>
+  <summary>esbuild - time: 0:00:00.009033, output size: 76 bytes</summary>
 
 #### Output size
 > The size of the output is:
 ```
-232 bytes
+76 bytes
 ```
 #### Time
 > The command:
 ```
-/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/es6/index.js  --bundle --outfile=./dist.js
+/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/es6/index.js  --bundle --define:'process.env.NODE_ENV="dev"' --minify --outfile=./dist.js
 ````
 > finished in:
 ```
-0:00:00.003754
+0:00:00.009033
 ```
 </details>
 
 
   
 <details>
-  <summary>parcel - time: 0:00:00.552266, output size: 1488 bytes</summary>
+  <summary>parcel - time: 0:00:00.525015, output size: 1488 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -378,14 +378,14 @@ console.log(r);
 ````
 > finished in:
 ```
-0:00:00.552266
+0:00:00.525015
 ```
 </details>
 
 
   
 <details>
-  <summary>poi - time: 0:00:01.545594, output size: 5601 bytes</summary>
+  <summary>poi - time: 0:00:01.523786, output size: 5601 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -399,7 +399,7 @@ console.log(r);
 ````
 > finished in:
 ```
-0:00:01.545594
+0:00:01.523786
 ```
 </details>
 
@@ -422,7 +422,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         4212.543
+CPU MHz:                         935.391
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -465,7 +465,7 @@ console.log(r);
 
   
 <details>
-  <summary>FJB - time: 0:00:00.002530, output size: 340 bytes</summary>
+  <summary>FJB - time: 0:00:00.008931, output size: 340 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -479,35 +479,35 @@ console.log(r);
 ````
 > finished in:
 ```
-0:00:00.002530
+0:00:00.008931
 ```
 </details>
 
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.003912, output size: 214 bytes</summary>
+  <summary>esbuild - time: 0:00:00.013824, output size: 67 bytes</summary>
 
 #### Output size
 > The size of the output is:
 ```
-214 bytes
+67 bytes
 ```
 #### Time
 > The command:
 ```
-/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/alias_imports/index.js  --bundle --outfile=./dist.js
+/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/alias_imports/index.js  --bundle --define:'process.env.NODE_ENV="dev"' --minify --outfile=./dist.js
 ````
 > finished in:
 ```
-0:00:00.003912
+0:00:00.013824
 ```
 </details>
 
 
   
 <details>
-  <summary>parcel - time: 0:00:00.608641, output size: 1383 bytes</summary>
+  <summary>parcel - time: 0:00:00.558755, output size: 1383 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -521,14 +521,14 @@ console.log(r);
 ````
 > finished in:
 ```
-0:00:00.608641
+0:00:00.558755
 ```
 </details>
 
 
   
 <details>
-  <summary>poi - time: 0:00:01.584695, output size: 5354 bytes</summary>
+  <summary>poi - time: 0:00:01.516136, output size: 5354 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -542,7 +542,7 @@ console.log(r);
 ````
 > finished in:
 ```
-0:00:01.584695
+0:00:01.516136
 ```
 </details>
 
@@ -565,7 +565,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         4246.828
+CPU MHz:                         1000.071
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -608,7 +608,7 @@ document.head.appendChild(cssEl);
 
   
 <details>
-  <summary>FJB - time: 0:00:00.002394, output size: 644 bytes</summary>
+  <summary>FJB - time: 0:00:00.009186, output size: 644 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -622,35 +622,35 @@ document.head.appendChild(cssEl);
 ````
 > finished in:
 ```
-0:00:00.002394
+0:00:00.009186
 ```
 </details>
 
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.005183, output size: 249 bytes</summary>
+  <summary>esbuild - time: 0:00:00.014423, output size: 102 bytes</summary>
 
 #### Output size
 > The size of the output is:
 ```
-249 bytes
+102 bytes
 ```
 #### Time
 > The command:
 ```
-/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/css_import/index.js  --bundle --outfile=./dist.js
+/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/css_import/index.js  --bundle --define:'process.env.NODE_ENV="dev"' --minify --outfile=./dist.js
 ````
 > finished in:
 ```
-0:00:00.005183
+0:00:00.014423
 ```
 </details>
 
 
   
 <details>
-  <summary>parcel - time: 0:00:00.712629, output size: 1383 bytes</summary>
+  <summary>parcel - time: 0:00:00.585251, output size: 1383 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -664,14 +664,14 @@ document.head.appendChild(cssEl);
 ````
 > finished in:
 ```
-0:00:00.712629
+0:00:00.585251
 ```
 </details>
 
 
   
 <details>
-  <summary>poi - time: 0:00:01.554258, output size: 18660 bytes</summary>
+  <summary>poi - time: 0:00:01.512521, output size: 18660 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -685,7 +685,7 @@ document.head.appendChild(cssEl);
 ````
 > finished in:
 ```
-0:00:01.554258
+0:00:01.512521
 ```
 </details>
 
@@ -708,7 +708,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         4359.365
+CPU MHz:                         2257.504
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -748,7 +748,7 @@ console.log(people[0].first_name);
 
   
 <details>
-  <summary>FJB - time: 0:00:00.002369, output size: 1358 bytes</summary>
+  <summary>FJB - time: 0:00:00.002995, output size: 1358 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -762,35 +762,35 @@ console.log(people[0].first_name);
 ````
 > finished in:
 ```
-0:00:00.002369
+0:00:00.002995
 ```
 </details>
 
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.003853, output size: 1003 bytes</summary>
+  <summary>esbuild - time: 0:00:00.004477, output size: 519 bytes</summary>
 
 #### Output size
 > The size of the output is:
 ```
-1003 bytes
+519 bytes
 ```
 #### Time
 > The command:
 ```
-/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/json_import/index.js  --bundle --outfile=./dist.js
+/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/json_import/index.js  --bundle --define:'process.env.NODE_ENV="dev"' --minify --outfile=./dist.js
 ````
 > finished in:
 ```
-0:00:00.003853
+0:00:00.004477
 ```
 </details>
 
 
   
 <details>
-  <summary>parcel - time: 0:00:00.562930, output size: 1822 bytes</summary>
+  <summary>parcel - time: 0:00:00.507510, output size: 1822 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -804,14 +804,14 @@ console.log(people[0].first_name);
 ````
 > finished in:
 ```
-0:00:00.562930
+0:00:00.507510
 ```
 </details>
 
 
   
 <details>
-  <summary>poi - time: 0:00:01.557947, output size: 5936 bytes</summary>
+  <summary>poi - time: 0:00:01.526182, output size: 5936 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -825,7 +825,7 @@ console.log(people[0].first_name);
 ````
 > finished in:
 ```
-0:00:01.557947
+0:00:01.526182
 ```
 </details>
 
@@ -848,7 +848,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         4100.836
+CPU MHz:                         1721.467
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -889,28 +889,28 @@ console.log(ceil(25.443));
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.019599, output size: 222632 bytes</summary>
+  <summary>esbuild - time: 0:00:00.021732, output size: 73253 bytes</summary>
 
 #### Output size
 > The size of the output is:
 ```
-222632 bytes
+73253 bytes
 ```
 #### Time
 > The command:
 ```
-/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/with_lodash/index.js  --bundle --outfile=./dist.js
+/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/with_lodash/index.js  --bundle --define:'process.env.NODE_ENV="dev"' --minify --outfile=./dist.js
 ````
 > finished in:
 ```
-0:00:00.019599
+0:00:00.021732
 ```
 </details>
 
 
   
 <details>
-  <summary>FJB - time: 0:00:00.559883, output size: 2115 bytes</summary>
+  <summary>FJB - time: 0:00:00.529139, output size: 2115 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -924,14 +924,14 @@ console.log(ceil(25.443));
 ````
 > finished in:
 ```
-0:00:00.559883
+0:00:00.529139
 ```
 </details>
 
 
   
 <details>
-  <summary>parcel - time: 0:00:00.617848, output size: 94714 bytes</summary>
+  <summary>parcel - time: 0:00:00.583718, output size: 94714 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -945,14 +945,14 @@ console.log(ceil(25.443));
 ````
 > finished in:
 ```
-0:00:00.617848
+0:00:00.583718
 ```
 </details>
 
 
   
 <details>
-  <summary>poi - time: 0:00:01.558475, output size: 549705 bytes</summary>
+  <summary>poi - time: 0:00:01.527919, output size: 549705 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -966,7 +966,7 @@ console.log(ceil(25.443));
 ````
 > finished in:
 ```
-0:00:01.558475
+0:00:01.527919
 ```
 </details>
 
@@ -989,7 +989,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         3500.014
+CPU MHz:                         1000.095
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -1029,28 +1029,28 @@ console.log(hljs);
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.012432, output size: 176203 bytes</summary>
+  <summary>esbuild - time: 0:00:00.011963, output size: 117937 bytes</summary>
 
 #### Output size
 > The size of the output is:
 ```
-176203 bytes
+117937 bytes
 ```
 #### Time
 > The command:
 ```
-/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/highlightjs/index.js  --bundle --outfile=./dist.js
+/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/highlightjs/index.js  --bundle --define:'process.env.NODE_ENV="dev"' --minify --outfile=./dist.js
 ````
 > finished in:
 ```
-0:00:00.012432
+0:00:00.011963
 ```
 </details>
 
 
   
 <details>
-  <summary>FJB - time: 0:00:00.163328, output size: 20114 bytes</summary>
+  <summary>FJB - time: 0:00:00.186483, output size: 20114 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -1064,14 +1064,14 @@ console.log(hljs);
 ````
 > finished in:
 ```
-0:00:00.163328
+0:00:00.186483
 ```
 </details>
 
 
   
 <details>
-  <summary>parcel - time: 0:00:00.572909, output size: 127443 bytes</summary>
+  <summary>parcel - time: 0:00:00.539902, output size: 127443 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -1085,14 +1085,14 @@ console.log(hljs);
 ````
 > finished in:
 ```
-0:00:00.572909
+0:00:00.539902
 ```
 </details>
 
 
   
 <details>
-  <summary>poi - time: 0:00:02.289881, output size: 191544 bytes</summary>
+  <summary>poi - time: 0:00:01.515391, output size: 191544 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -1106,7 +1106,7 @@ console.log(hljs);
 ````
 > finished in:
 ```
-0:00:02.289881
+0:00:01.515391
 ```
 </details>
 
@@ -1129,7 +1129,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         4285.859
+CPU MHz:                         1400.031
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -1169,28 +1169,28 @@ console.log($);
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.015694, output size: 149812 bytes</summary>
+  <summary>esbuild - time: 0:00:00.016009, output size: 89981 bytes</summary>
 
 #### Output size
 > The size of the output is:
 ```
-149812 bytes
+89981 bytes
 ```
 #### Time
 > The command:
 ```
-/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/with_jquery/index.js  --bundle --outfile=./dist.js
+/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/with_jquery/index.js  --bundle --define:'process.env.NODE_ENV="dev"' --minify --outfile=./dist.js
 ````
 > finished in:
 ```
-0:00:00.015694
+0:00:00.016009
 ```
 </details>
 
 
   
 <details>
-  <summary>FJB - time: 0:00:00.297863, output size: 99459 bytes</summary>
+  <summary>FJB - time: 0:00:00.275872, output size: 99459 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -1204,14 +1204,14 @@ console.log($);
 ````
 > finished in:
 ```
-0:00:00.297863
+0:00:00.275872
 ```
 </details>
 
 
   
 <details>
-  <summary>parcel - time: 0:00:00.636056, output size: 90592 bytes</summary>
+  <summary>parcel - time: 0:00:00.584072, output size: 90592 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -1225,14 +1225,14 @@ console.log($);
 ````
 > finished in:
 ```
-0:00:00.636056
+0:00:00.584072
 ```
 </details>
 
 
   
 <details>
-  <summary>poi - time: 0:00:02.818234, output size: 143057 bytes</summary>
+  <summary>poi - time: 0:00:01.534778, output size: 143057 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -1246,7 +1246,7 @@ console.log($);
 ````
 > finished in:
 ```
-0:00:02.818234
+0:00:01.534778
 ```
 </details>
 
@@ -1269,7 +1269,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         3100.001
+CPU MHz:                         1284.220
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -1307,28 +1307,28 @@ import React from 'react';
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.008634, output size: 76776 bytes</summary>
+  <summary>esbuild - time: 0:00:00.008126, output size: 25345 bytes</summary>
 
 #### Output size
 > The size of the output is:
 ```
-76776 bytes
+25345 bytes
 ```
 #### Time
 > The command:
 ```
-/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/react_import/index.jsx  --bundle --outfile=./dist.js
+/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/react_import/index.jsx  --bundle --define:'process.env.NODE_ENV="dev"' --minify --outfile=./dist.js
 ````
 > finished in:
 ```
-0:00:00.008634
+0:00:00.008126
 ```
 </details>
 
 
   
 <details>
-  <summary>FJB - time: 0:00:00.059582, output size: 43758 bytes</summary>
+  <summary>FJB - time: 0:00:00.067491, output size: 43758 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -1342,14 +1342,14 @@ import React from 'react';
 ````
 > finished in:
 ```
-0:00:00.059582
+0:00:00.067491
 ```
 </details>
 
 
   
 <details>
-  <summary>parcel - time: 0:00:00.578297, output size: 8574 bytes</summary>
+  <summary>parcel - time: 0:00:00.501925, output size: 8574 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -1363,14 +1363,14 @@ import React from 'react';
 ````
 > finished in:
 ```
-0:00:00.578297
+0:00:00.501925
 ```
 </details>
 
 
   
 <details>
-  <summary>poi - time: 0:00:01.585568, output size: 80699 bytes</summary>
+  <summary>poi - time: 0:00:01.525273, output size: 80699 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -1384,7 +1384,7 @@ import React from 'react';
 ````
 > finished in:
 ```
-0:00:01.585568
+0:00:01.525273
 ```
 </details>
 
@@ -1407,7 +1407,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         4100.246
+CPU MHz:                         1000.078
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -1474,28 +1474,28 @@ render(<App />, document.getElementById("root"));
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.042271, output size: 1105110 bytes</summary>
+  <summary>esbuild - time: 0:00:00.041179, output size: 289816 bytes</summary>
 
 #### Output size
 > The size of the output is:
 ```
-1105110 bytes
+289816 bytes
 ```
 #### Time
 > The command:
 ```
-/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/with_react/index.jsx  --bundle --outfile=./dist.js
+/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/with_react/index.jsx  --bundle --define:'process.env.NODE_ENV="dev"' --minify --outfile=./dist.js
 ````
 > finished in:
 ```
-0:00:00.042271
+0:00:00.041179
 ```
 </details>
 
 
   
 <details>
-  <summary>parcel - time: 0:00:00.753512, output size: 135732 bytes</summary>
+  <summary>parcel - time: 0:00:00.635699, output size: 135732 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -1509,35 +1509,14 @@ render(<App />, document.getElementById("root"));
 ````
 > finished in:
 ```
-0:00:00.753512
+0:00:00.635699
 ```
 </details>
 
 
   
 <details>
-  <summary>FJB - time: 0:00:01.646883, output size: 606148 bytes</summary>
-
-#### Output size
-> The size of the output is:
-```
-606148 bytes
-```
-#### Time
-> The command:
-```
-/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/with_react/index.jsx  > ./dist.js
-````
-> finished in:
-```
-0:00:01.646883
-```
-</details>
-
-
-  
-<details>
-  <summary>poi - time: 0:00:02.282019, output size: 1031602 bytes</summary>
+  <summary>poi - time: 0:00:01.515614, output size: 1031602 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -1551,7 +1530,28 @@ render(<App />, document.getElementById("root"));
 ````
 > finished in:
 ```
-0:00:02.282019
+0:00:01.515614
+```
+</details>
+
+
+  
+<details>
+  <summary>FJB - time: 0:00:01.597075, output size: 606148 bytes</summary>
+
+#### Output size
+> The size of the output is:
+```
+606148 bytes
+```
+#### Time
+> The command:
+```
+/home/ianertson/workspace/fjb/fjb.out /home/ianertson/workspace/fjb/tests/src/test_projects/with_react/index.jsx  > ./dist.js
+````
+> finished in:
+```
+0:00:01.597075
 ```
 </details>
 
@@ -1574,7 +1574,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         4100.063
+CPU MHz:                         1136.190
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -1615,28 +1615,28 @@ console.log(CookieBanner);
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.005806, output size: 14374 bytes</summary>
+  <summary>esbuild - time: 0:00:00.006146, output size: 10306 bytes</summary>
 
 #### Output size
 > The size of the output is:
 ```
-14374 bytes
+10306 bytes
 ```
 #### Time
 > The command:
 ```
-/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/cookie_banner/index.js  --bundle --outfile=./dist.js
+/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/cookie_banner/index.js  --bundle --define:'process.env.NODE_ENV="dev"' --minify --outfile=./dist.js
 ````
 > finished in:
 ```
-0:00:00.005806
+0:00:00.006146
 ```
 </details>
 
 
   
 <details>
-  <summary>FJB - time: 0:00:00.020660, output size: 10349 bytes</summary>
+  <summary>FJB - time: 0:00:00.053386, output size: 10349 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -1650,14 +1650,14 @@ console.log(CookieBanner);
 ````
 > finished in:
 ```
-0:00:00.020660
+0:00:00.053386
 ```
 </details>
 
 
   
 <details>
-  <summary>parcel - time: 0:00:00.621513, output size: 10911 bytes</summary>
+  <summary>parcel - time: 0:00:00.501753, output size: 10911 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -1671,14 +1671,14 @@ console.log(CookieBanner);
 ````
 > finished in:
 ```
-0:00:00.621513
+0:00:00.501753
 ```
 </details>
 
 
   
 <details>
-  <summary>poi - time: 0:00:01.603008, output size: 18546 bytes</summary>
+  <summary>poi - time: 0:00:01.525696, output size: 18546 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -1692,7 +1692,7 @@ console.log(CookieBanner);
 ````
 > finished in:
 ```
-0:00:01.603008
+0:00:01.525696
 ```
 </details>
 
@@ -1715,7 +1715,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         4243.040
+CPU MHz:                         1100.008
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -1756,7 +1756,7 @@ function validateEmail(email) {
 
   
 <details>
-  <summary>FJB - time: 0:00:00.002492, output size: 185 bytes</summary>
+  <summary>FJB - time: 0:00:00.008548, output size: 185 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -1770,35 +1770,35 @@ function validateEmail(email) {
 ````
 > finished in:
 ```
-0:00:00.002492
+0:00:00.008548
 ```
 </details>
 
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.003960, output size: 15 bytes</summary>
+  <summary>esbuild - time: 0:00:00.013866, output size: 12 bytes</summary>
 
 #### Output size
 > The size of the output is:
 ```
-15 bytes
+12 bytes
 ```
 #### Time
 > The command:
 ```
-/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/regex/index.js  --bundle --outfile=./dist.js
+/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/regex/index.js  --bundle --define:'process.env.NODE_ENV="dev"' --minify --outfile=./dist.js
 ````
 > finished in:
 ```
-0:00:00.003960
+0:00:00.013866
 ```
 </details>
 
 
   
 <details>
-  <summary>parcel - time: 0:00:00.557899, output size: 1171 bytes</summary>
+  <summary>parcel - time: 0:00:00.546834, output size: 1171 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -1812,14 +1812,14 @@ function validateEmail(email) {
 ````
 > finished in:
 ```
-0:00:00.557899
+0:00:00.546834
 ```
 </details>
 
 
   
 <details>
-  <summary>poi - time: 0:00:01.553601, output size: 4462 bytes</summary>
+  <summary>poi - time: 0:00:01.514645, output size: 4462 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -1833,7 +1833,7 @@ function validateEmail(email) {
 ````
 > finished in:
 ```
-0:00:01.553601
+0:00:01.514645
 ```
 </details>
 
@@ -1856,7 +1856,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         4235.211
+CPU MHz:                         1099.960
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -1904,7 +1904,7 @@ const d = c[b];
 
   
 <details>
-  <summary>FJB - time: 0:00:00.002705, output size: 359 bytes</summary>
+  <summary>FJB - time: 0:00:00.010073, output size: 359 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -1918,35 +1918,35 @@ const d = c[b];
 ````
 > finished in:
 ```
-0:00:00.002705
+0:00:00.010073
 ```
 </details>
 
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.003811, output size: 154 bytes</summary>
+  <summary>esbuild - time: 0:00:00.013099, output size: 71 bytes</summary>
 
 #### Output size
 > The size of the output is:
 ```
-154 bytes
+71 bytes
 ```
 #### Time
 > The command:
 ```
-/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/array_access/index.js  --bundle --outfile=./dist.js
+/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/array_access/index.js  --bundle --define:'process.env.NODE_ENV="dev"' --minify --outfile=./dist.js
 ````
 > finished in:
 ```
-0:00:00.003811
+0:00:00.013099
 ```
 </details>
 
 
   
 <details>
-  <summary>parcel - time: 0:00:00.570111, output size: 1318 bytes</summary>
+  <summary>parcel - time: 0:00:00.564562, output size: 1318 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -1960,14 +1960,14 @@ const d = c[b];
 ````
 > finished in:
 ```
-0:00:00.570111
+0:00:00.564562
 ```
 </details>
 
 
   
 <details>
-  <summary>poi - time: 0:00:01.560750, output size: 4707 bytes</summary>
+  <summary>poi - time: 0:00:01.533533, output size: 4707 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -1981,7 +1981,7 @@ const d = c[b];
 ````
 > finished in:
 ```
-0:00:01.560750
+0:00:01.533533
 ```
 </details>
 
@@ -2004,7 +2004,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         4297.961
+CPU MHz:                         1500.031
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -2044,7 +2044,7 @@ export function hello() {
 
   
 <details>
-  <summary>FJB - time: 0:00:00.002294, output size: 168 bytes</summary>
+  <summary>FJB - time: 0:00:00.005886, output size: 168 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -2058,35 +2058,35 @@ export function hello() {
 ````
 > finished in:
 ```
-0:00:00.002294
+0:00:00.005886
 ```
 </details>
 
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.003339, output size: 110 bytes</summary>
+  <summary>esbuild - time: 0:00:00.009472, output size: 42 bytes</summary>
 
 #### Output size
 > The size of the output is:
 ```
-110 bytes
+42 bytes
 ```
 #### Time
 > The command:
 ```
-/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/noimports/index.js  --bundle --outfile=./dist.js
+/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/noimports/index.js  --bundle --define:'process.env.NODE_ENV="dev"' --minify --outfile=./dist.js
 ````
 > finished in:
 ```
-0:00:00.003339
+0:00:00.009472
 ```
 </details>
 
 
   
 <details>
-  <summary>parcel - time: 0:00:00.588064, output size: 1242 bytes</summary>
+  <summary>parcel - time: 0:00:00.563842, output size: 1242 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -2100,14 +2100,14 @@ export function hello() {
 ````
 > finished in:
 ```
-0:00:00.588064
+0:00:00.563842
 ```
 </details>
 
 
   
 <details>
-  <summary>poi - time: 0:00:01.568365, output size: 4658 bytes</summary>
+  <summary>poi - time: 0:00:01.521591, output size: 4658 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -2121,7 +2121,7 @@ export function hello() {
 ````
 > finished in:
 ```
-0:00:01.568365
+0:00:01.521591
 ```
 </details>
 
@@ -2144,7 +2144,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         4274.886
+CPU MHz:                         1400.014
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
@@ -2182,7 +2182,7 @@ const pattern = "*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|(";
 
   
 <details>
-  <summary>FJB - time: 0:00:00.002172, output size: 183 bytes</summary>
+  <summary>FJB - time: 0:00:00.006860, output size: 183 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -2196,35 +2196,35 @@ const pattern = "*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|(";
 ````
 > finished in:
 ```
-0:00:00.002172
+0:00:00.006860
 ```
 </details>
 
 
   
 <details>
-  <summary>esbuild - time: 0:00:00.004270, output size: 15 bytes</summary>
+  <summary>esbuild - time: 0:00:00.010493, output size: 12 bytes</summary>
 
 #### Output size
 > The size of the output is:
 ```
-15 bytes
+12 bytes
 ```
 #### Time
 > The command:
 ```
-/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/strings/index.js  --bundle --outfile=./dist.js
+/home/ianertson/workspace/fjb/benchmark/node_modules/.bin/esbuild /home/ianertson/workspace/fjb/tests/src/test_projects/strings/index.js  --bundle --define:'process.env.NODE_ENV="dev"' --minify --outfile=./dist.js
 ````
 > finished in:
 ```
-0:00:00.004270
+0:00:00.010493
 ```
 </details>
 
 
   
 <details>
-  <summary>parcel - time: 0:00:00.599406, output size: 1193 bytes</summary>
+  <summary>parcel - time: 0:00:00.553200, output size: 1193 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -2238,14 +2238,14 @@ const pattern = "*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|(";
 ````
 > finished in:
 ```
-0:00:00.599406
+0:00:00.553200
 ```
 </details>
 
 
   
 <details>
-  <summary>poi - time: 0:00:01.584503, output size: 4468 bytes</summary>
+  <summary>poi - time: 0:00:01.521604, output size: 4468 bytes</summary>
 
 #### Output size
 > The size of the output is:
@@ -2259,7 +2259,7 @@ const pattern = "*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|(";
 ````
 > finished in:
 ```
-0:00:01.584503
+0:00:01.521604
 ```
 </details>
 
@@ -2282,7 +2282,7 @@ CPU family:                      6
 Model:                           158
 Model name:                      Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
 Stepping:                        13
-CPU MHz:                         4099.738
+CPU MHz:                         1000.060
 CPU max MHz:                     5000.0000
 CPU min MHz:                     800.0000
 BogoMIPS:                        4800.00
