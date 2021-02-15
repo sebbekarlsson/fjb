@@ -166,10 +166,6 @@ static AST_T* parse_block_linked_list(parser_T* parser,
 
       if (left) {
         left->right = parse_block_linked_list(parser, types, length, options);
-
-        if (left->right) {
-          left = left->right;
-        }
       }
     }
   }

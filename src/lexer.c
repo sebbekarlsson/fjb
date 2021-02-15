@@ -245,7 +245,7 @@ token_T* lexer_next(lexer_T* lexer)
 
     if (lexer->c == '<') {
       if (lexer_peek(lexer, 1) == '=') {
-        token_T* tok = lexer_advance_token(lexer, init_token(strdup(">="), TOKEN_LT_EQUALS));
+        token_T* tok = lexer_advance_token(lexer, init_token(strdup("<="), TOKEN_LT_EQUALS));
         lexer_advance(lexer);
         return tok;
       }
