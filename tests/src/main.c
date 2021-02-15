@@ -44,6 +44,19 @@ void test_with_lodash()
   destroy_fjb_env();
 }
 
+void test_with_vue()
+{
+  init_fjb_env();
+  const char* filepath = "./src/test_projects/with_vue/index.js";
+
+  MSG();
+
+  AST_T* root = run_get_ast(filepath, 1);
+
+  assert_node_exists(root, AST_STATE, "new", "test AST_STATE exists");
+  destroy_fjb_env();
+}
+
 void test_highlightjs()
 {
   init_fjb_env();
@@ -337,6 +350,7 @@ int main(int argc, char* argv[])
   test_with_lodash();
   test_highlightjs();
   test_with_jquery();
+  test_with_vue();
   test_no_imports();
   test_with_assignment();
   test_strings();
