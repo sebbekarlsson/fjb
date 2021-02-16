@@ -18,7 +18,7 @@ flags += -D DEBUG -pg -Wall -g
 endif
 
 
-$(exec): $(jsheaders) $(gppheaders) $(objects) libjson.a libhashmap.a libscss.a
+$(exec): $(jsheaders) $(gppheaders) $(objects) version.h libjson.a libhashmap.a libscss.a
 	gcc $(objects) $(flags) -g -o $(exec)
 
 libfjb.a: $(objects_no_main)
@@ -49,6 +49,11 @@ libscss.a:
 
 libhashmap.a:
 	cd external/hashmap ; make clean ; make ; make install ; mv ./libhashmap.a ../../.
+
+version.h:
+	mkdir -p .tmp
+	./version.sh > .tmp/$@
+	xxd -i .tmp/$@ | sed 's/\([0-9a-f]\)$$/\0, 0x00/' > src/include/$@
 
 install:
 	make
