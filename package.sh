@@ -40,3 +40,12 @@ $GPP_PATH ./pkg.gpp > $PKGNAME/DEBIAN/control
 echo "Building..."
 dpkg-deb --build $PKGNAME
 echo "Done"
+
+TAG=$PKGNAME-amd64-linux
+
+read -p "Publish $PKGNAME.deb $TAG to Github? (Y/n)" -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+  gh release create $TAG $PKGNAME.deb [flags]
+fi

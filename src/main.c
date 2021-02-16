@@ -1,3 +1,4 @@
+#include "include/cmd.h"
 #include "include/env.h"
 #include "include/fjb.h"
 #include "include/io.h"
@@ -6,23 +7,17 @@
 #include <stdio.h>
 #include <string.h>
 
-/*unsigned int getarg(int argc, char* argv[], const char* key)
-{
-  for (int i = argc == 1 ? 0 : 1; i < argc; i++)
-    if (strcmp(argv[i], key) == 0)
-      return 1;
-
-  return 0;
-}*/
-
-void show_help()
-{
-  printf("Usage:\n"
-         "\tfjb <input-file>\n");
-}
-
 int main(int argc, char* argv[])
 {
+  cmd_opt_T opt = {};
+  opt = cmd_getflag(argc, argv, "--help", &opt);
+  if (opt.key)
+    return cmd_help(opt);
+
+  opt = cmd_getflag(argc, argv, "--version", &opt);
+  if (opt.key)
+    return cmd_version(opt);
+
   init_fjb_env();
   load_plugins();
 
@@ -30,7 +25,8 @@ int main(int argc, char* argv[])
 
   if (!filepath) {
     printf("You have not told me what to do.\n");
-    show_help();
+    printf("--------\n");
+    cmd_help();
     return 0;
   }
 
