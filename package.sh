@@ -47,5 +47,5 @@ read -p "Publish $PKGNAME.deb $TAG to Github? (Y/n)" -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
-  gh release create $TAG $PKGNAME.deb [flags]
+  gh release create $TAG $PKGNAME.deb --title $TAG
 fi
