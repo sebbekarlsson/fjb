@@ -7,3 +7,6 @@
 [submodule "external/scss"]
 	path = external/scss
 	url = https://github.com/sebbekarlsson/scss.git
+[submodule "tests/fjb-samples"]
+	path = tests/fjb-samples
+	url = https://github.com/sebbekarlsson/fjb-samples.git

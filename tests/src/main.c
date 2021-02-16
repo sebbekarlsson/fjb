@@ -8,7 +8,7 @@
 void test_es6()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/es6/index.js";
+  const char* filepath = "fjb-samples/es6/index.js";
 
   MSG();
 
@@ -21,7 +21,7 @@ void test_es6()
 void test_simple()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/simple/index.js";
+  const char* filepath = "fjb-samples/simple/index.js";
 
   MSG();
 
@@ -34,7 +34,7 @@ void test_simple()
 void test_with_lodash()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/with_lodash/index.js";
+  const char* filepath = "fjb-samples/with_lodash/index.js";
 
   MSG();
 
@@ -47,7 +47,7 @@ void test_with_lodash()
 void test_with_vue()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/with_vue/index.js";
+  const char* filepath = "fjb-samples/with_vue/index.js";
 
   MSG();
 
@@ -60,7 +60,7 @@ void test_with_vue()
 void test_highlightjs()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/highlightjs/index.js";
+  const char* filepath = "fjb-samples/highlightjs/index.js";
 
   MSG();
 
@@ -73,7 +73,7 @@ void test_highlightjs()
 void test_with_jquery()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/with_jquery/index.js";
+  const char* filepath = "fjb-samples/with_jquery/index.js";
 
   MSG();
 
@@ -86,7 +86,7 @@ void test_with_jquery()
 void test_no_imports()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/noimports/index.js";
+  const char* filepath = "fjb-samples/noimports/index.js";
 
   MSG();
 
@@ -99,7 +99,7 @@ void test_no_imports()
 void test_with_assignment()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/with_assignments/index.js";
+  const char* filepath = "fjb-samples/with_assignments/index.js";
 
   MSG();
 
@@ -112,7 +112,7 @@ void test_with_assignment()
 void test_strings()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/strings/index.js";
+  const char* filepath = "fjb-samples/strings/index.js";
 
   MSG();
 
@@ -128,7 +128,7 @@ void test_strings()
 void test_regex()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/regex/index.js";
+  const char* filepath = "fjb-samples/regex/index.js";
 
   MSG();
 
@@ -143,7 +143,7 @@ void test_regex()
 void test_class()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/class/index.js";
+  const char* filepath = "fjb-samples/class/index.js";
 
   MSG();
 
@@ -156,7 +156,7 @@ void test_class()
 void test_alias_imports()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/alias_imports/index.js";
+  const char* filepath = "fjb-samples/alias_imports/index.js";
 
   MSG();
 
@@ -169,7 +169,7 @@ void test_alias_imports()
 void test_wildcard_imports()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/wildcard_imports/index.js";
+  const char* filepath = "fjb-samples/wildcard_imports/index.js";
 
   MSG();
 
@@ -182,7 +182,7 @@ void test_wildcard_imports()
 void test_jsx()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/jsx/index.jsx";
+  const char* filepath = "fjb-samples/jsx/index.jsx";
 
   MSG();
 
@@ -195,7 +195,7 @@ void test_jsx()
 void test_jsx_custom()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/jsx_custom/index.jsx";
+  const char* filepath = "fjb-samples/jsx_custom/index.jsx";
 
   MSG();
 
@@ -208,7 +208,7 @@ void test_jsx_custom()
 void test_json_import()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/json_import/index.js";
+  const char* filepath = "fjb-samples/json_import/index.js";
 
   MSG();
 
@@ -220,7 +220,7 @@ void test_json_import()
 void test_css_import()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/css_import/index.js";
+  const char* filepath = "fjb-samples/css_import/index.js";
 
   MSG();
 
@@ -232,7 +232,7 @@ void test_css_import()
 void test_scss_import()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/scss_import/index.js";
+  const char* filepath = "fjb-samples/scss_import/index.js";
 
   MSG();
 
@@ -244,7 +244,7 @@ void test_scss_import()
 void test_destruct()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/destruct/index.js";
+  const char* filepath = "fjb-samples/destruct/index.js";
 
   MSG();
 
@@ -257,7 +257,7 @@ void test_destruct()
 void test_ternary()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/ternary/index.js";
+  const char* filepath = "fjb-samples/ternary/index.js";
 
   MSG();
 
@@ -271,7 +271,7 @@ void test_ternary()
 void test_array_access()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/array_access/index.js";
+  const char* filepath = "fjb-samples/array_access/index.js";
 
   MSG();
 
@@ -286,7 +286,7 @@ void test_array_access()
 void test_typescript_class()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/ts_fib/index.ts";
+  const char* filepath = "fjb-samples/ts_fib/index.ts";
 
   MSG();
 
@@ -298,7 +298,7 @@ void test_typescript_class()
 void test_typescript_union()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/ts_union/index.ts";
+  const char* filepath = "fjb-samples/ts_union/index.ts";
 
   MSG();
 
@@ -310,7 +310,7 @@ void test_typescript_union()
 void test_typescript_intersect()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/ts_intersect/index.ts";
+  const char* filepath = "fjb-samples/ts_intersect/index.ts";
 
   MSG();
 
@@ -322,7 +322,7 @@ void test_typescript_intersect()
 void test_typescript_interface_extends()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/typescript_interface_extends/index.ts";
+  const char* filepath = "fjb-samples/ts_interface_extends/index.ts";
 
   MSG();
 
@@ -334,7 +334,7 @@ void test_typescript_interface_extends()
 void test_typescript_generic()
 {
   init_fjb_env();
-  const char* filepath = "./src/test_projects/ts_generics/index.ts";
+  const char* filepath = "fjb-samples/ts_generics/index.ts";
 
   MSG();
 
