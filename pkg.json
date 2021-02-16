@@ -1,6 +1,6 @@
 {
   "pkgname": "fjb",
-  "version": "0.0-5",
+  "version": "0.0-6",
   "description": "Fast javascript bundler",
   "arch": "amd64"
 }
