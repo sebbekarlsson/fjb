@@ -168,11 +168,11 @@ AST_T* visitor_visit_import(visitor_T* visitor, AST_T* ast, list_T* stack)
   fjb_set_aliased_import(ast->alias != 0);
   free(contents);
 
-  fjb_set_filepath(fjb_call_all_hooks(HOOK_BEFORE_IMPORT, final_file_to_read, FJB_ENV));
+  fjb_set_filepath(fjb_call_all_hooks(HOOK_BEFORE_IMPORT, final_file_to_read));
 
   char* ext = (char*)get_filename_ext(FJB_ENV->filepath);
 
-  compiler_result_T* special = emit_hooks(FJB_ENV, ext, ast->list_value);
+  compiler_result_T* special = emit_hooks(ext, ast->list_value);
 
   FJB_ENV->current_import = ast;
   compiler_result_T* result = special ? special : fjb();
@@ -190,7 +190,7 @@ AST_T* visitor_visit_import(visitor_T* visitor, AST_T* ast, list_T* stack)
     AST_T* dot = new_compound(result->node, FJB_ENV);
 
     ast->node = dot;
-    ast->compiled_value = dot->list_value ? emit(dot, FJB_ENV) : ast->compiled_value;
+    ast->compiled_value = dot->list_value ? emit(dot) : ast->compiled_value;
   }
 
   fjb_set_filepath(prev_filepath);
@@ -223,45 +223,69 @@ AST_T* visitor_visit_assignment(visitor_T* visitor, AST_T* ast, list_T* stack)
     ast->left = visitor_visit(visitor, ast->left, stack);
   if (ast->right)
     ast->right = visitor_visit(visitor, ast->right, stack);
+
+  if (ast->value && ast->left && ast->left->name) {
+    ast->value->encoding = strdup(ast->left->name);
+    ast->value->bool_value = 1;
+  }
+
   if (ast->value)
     ast->value = visitor_visit(visitor, ast->value, stack);
-
-  if (ast->left && ast->left->name && ast->value && ast->value->basename && visitor->root) {
-    if (ast->value->name && strcmp(ast->value->name, "require") == 0) {
-      ast->exported = 1;
-
-      if (!ast->value->compiled_value && FJB_ENV->current_import) {
-        if (!FJB_ENV->current_import->options)
-          FJB_ENV->current_import->options = NEW_STACK;
-        AST_T* ast_name = init_ast(AST_NAME);
-        ast_name->string_value = strdup(ast->left->name);
-        list_push(FJB_ENV->current_import->options, ast_name);
-        map_set(FJB_ENV->current_import->requirements,
-                ast->left->name,
-                init_assignment(ast->left->name, ast_name));
-      }
-    }
-  }
-
-  if (((ast->value && ast->value->dead) || (ast->left && ast->left->dead)) ||
-      (ast->right && ast->right->dead)) {
-    ast->type = AST_NOOP;
-    ast->left = 0;
-    ast->right = 0;
-    ast->flags = 0;
-    return ast->value;
-  }
 
   if (!ast->name && ast->left && ast->left->name) {
     ast->name = strdup(ast->left->name);
   }
 
-  if (ast->left && ast->left->name && strcmp(ast->left->name, "exports") == 0) {
-    if (ast->value && ast->value->type == AST_CALL && ast->value->name) {
+  if (ast->name) {
+    imported_T* im = fjb_get_imported(ast->name);
+
+    if (im) {
+      im->ast = ast;
+      ast->exported = 1;
+    } else if (!ast->exported) {
+      ast->not_exported = 1;
+      if (ast->value)
+        ast->value->not_exported = 1;
+    }
+  }
+
+  if (ast->left && ast->left->name &&
+      (strcmp(ast->left->name, "exports") == 0 || strcmp(ast->left->name, "module") == 0)) {
+    if (ast->value && ast->value->name) {
       if (strcmp(ast->value->name, "require") == 0) {
-        ast = ast->value;
-        return ast;
+        map_unset(FJB_ENV->compiled_imports, ast->value->encoding);
+        AST_T* state = init_ast(AST_STATE);
+        state->string_value = strdup("return");
+        state->value = ast->value;
+        return state;
       }
+    }
+  }
+
+  if (ast->value && ast->value->type == AST_NOOP)
+    return init_ast(AST_NOOP);
+
+  if (ast->left && ast->left->name && ast->value) {
+    if (ast->value->name && strcmp(ast->value->name, "require") == 0) {
+      if ((!ast->value->compiled_value || ast->value->type == AST_NOOP) &&
+          FJB_ENV->current_import) {
+        if (!FJB_ENV->current_import->options)
+          FJB_ENV->current_import->options = NEW_STACK;
+
+        if (strcmp(ast->left->name, "module") != 0) {
+          AST_T* ast_name = init_ast(AST_NAME);
+          ast_name->string_value = strdup(ast->left->name);
+          list_push(FJB_ENV->current_import->options, ast_name);
+          map_set(FJB_ENV->current_import->requirements,
+                  ast->left->name,
+                  init_assignment(ast->left->name, ast_name));
+        }
+      }
+
+      ast->value->left = ast;
+      FJB_ENV->current_import = ast->value;
+      ast->value = 0;
+      return init_ast(AST_NOOP);
     }
   }
 
@@ -273,7 +297,7 @@ AST_T* visitor_visit_assignment(visitor_T* visitor, AST_T* ast, list_T* stack)
     AST_T* assignment = init_assignment(name, rightptr);
     gc_mark(FJB_ENV->GC, assignment);
 
-    list_push(stack, assignment);
+    list_push(stack, assignment); // TODO: get rid of stack
 
     if (assignment->name) {
       map_set(FJB_ENV->map, assignment->name, assignment);
@@ -298,20 +322,7 @@ AST_T* visitor_visit_assignment(visitor_T* visitor, AST_T* ast, list_T* stack)
     }
   }
 
-  if (ast->name) {
-    imported_T* im = (imported_T*)map_get_value(FJB_ENV->imports, ast->name);
-
-    if (im) {
-      im->ast = ast;
-    } else if (!ast->exported) {
-      ast->not_exported = 1;
-      if (ast->value)
-        ast->value->not_exported = 1;
-    }
-  }
-
-  if (ast->name)
-    map_set(FJB_ENV->assignments, ast->name, ast);
+  fjb_register_assignment(ast, ast->name);
 
   return ast;
 }
@@ -462,9 +473,8 @@ AST_T* visitor_visit_class(visitor_T* visitor, AST_T* ast, list_T* stack)
     ast->options = visit_array(visitor, ast->options, stack);
 
   if (ast->name) {
-    map_set(FJB_ENV->map, ast->name, ast);
-    list_push(stack, ast);
-    map_set(FJB_ENV->functions, ast->name, ast);
+    fjb_register_function(ast, ast->name);
+    list_push(stack, ast); // // TODO: get rid of stack
 
     imported_T* im = (imported_T*)map_get_value(FJB_ENV->imports, ast->name);
 
@@ -498,16 +508,15 @@ AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* stack)
         continue;
 
       map_set(FJB_ENV->map, n, child);
-      list_push(stack, child);
+      list_push(stack, child); // TODO: get rid of stack
     }
   }
 
   if (ast->name) {
-    map_set(FJB_ENV->map, ast->name, ast);
-    list_push(stack, ast);
-    map_set(FJB_ENV->functions, ast->name, ast);
+    fjb_register_function(ast, ast->name);
+    list_push(stack, ast); // TODO: get rid of stack
 
-    imported_T* im = (imported_T*)map_get_value(FJB_ENV->imports, ast->name);
+    imported_T* im = fjb_get_imported(ast->name);
 
     if (im) {
       im->ast = ast;
@@ -710,14 +719,31 @@ AST_T* visitor_visit_call(visitor_T* visitor, AST_T* ast, list_T* stack)
       char* base = final_file_to_read ? get_slashed_path(final_file_to_read) : 0;
       ast->basename = base ? strdup(base) : 0;
 
-      if ((base && list_contains_str(FJB_ENV->resolved_imports, base)) ||
-          list_contains_str(FJB_ENV->resolved_imports, str)) {
-        ast->left = 0;
-        ast->dead = 1;
-        ast->type = AST_NOOP;
+      if (!ast->encoding)
+        ast->encoding = strdup(base);
+
+      AST_T* existing = (AST_T*)map_get_value(FJB_ENV->compiled_imports, ast->encoding);
+
+      if (base &&
+          (existing && existing->encoding || (list_contains_str(FJB_ENV->resolved_imports, base) ||
+                                              list_contains_str(FJB_ENV->resolved_imports, str)
+
+                                                )) &&
+          FJB_ENV->current_import) {
+        if (!FJB_ENV->current_import->options)
+          FJB_ENV->current_import->options = NEW_STACK;
+
+        /*AST_T* id = init_ast_name(existing->encoding);
+        AST_T* binop = init_ast(AST_BINOP);
+        binop->left = init_ast(AST_NAME);
+        binop->left->name = strdup(existing->encoding);
+        binop->token = init_token(".", TOKEN_DOT);
+        binop->right = id;
+        list_push(FJB_ENV->current_import->options, binop);
+        map_set(FJB_ENV->current_import->requirements, id->name, init_assignment(id->name, binop));
+        ast->int_value = 1;*/
         return ast;
       }
-      // printf("base:\t\t%s\n", base);
 
       list_push(FJB_ENV->resolved_imports, str);
 
@@ -731,18 +757,14 @@ AST_T* visitor_visit_call(visitor_T* visitor, AST_T* ast, list_T* stack)
         fjb_set_source(contents);
         char* old = FJB_ENV->filepath;
         FJB_ENV->filepath = strdup(final_file_to_read);
-        FJB_ENV->current_import = ast;
+        // FJB_ENV->current_import = ast;
         compiler_result_T* result = fjb(FJB_ENV);
         FJB_ENV->filepath = old;
         ast->compiled_value = strdup(result->stdout);
 
-        if (result && result->headers)
-          ast->headers = strdup(result->headers);
-        else if (!result->headers) {
-          const char* template = "\n/* REQUIRE `%s` */\n";
-          ast->headers = calloc(strlen(final_file_to_read) + strlen(template) + 1, sizeof(char));
-          sprintf(ast->headers, template, final_file_to_read);
-        }
+        ast->headers = result && result->headers ? strdup(result->headers) : strdup("");
+
+        map_set(FJB_ENV->compiled_imports, ast->encoding, ast);
 
         fjb_set_filepath(old);
         ast->node = result->node;
@@ -755,9 +777,7 @@ AST_T* visitor_visit_call(visitor_T* visitor, AST_T* ast, list_T* stack)
 
       free(str);
     } else {
-      ast->dead = 1;
       ast->left = 0;
-      return ast;
     }
   }
 
@@ -833,7 +853,7 @@ AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* stack)
 
   ast->module_root = visitor->root;
 
-  ast = fjb_call_all_hooks(HOOK_BEFORE_EVAL, ast, FJB_ENV);
+  ast = fjb_call_all_hooks(HOOK_BEFORE_EVAL, ast);
 
   switch (ast->type) {
     case AST_ARRAY: ast = visitor_visit_array(visitor, ast, stack); break;
@@ -882,7 +902,7 @@ AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* stack)
     ast->stack_frame = map_copy(FJB_ENV->map);
   }
 
-  ast = fjb_call_all_hooks(HOOK_AFTER_EVAL, ast, FJB_ENV);
+  ast = fjb_call_all_hooks(HOOK_AFTER_EVAL, ast);
 
   return ast;
 }

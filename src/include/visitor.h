@@ -17,6 +17,10 @@ typedef struct FJB_VISITOR_STRUCT
   AST_T* root;
 } visitor_T;
 
+/**
+ * TODO: get rid of the list_T* stack, thing
+ */
+
 visitor_T* init_visitor(parser_T* parser);
 
 AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* stack);

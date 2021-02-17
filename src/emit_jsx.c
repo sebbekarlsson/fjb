@@ -39,7 +39,7 @@ const char* get_create_text_node_string()
   }
 }
 
-char* emit_jsx_template_string(AST_T* ast, fjb_env_T* env)
+char* emit_jsx_template_string(AST_T* ast)
 {
   char* m = "`";
   char* str = 0;
@@ -51,7 +51,7 @@ char* emit_jsx_template_string(AST_T* ast, fjb_env_T* env)
   if (ast->string_value) {
     str = str_append(&str, ast->string_value);
   } else if (ast->expr) {
-    char* v = emit(ast->expr, env);
+    char* v = emit(ast->expr);
     str = str_append(&str, v);
   }
   str = str_append(&str, "}");
@@ -61,7 +61,7 @@ char* emit_jsx_template_string(AST_T* ast, fjb_env_T* env)
   return str;
 }
 
-char* emit_jsx_text(AST_T* ast, fjb_env_T* env)
+char* emit_jsx_text(AST_T* ast)
 {
   char* m = "`";
   char* str = 0;
@@ -72,7 +72,7 @@ char* emit_jsx_text(AST_T* ast, fjb_env_T* env)
   if (ast->string_value) {
     str = str_append(&str, ast->string_value);
   } else if (ast->expr) {
-    char* v = emit(ast->expr, env);
+    char* v = emit(ast->expr);
     str = str_append(&str, v);
   }
   str = str_append(&str, m);
@@ -81,12 +81,12 @@ char* emit_jsx_text(AST_T* ast, fjb_env_T* env)
   return str;
 }
 
-char* emit_jsx_react_body(AST_T* ast, fjb_env_T* env)
+char* emit_jsx_react_body(AST_T* ast)
 {
   char* str = 0;
 
   LOOP_NODES(
-    ast->list_value, i, child, char* childstr = emit_jsx(child, env);
+    ast->list_value, i, child, char* childstr = emit_jsx(child);
 
     if (childstr) {
       str = str_append(&str, childstr);
@@ -98,12 +98,12 @@ char* emit_jsx_react_body(AST_T* ast, fjb_env_T* env)
   return str ? str : strdup("");
 }
 
-char* emit_jsx_body(AST_T* ast, fjb_env_T* env)
+char* emit_jsx_body(AST_T* ast)
 {
   char* str = 0;
 
   LOOP_NODES(
-    ast->list_value, i, child, char* childstr = emit_jsx(child, env);
+    ast->list_value, i, child, char* childstr = emit_jsx(child);
 
     if (childstr) {
       str = str_append(&str, "__jsx_append(parent,");
@@ -117,7 +117,7 @@ char* emit_jsx_body(AST_T* ast, fjb_env_T* env)
   return str ? str : strdup("");
 }
 
-char* emit_jsx_attributes(AST_T* ast, fjb_env_T* env)
+char* emit_jsx_attributes(AST_T* ast)
 {
   char* str = 0;
 
@@ -138,7 +138,7 @@ char* emit_jsx_attributes(AST_T* ast, fjb_env_T* env)
       len = TEMPLATE_LISTENER_LEN;
     }
 
-    char* value = emit(child->value, env);
+    char* value = emit(child->value);
     char* buff = calloc(strlen(name) + strlen(value) + len + 1, sizeof(char));
     sprintf(buff, template, name, value);
 
@@ -149,7 +149,7 @@ char* emit_jsx_attributes(AST_T* ast, fjb_env_T* env)
   return str ? str : strdup("");
 }
 
-char* emit_jsx_call(AST_T* ast, fjb_env_T* env)
+char* emit_jsx_call(AST_T* ast)
 {
   char* value = 0;
 
@@ -160,22 +160,22 @@ char* emit_jsx_call(AST_T* ast, fjb_env_T* env)
   AST_T* state = init_ast(AST_STATE);
   state->string_value = strdup("new");
   state->value = call_ast;
-  gc_mark(env->GC, state);
+  gc_mark(FJB_ENV->GC, state);
 
-  value = emit(state, env);
+  value = emit(state);
 
   return value;
 }
 
-char* emit_jsx_element(AST_T* ast, fjb_env_T* env)
+char* emit_jsx_element(AST_T* ast)
 {
   const char* TEMPLATE = (const char*)(ast->ptr ? _tmp_jsx_ptr_js : _tmp_jsx_js);
   unsigned int TEMPLATE_LEN = ast->ptr ? _tmp_jsx_js_len : _tmp_jsx_js_len;
   char* name = ast_get_string(ast);
-  char* func_name = ast->ptr ? emit_jsx_call(ast, env) : strdup(get_create_element_string());
-  char* attr = emit_jsx_attributes(ast, env);
-  char* body = ast->body ? emit_jsx_body(ast->body, env) : strdup("");
-  char* call_args = ast->options && ast->options->size ? emit_tuple(ast->options, env) : strdup("");
+  char* func_name = ast->ptr ? emit_jsx_call(ast) : strdup(get_create_element_string());
+  char* attr = emit_jsx_attributes(ast);
+  char* body = ast->body ? emit_jsx_body(ast->body) : strdup("");
+  char* call_args = ast->options && ast->options->size ? emit_tuple(ast->options) : strdup("");
   char* value = calloc(TEMPLATE_LEN + strlen(name) + strlen(call_args) + strlen(func_name) +
                          strlen(attr) + strlen(body) + 1,
                        sizeof(char));
@@ -185,14 +185,14 @@ char* emit_jsx_element(AST_T* ast, fjb_env_T* env)
   return value;
 }
 
-char* emit_jsx_react_element(AST_T* ast, fjb_env_T* env)
+char* emit_jsx_react_element(AST_T* ast)
 {
   const char* TEMPLATE = (const char*)(ast->ptr ? _tmp_jsx_react_ptr_js : _tmp_jsx_react_js);
   unsigned int TEMPLATE_LEN = ast->ptr ? _tmp_jsx_react_ptr_js_len : _tmp_jsx_react_js_len;
   char* name = ast_get_string(ast);
-  char* func_name = name; // ast->ptr ? emit_jsx_call(ast, env) : name;
-  char* body = ast->body ? emit_jsx_react_body(ast->body, env) : strdup("");
-  char* attr = ast->options && ast->options->size ? emit_tuple(ast->options, env) : strdup("");
+  char* func_name = name; // ast->ptr ? emit_jsx_call(ast) : name;
+  char* body = ast->body ? emit_jsx_react_body(ast->body) : strdup("");
+  char* attr = ast->options && ast->options->size ? emit_tuple(ast->options) : strdup("");
   char* value =
     calloc(TEMPLATE_LEN + strlen(name) + strlen(func_name) + strlen(attr) + strlen(body) + 1,
            sizeof(char));
@@ -202,11 +202,11 @@ char* emit_jsx_react_element(AST_T* ast, fjb_env_T* env)
   return value;
 }
 
-char* emit_jsx_template_value(AST_T* ast, fjb_env_T* env)
+char* emit_jsx_template_value(AST_T* ast)
 {
   char* value = 0;
   if (ast->expr) {
-    char* exprstr = emit(ast->expr, env);
+    char* exprstr = emit(ast->expr);
     value = str_append(&value, exprstr);
     return value;
   }
@@ -214,19 +214,19 @@ char* emit_jsx_template_value(AST_T* ast, fjb_env_T* env)
   return strdup("");
 }
 
-char* emit_jsx(AST_T* ast, fjb_env_T* env)
+char* emit_jsx(AST_T* ast)
 {
   unsigned int jsx_type = fjb_get_jsx_type();
 
   if (jsx_type == JSX_DEFAULT) {
     switch (ast->type) {
-      case AST_JSX_ELEMENT: return emit_jsx_element(ast, env); break;
-      case AST_JSX_COMPOUND: return emit_jsx_body(ast, env); break;
-      case AST_JSX_TEMPLATE_VALUE: return emit_jsx_template_value(ast, env); break;
-      case AST_JSX_TEMPLATE_STRING: return emit_jsx_template_string(ast, env); break;
-      case AST_JSX_TEXT: return emit_jsx_text(ast, env); break;
+      case AST_JSX_ELEMENT: return emit_jsx_element(ast); break;
+      case AST_JSX_COMPOUND: return emit_jsx_body(ast); break;
+      case AST_JSX_TEMPLATE_VALUE: return emit_jsx_template_value(ast); break;
+      case AST_JSX_TEMPLATE_STRING: return emit_jsx_template_string(ast); break;
+      case AST_JSX_TEXT: return emit_jsx_text(ast); break;
       case AST_CALL:
-      case AST_STATE: return emit(ast, env); break;
+      case AST_STATE: return emit(ast); break;
       default: {
         printf("[Gen(JSX)]: Missing emiterator for `%d`\n", ast->type);
         exit(1);
@@ -234,13 +234,13 @@ char* emit_jsx(AST_T* ast, fjb_env_T* env)
     }
   } else if (jsx_type == JSX_REACT) {
     switch (ast->type) {
-      case AST_JSX_ELEMENT: return emit_jsx_react_element(ast, env); break;
-      case AST_JSX_COMPOUND: return emit_jsx_react_body(ast, env); break;
-      case AST_JSX_TEMPLATE_VALUE: return emit_jsx_template_value(ast, env); break;
-      case AST_JSX_TEMPLATE_STRING: return emit_jsx_template_string(ast, env); break;
-      case AST_JSX_TEXT: return emit_jsx_text(ast, env); break;
+      case AST_JSX_ELEMENT: return emit_jsx_react_element(ast); break;
+      case AST_JSX_COMPOUND: return emit_jsx_react_body(ast); break;
+      case AST_JSX_TEMPLATE_VALUE: return emit_jsx_template_value(ast); break;
+      case AST_JSX_TEMPLATE_STRING: return emit_jsx_template_string(ast); break;
+      case AST_JSX_TEXT: return emit_jsx_text(ast); break;
       case AST_CALL:
-      case AST_STATE: return emit(ast, env); break;
+      case AST_STATE: return emit(ast); break;
       default: {
         printf("[Gen(JSX)]: Missing emiterator for `%d`\n", ast->type);
         exit(1);

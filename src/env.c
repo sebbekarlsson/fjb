@@ -119,14 +119,14 @@ list_T* fjb_get_hooks()
   return FJB_ENV->hooks;
 }
 
-void* fjb_call_all_hooks(int type, void* ptr, fjb_env_T* env)
+void* fjb_call_all_hooks(int type, void* ptr)
 {
   for (unsigned int i = 0; i < FJB_ENV->hooks->size; i++) {
     plugin_hook hook = (plugin_hook)FJB_ENV->hooks->items[i];
     if (!hook)
       continue;
 
-    ptr = hook(type, ptr, env);
+    ptr = hook(type, ptr, FJB_ENV);
   }
 
   return ptr;
@@ -184,4 +184,48 @@ void fjb_set_jsx_type(int jsx_type)
   AST_T* val = init_ast_string(jsx_type == JSX_REACT ? "react" : "jsx");
 
   map_set(env->map, "jsx", val);
+}
+
+unsigned int fjb_ast_is_imported(AST_T* ast)
+{
+  if (!ast)
+    return 0;
+
+  return (ast->name && (map_get(FJB_ENV->imports, ast->name) != 0) ||
+          (ast->left && ast->left->name &&
+           (map_get(FJB_ENV->imports, ast->left->name) != 0 ||
+            map_get(FJB_ENV->compiled_imports, ast->left->name) != 0)));
+}
+
+unsigned int fjb_ast_should_be_exposed(AST_T* ast)
+{
+  if (!ast)
+    return 0;
+
+  return (fjb_ast_is_imported(ast) || ast->exported) && !ast->anon;
+}
+
+imported_T* fjb_get_imported(char* name)
+{
+  if (!name)
+    return 0;
+  return (imported_T*)map_get_value(FJB_ENV->imports, name);
+}
+
+void fjb_register_function(AST_T* ast, char* name)
+{
+  if (!name)
+    return;
+
+  map_set(FJB_ENV->functions, strdup(ast->name), ast);
+  map_set(FJB_ENV->map, strdup(ast->name), ast);
+}
+
+void fjb_register_assignment(AST_T* ast, char* name)
+{
+  if (!name)
+    return;
+
+  map_set(FJB_ENV->assignments, strdup(name), ast);
+  map_set(FJB_ENV->map, strdup(name), ast);
 }

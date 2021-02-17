@@ -78,64 +78,64 @@ def create_mark(title, path, runs=RUNS):
 
 BENCHMARKS = [
     create_mark(
-        "Ternary operator", '/tests/src/test_projects/ternary/index.js'
+        "Ternary operator", '/tests/fjb-samples/ternary/index.js'
     ),
-    create_mark("Destruct", '/tests/src/test_projects/destruct/index.js'),
+    create_mark("Destruct", '/tests/fjb-samples/destruct/index.js'),
     create_mark(
-        "Importing ES6 modules", '/tests/src/test_projects/es6/index.js'
+        "Importing ES6 modules", '/tests/fjb-samples/es6/index.js'
     ),
     create_mark(
         "Importing aliased ES6 modules",
-        '/tests/src/test_projects/alias_imports/index.js'
+        '/tests/fjb-samples/alias_imports/index.js'
     ),
     create_mark(
-        "Importing CSS", '/tests/src/test_projects/css_import/index.js'
+        "Importing CSS", '/tests/fjb-samples/css_import/index.js'
     ),
     create_mark(
-        "Importing JSON", '/tests/src/test_projects/json_import/index.js'
+        "Importing JSON", '/tests/fjb-samples/json_import/index.js'
     ),
     create_mark(
         "Importing `ceil` from lodash, with tree shaking.",
-        '/tests/src/test_projects/with_lodash/index.js'
+        '/tests/fjb-samples/with_lodash/index.js'
     ),
     create_mark(
         "Importing `Vue` from vue, with tree shaking.",
-        '/tests/src/test_projects/with_vue/index.js'
+        '/tests/fjb-samples/with_vue/index.js'
     ),
     create_mark(
         "Importing `hljs` from hightlight.min.js, with tree shaking.",
-        '/tests/src/test_projects/highlightjs/index.js'
+        '/tests/fjb-samples/highlightjs/index.js'
     ),
     create_mark(
-        "Require `jquery`", '/tests/src/test_projects/with_jquery/index.js'
+        "Require `jquery`", '/tests/fjb-samples/with_jquery/index.js'
     ),
     create_mark(
         "Importing `react` from react",
-        '/tests/src/test_projects/react_import/index.jsx'
+        '/tests/fjb-samples/react_import/index.jsx'
     ),
     create_mark(
         "React project with JSX",
-        '/tests/src/test_projects/with_react/index.jsx'
+        '/tests/fjb-samples/with_react/index.jsx'
     ),
     create_mark(
         "Importing cookie banner (dobarkod/cookie-banner)",
-        '/tests/src/test_projects/cookie_banner/index.js'
+        '/tests/fjb-samples/cookie_banner/index.js'
     ),
     create_mark(
         "Simple regex",
-        '/tests/src/test_projects/regex/index.js'
+        '/tests/fjb-samples/regex/index.js'
     ),
     create_mark(
         "Array access",
-        '/tests/src/test_projects/array_access/index.js'
+        '/tests/fjb-samples/array_access/index.js'
     ),
     create_mark(
         "Simple bundle with zero imports",
-        '/tests/src/test_projects/noimports/index.js'
+        '/tests/fjb-samples/noimports/index.js'
     ),
     create_mark(
         "Escaped strings",
-        '/tests/src/test_projects/strings/index.js'
+        '/tests/fjb-samples/strings/index.js'
     ),
 ]
 

@@ -2,5 +2,5 @@
 #define FJB_GEN_JSX_H
 #include "AST.h"
 #include "env.h"
-char* emit_jsx(AST_T* ast, fjb_env_T* env);
+char* emit_jsx(AST_T* ast);
 #endif
