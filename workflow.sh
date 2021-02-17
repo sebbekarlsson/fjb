@@ -38,9 +38,6 @@ cd $P
 
 cd tests
 
-cd $P
-cd tests
-
 ls -lart
 
 ../pull_deps.sh
