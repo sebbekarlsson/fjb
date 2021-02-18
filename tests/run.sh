@@ -8,6 +8,5 @@ cd ..
 make clean
 make
 ./test.out
-
-./setup_chromedriver.sh
-./web.sh
+# ./setup_chromedriver.sh
+# ./web.sh
