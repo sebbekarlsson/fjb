@@ -52,7 +52,7 @@ for page in pages:
     print(url)
     driver.get(url)
 
-    time.sleep(5)
+    time.sleep(10)
 
     assert driver.find_element_by_tag_name('body')
 
