@@ -8,6 +8,8 @@ import time
 options = Options()
 options.add_argument("--headless")
 options.add_argument("--disable-extensions")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
 
 driver = webdriver.Chrome(
     executable_path=os.path.abspath("./driver/chromedriver"), options=options
