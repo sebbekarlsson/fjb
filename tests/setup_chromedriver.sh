@@ -1,5 +1,12 @@
 path=$(pwd)
 
+
+if [ -d "./driver" ] 
+then
+  echo "driver already exists"
+  exit
+fi
+
 rm -rf driver
 mkdir driver
 cd driver

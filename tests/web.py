@@ -1,33 +1,65 @@
 import os
+import subprocess
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
+
+import time
 
 options = Options()
 options.add_argument("--headless")
 options.add_argument("--disable-extensions")
-# options.add_argument("--disable-dev-shm-usage")
-# options.add_argument("--no-sandbox")
-# options.add_argument("--remote-debugging-port=9222")
-# options.binary_location = os.path.abspath("./driver/chromedriver")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
 
 driver = webdriver.Chrome(
-    executable_path=os.path.abspath("./driver/chromedriver"),
-    options=options
+    executable_path=os.path.abspath("./driver/chromedriver"), options=options
 )
 
-
 pages = [
-    dict(url="fjb-samples/with_react/index.html", element_id='root'),
-    dict(url="fjb-samples/with_vue/index.html", text='hello')
+    dict(
+        entry="index.jsx",
+        url="./fjb-samples/jsx",
+        f=lambda x: len(x.find_elements_by_tag_name('div')) >= 66
+    ),
+    dict(
+        entry="index.jsx",
+        url="./fjb-samples/with_react",
+        text='It\'s so simple!'
+    ),
+    dict(
+        entry="index.ts",
+        url="./fjb-samples/ts_vue",
+        text='Hello there'
+    )
 ]
 
 for page in pages:
+    entry = page['entry']
     p = os.path.abspath(page['url'])
-    driver.get('file://' + p)
+    res = subprocess.run(
+        f"cd {p} && yarn install", shell=True, capture_output=True)
 
-    if 'id' in page:
-        search_field = driver.find_element_by_id(page['id'])
-        assert search_field
-    elif 'text' in page:
-        assert page['text'] in driver.find_element_by_tag_name('body').text
+    print(res.stdout, res.stderr)
+
+    res = subprocess.run(
+        f"../fjb.out {p}/{entry} > {p}/dist.js",
+        shell=True,
+        capture_output=True)
+
+    print(res.stdout, res.stderr)
+
+    url = f'file://{p}/index.html'
+    print(url)
+    driver.get(url)
+
+    time.sleep(10)
+
+    assert driver.find_element_by_tag_name('body')
+
+    if 'f' in page:
+        assert page['f'](driver)
+
+    if 'text' in page:
+        if page['text']:
+            print(page['text'])
+            assert page['text'] in driver.find_element_by_tag_name('body').text
