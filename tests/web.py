@@ -14,17 +14,17 @@ driver = webdriver.Chrome(
 pages = [
     dict(
         entry="index.jsx",
-        url="fjb-samples/jsx",
+        url="./fjb-samples/jsx",
         f=lambda x: len(x.find_elements_by_tag_name('div')) >= 66
     ),
     dict(
         entry="index.jsx",
-        url="fjb-samples/with_react",
+        url="./fjb-samples/with_react",
         text='It\'s so simple!'
     ),
     dict(
         entry="index.ts",
-        url="fjb-samples/ts_vue",
+        url="./fjb-samples/ts_vue",
         text='Hello there'
     )
 ]
@@ -37,7 +37,10 @@ for page in pages:
 
     print(res.stdout, res.stderr)
 
-    res = subprocess.run(f"../fjb.out {p}/{entry} > {p}/dist.js", shell=True)
+    res = subprocess.run(
+        f"../fjb.out {p}/{entry} > {p}/dist.js",
+        shell=True,
+        capture_output=True)
 
     print(res.stdout, res.stderr)
 
@@ -45,9 +48,12 @@ for page in pages:
     print(url)
     driver.get(url)
 
+    assert driver.find_element_by_tag_name('body')
+
     if 'f' in page:
         assert page['f'](driver)
 
     if 'text' in page:
-        print(page['text'])
-        assert page['text'] in driver.find_element_by_tag_name('body').text
+        if page['text']:
+            print(page['text'])
+            assert page['text'] in driver.find_element_by_tag_name('body').text
