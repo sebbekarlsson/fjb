@@ -3,13 +3,9 @@ import subprocess
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-import time
-
 options = Options()
 options.add_argument("--headless")
 options.add_argument("--disable-extensions")
-options.add_argument("--no-sandbox")
-options.add_argument("--disable-dev-shm-usage")
 
 driver = webdriver.Chrome(
     executable_path=os.path.abspath("./driver/chromedriver"), options=options
@@ -51,8 +47,6 @@ for page in pages:
     url = f'file://{p}/index.html'
     print(url)
     driver.get(url)
-
-    time.sleep(10)
 
     assert driver.find_element_by_tag_name('body')
 
