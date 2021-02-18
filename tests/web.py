@@ -1,33 +1,43 @@
 import os
+import subprocess
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 
 options = Options()
 options.add_argument("--headless")
 options.add_argument("--disable-extensions")
-# options.add_argument("--disable-dev-shm-usage")
-# options.add_argument("--no-sandbox")
-# options.add_argument("--remote-debugging-port=9222")
-# options.binary_location = os.path.abspath("./driver/chromedriver")
 
 driver = webdriver.Chrome(
-    executable_path=os.path.abspath("./driver/chromedriver"),
-    options=options
+    executable_path=os.path.abspath("./driver/chromedriver"), options=options
 )
 
-
 pages = [
-    dict(url="fjb-samples/with_react/index.html", element_id='root'),
-    dict(url="fjb-samples/with_vue/index.html", text='hello')
+    dict(
+        entry="index.jsx",
+        url="fjb-samples/jsx",
+        f=lambda x: len(x.find_elements_by_tag_name('div')) >= 66
+    ),
+    dict(
+        entry="index.jsx",
+        url="fjb-samples/with_react",
+        text='It\'s so simple!'
+    ),
+    dict(
+        entry="index.ts",
+        url="fjb-samples/ts_vue",
+        text='Hello there'
+    )
 ]
 
 for page in pages:
+    entry = page['entry']
     p = os.path.abspath(page['url'])
-    driver.get('file://' + p)
+    subprocess.run(f"cd {p} && yarn install", shell=True)
+    subprocess.run(f"../fjb.out {p}/{entry} > {p}/dist.js", shell=True)
+    driver.get(f'file://{p}/index.html')
 
-    if 'id' in page:
-        search_field = driver.find_element_by_id(page['id'])
-        assert search_field
-    elif 'text' in page:
+    if 'f' in page:
+        assert page['f'](driver)
+
+    if 'text' in page:
         assert page['text'] in driver.find_element_by_tag_name('body').text
