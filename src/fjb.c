@@ -28,10 +28,10 @@ compiler_result_T* _fjb()
     return 0;
 
   FJB_ENV->ticks += 1;
-  fjb_set_filepath(fjb_call_all_hooks(HOOK_RECEIVE_FILEPATH, FJB_ENV->filepath, FJB_ENV));
+  fjb_set_filepath(fjb_call_all_hooks(HOOK_RECEIVE_FILEPATH, FJB_ENV->filepath));
 
   if (FJB_ENV->source)
-    fjb_set_source(fjb_call_all_hooks(HOOK_RECEIVE_SOURCE, FJB_ENV->source, FJB_ENV));
+    fjb_set_source(fjb_call_all_hooks(HOOK_RECEIVE_SOURCE, FJB_ENV->source));
 
   NOOP = init_ast(AST_NOOP);
   gc_mark(FJB_ENV->GC, NOOP);
@@ -80,7 +80,7 @@ compiler_result_T* _fjb()
   str = str_append(&str, "/* IMPORT `");
   str = str_append(&str, FJB_ENV->filepath);
   str = str_append(&str, "` */ ");
-  char* out = emit(root_to_emiterate, FJB_ENV);
+  char* out = emit(root_to_emiterate);
 
   if (out) {
     str = str_append(&str, strdup(out));
@@ -106,7 +106,7 @@ compiler_result_T* _fjb()
 
   FJB_ENV->level += 1;
 
-  result = fjb_call_all_hooks(HOOK_BEFORE_COMPILE, result, FJB_ENV);
+  result = fjb_call_all_hooks(HOOK_BEFORE_COMPILE, result);
 
   return result;
 }
@@ -116,10 +116,12 @@ compiler_result_T* fjb()
   if (!FJB_ENV->filepath)
     return 0;
 
+#ifndef DEBUG
   timer_thread_start();
+#endif
 
   if (FJB_ENV->filepath)
-    fjb_set_filepath(fjb_call_all_hooks(HOOK_RECEIVE_FILEPATH, FJB_ENV->filepath, FJB_ENV));
+    fjb_set_filepath(fjb_call_all_hooks(HOOK_RECEIVE_FILEPATH, FJB_ENV->filepath));
 
   compiler_result_T* result = _fjb();
   if (!result)
@@ -146,10 +148,13 @@ compiler_result_T* fjb()
 
       imp_res->dead = 0;
 
-      char* impstr = emit(imp_res, FJB_ENV);
+      char* impstr = emit(imp_res);
       if (!impstr)
         continue;
       imps = str_append(&imps, impstr);
+
+      if (i < len - 1)
+        imps = str_append(&imps, ";");
     }
   }
 

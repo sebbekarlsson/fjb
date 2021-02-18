@@ -356,3 +356,5 @@ dmypy.json
 *.deb
 
 fjb_*
+
+tests/driver

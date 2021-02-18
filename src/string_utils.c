@@ -13,6 +13,20 @@ char* str_append(char** source, const char* piece)
 {
   char* src = *source;
 
+  size_t slen = src ? strlen(src) : 0;
+  size_t plen = piece ? strlen(piece) : 0;
+  size_t len = slen + plen + 1;
+  src = realloc(src, len * sizeof(char));
+  memcpy(src + slen, piece, plen + 1);
+
+  return src;
+}
+
+/*
+char* str_append(char** source, const char* piece)
+{
+  char* src = *source;
+
   if (!piece)
     return src;
 
@@ -25,7 +39,7 @@ char* str_append(char** source, const char* piece)
   strcat(src, piece);
 
   return src;
-}
+}*/
 
 char* str_prefix(char** source, const char* piece)
 {

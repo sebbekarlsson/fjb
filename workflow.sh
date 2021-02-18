@@ -36,20 +36,6 @@ make install
 
 cd $P
 
-ls -lart
-
-cd tests
-
-cd src/test_projects/with_lodash/
-yarn install
-
-cd $P
-cd tests
-
-cd src/test_projects/with_vue/
-yarn install
-
-cd $P
 cd tests
 
 ls -lart

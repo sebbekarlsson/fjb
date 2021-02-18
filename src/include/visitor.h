@@ -15,7 +15,12 @@ typedef struct FJB_VISITOR_STRUCT
 {
   parser_T* parser;
   AST_T* root;
+  unsigned int map_size;
 } visitor_T;
+
+/**
+ * TODO: get rid of the list_T* stack, thing
+ */
 
 visitor_T* init_visitor(parser_T* parser);
 
