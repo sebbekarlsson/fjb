@@ -1,6 +1,12 @@
 P=$(pwd)
 
 whereis python
+
+sudo apt install build-essential libssl-dev libffi-dev python-dev --yes
+sudo apt install python3-pip --yes
+# Step 3: Use pip to install virtualenv
+sudo pip3 install virtualenv
+
 sudo apt install gcc wget python-virtualenv --yes
 wget https://nodejs.org/dist/v14.15.5/node-v14.15.5-linux-x64.tar.xz
 tar xf node-v14.15.5-linux-x64.tar.xz
