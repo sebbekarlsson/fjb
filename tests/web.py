@@ -32,12 +32,22 @@ pages = [
 for page in pages:
     entry = page['entry']
     p = os.path.abspath(page['url'])
-    subprocess.run(f"cd {p} && yarn install", shell=True)
-    subprocess.run(f"../fjb.out {p}/{entry} > {p}/dist.js", shell=True)
-    driver.get(f'file://{p}/index.html')
+    res = subprocess.run(
+        f"cd {p} && yarn install", shell=True, capture_output=True)
+
+    print(res.stdout, res.stderr)
+
+    res = subprocess.run(f"../fjb.out {p}/{entry} > {p}/dist.js", shell=True)
+
+    print(res.stdout, res.stderr)
+
+    url = f'file://{p}/index.html'
+    print(url)
+    driver.get(url)
 
     if 'f' in page:
         assert page['f'](driver)
 
     if 'text' in page:
+        print(page['text'])
         assert page['text'] in driver.find_element_by_tag_name('body').text
