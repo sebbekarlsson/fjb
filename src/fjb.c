@@ -116,7 +116,9 @@ compiler_result_T* fjb()
   if (!FJB_ENV->filepath)
     return 0;
 
+#ifndef DEBUG
   timer_thread_start();
+#endif
 
   if (FJB_ENV->filepath)
     fjb_set_filepath(fjb_call_all_hooks(HOOK_RECEIVE_FILEPATH, FJB_ENV->filepath));

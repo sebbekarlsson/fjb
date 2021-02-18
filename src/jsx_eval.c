@@ -15,6 +15,10 @@ AST_T* eval_jsx_template_value(visitor_T* visitor, AST_T* ast, list_T* stack)
 
 AST_T* eval_jsx_element(visitor_T* visitor, AST_T* ast, list_T* stack)
 {
+  if (FJB_ENV->map && FJB_ENV->map->len_used_buckets && FJB_ENV->map->nrkeys) {
+    ast->stack_frame = map_copy(FJB_ENV->map);
+  }
+
   if (ast->name_ast)
     ast->name_ast = visitor_visit(visitor, ast->name_ast, stack);
 
@@ -65,7 +69,6 @@ AST_T* eval_jsx(visitor_T* visitor, AST_T* ast, list_T* stack)
     return 0;
 
   FJB_ENV->is_using_jsx = 1;
-  ast->stack_frame = map_copy(FJB_ENV->map);
 
   switch (ast->type) {
     case AST_JSX_ELEMENT: return eval_jsx_element(visitor, ast, stack); break;

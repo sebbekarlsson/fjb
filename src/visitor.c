@@ -855,6 +855,28 @@ AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* stack)
 
   ast = fjb_call_all_hooks(HOOK_BEFORE_EVAL, ast);
 
+  unsigned int map_size = FJB_ENV->map->nrkeys;
+
+  if (ast && ast->name && (map_size != visitor->map_size || !ast->stack_frame)) {
+    if ((FJB_ENV->map && FJB_ENV->map->len_used_buckets && FJB_ENV->map->nrkeys) &&
+        !ast->stack_frame &&
+        !(ast->type == AST_NOOP || ast->type == AST_UNDEFINED || ast->type == AST_INT ||
+          ast->type == AST_INT_MIN || ast->type == AST_FLOAT || ast->type == AST_FUNCTION ||
+          ast->type == AST_ARROW_DEFINITION || ast->type == AST_CLASS || ast->type == AST_OBJECT ||
+          ast->type == AST_COLON_ASSIGNMENT || ast->type == AST_HEX || ast->type == AST_STRING ||
+          ast->type == AST_REGEX || ast->type == AST_TUPLE || ast->type == AST_ARRAY ||
+          ast->type == AST_JSX_COMPOUND || ast->type == AST_CONDITION || ast->type == AST_WHILE ||
+          ast->type == AST_COMPOUND || ast->type == AST_JSX_ELEMENT ||
+          ast->type == AST_JSX_TEMPLATE_STRING || ast->type == AST_FOR || ast->type == AST_DO ||
+          ast->type == AST_TRY || ast->type == AST_STATE || ast->type == AST_IMPORT)) {
+      /**
+       * We really want to call this method as few times as possible.
+       * It's very expensive.
+       */
+      ast->stack_frame = map_copy(FJB_ENV->map);
+    }
+  }
+
   switch (ast->type) {
     case AST_ARRAY: ast = visitor_visit_array(visitor, ast, stack); break;
     case AST_HEX: ast = visitor_visit_hex(visitor, ast, stack); break;
@@ -898,11 +920,9 @@ AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* stack)
   if (ast->next)
     ast->next = visitor_visit(visitor, ast->next, stack);
 
-  if (FJB_ENV->map && !ast->stack_frame) {
-    ast->stack_frame = map_copy(FJB_ENV->map);
-  }
-
   ast = fjb_call_all_hooks(HOOK_AFTER_EVAL, ast);
+
+  visitor->map_size = FJB_ENV->map->nrkeys;
 
   return ast;
 }
