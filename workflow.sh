@@ -1,6 +1,7 @@
 P=$(pwd)
 
-sudo apt install gcc wget --yes
+whereis python
+sudo apt install gcc wget python-virtualenv --yes
 wget https://nodejs.org/dist/v14.15.5/node-v14.15.5-linux-x64.tar.xz
 tar xf node-v14.15.5-linux-x64.tar.xz
 export PATH="$P/node-v14.15.5-linux-x64/bin:$PATH"
