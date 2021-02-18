@@ -3,6 +3,8 @@ import subprocess
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
+import time
+
 options = Options()
 options.add_argument("--headless")
 options.add_argument("--disable-extensions")
@@ -47,6 +49,8 @@ for page in pages:
     url = f'file://{p}/index.html'
     print(url)
     driver.get(url)
+
+    time.sleep(5)
 
     assert driver.find_element_by_tag_name('body')
 
