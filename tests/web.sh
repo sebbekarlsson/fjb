@@ -8,7 +8,7 @@ fi
 
 echo "USING PYTHON: $PY"
 
-virtualenv -p /usr/bin/python3.9 ./venv
+virtualenv -p $PY ./venv
 source ./venv/bin/activate
 pip install selenium
 ./venv/bin/python ./web.py
