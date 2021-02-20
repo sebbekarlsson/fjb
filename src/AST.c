@@ -68,9 +68,6 @@ void ast_free(AST_T* ast)
   if (ast->headers)
     free(ast->headers);
 
-  // if (ast->node)
-  //  ast_free(ast->node);
-
   if (ast->list_value) {
     list_free_shallow(ast->list_value);
   }
@@ -113,24 +110,6 @@ AST_T* init_ast_name(char* name)
   ast->name = name ? strdup(name) : strdup(" ");
 
   return ast;
-}
-
-char* ast_encode_strings(list_T* strings)
-{
-  char* str = 0;
-
-  LOOP_NODES(strings, i, ast, {
-    if (!ast->string_value && !ast->name)
-      continue;
-
-    char* v = ast->string_value ? ast->string_value : ast->name;
-
-    char* enc = str_encode(v);
-    str = str_append(&str, enc);
-    free(enc);
-  });
-
-  return str;
 }
 
 char* ast_get_string(AST_T* ast)

@@ -77,7 +77,7 @@ compiler_result_T* _fjb()
   /* ==== Generate ==== */
   char* str = strdup("");
 
-  str = str_append(&str, "/* IMPORT `");
+  str = str_append(&str, "/* - `");
   str = str_append(&str, FJB_ENV->filepath);
   str = str_append(&str, "` */ ");
   char* out = emit(root_to_emiterate);
@@ -129,7 +129,7 @@ compiler_result_T* fjb()
 
   char* headers = fjb_get_headers(FJB_ENV);
 
-  result->headers = strdup(" ");
+  result->headers = strdup("");
 
   char* imps = 0;
   if (FJB_ENV->compiled_imports) {

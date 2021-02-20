@@ -123,6 +123,10 @@ unsigned int get_deps(AST_T* ast, options_T args, fjb_env_T* env)
     for (unsigned int i = 0; i < nr_types; i++) {
       query.type = types[i];
 
+      if (ast->stack_frame) ptr = (AST_T*)map_get_value(ast->stack_frame, ast->name);
+
+      if (ptr) break;
+
       if (types[i] == AST_FUNCTION) {
         ptr = (AST_T*)map_get_value(FJB_ENV->functions, ast->name);
       } else {

@@ -398,6 +398,7 @@ AST_T* parser_parse_definition(parser_T* parser, parser_options_T options)
   while (parser->token->type == TOKEN_CONST || parser->token->type == TOKEN_LET ||
          parser->token->type == TOKEN_VAR) {
     AST_T* ast_flag = init_ast_line(AST_NAME, parser->lexer->line);
+    ast_flag->flag_type = parser->token->type;
     ast_flag->string_value = strdup(parser->token->value);
     ast_flag->name = strdup(ast_flag->string_value);
     gc_mark(parser->env->GC, ast_flag);

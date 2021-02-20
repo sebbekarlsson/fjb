@@ -59,6 +59,7 @@ typedef struct FJB_AST_STRUCT
   unsigned int writable;
   unsigned int bool_value;
   unsigned int dead;
+  unsigned int is_require_call;
   int line;
 
   unsigned int is_resolved;
@@ -68,6 +69,7 @@ typedef struct FJB_AST_STRUCT
 
   char* basename;
   char* comment;
+  int flag_type;
 
   map_T* map;
 
@@ -83,13 +85,7 @@ AST_T* init_ast_string(char* string_value);
 
 AST_T* init_ast_name(char* name);
 
-void ast_init_parent_lists(AST_T* ast);
-
-unsigned int ast_is_in_list(AST_T* ast, list_T* list);
-
 char* ast_type_to_str(AST_T* ast);
-
-char* ast_binop_to_str(AST_T* ast, int indent);
 
 typedef struct QUERY_STRUCT_T
 {
@@ -100,8 +96,6 @@ typedef struct QUERY_STRUCT_T
 } query_T;
 
 AST_T* ast_search_pointer(AST_T* ast, int type);
-
-char* ast_encode_strings(list_T* strings);
 
 char* ast_get_string(AST_T* ast);
 
