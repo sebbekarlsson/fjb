@@ -284,8 +284,6 @@ AST_T* visitor_visit_assignment(visitor_T* visitor, AST_T* ast, list_T* stack)
 
     AST_T* assignment = init_assignment(name, rightptr);
 
-    if (assignment->name)
-      fjb_register_assignment(assignment, assignment->name);
     gc_mark(FJB_ENV->GC, assignment);
 
     list_push(stack, assignment); // TODO: get rid of stack
@@ -320,7 +318,8 @@ AST_T* visitor_visit_assignment(visitor_T* visitor, AST_T* ast, list_T* stack)
 
 AST_T* visitor_visit_state(visitor_T* visitor, AST_T* ast, list_T* stack)
 {
-  if (ast->value) ast->value = visitor_visit(visitor, ast->value, stack);
+  if (ast->value)
+    ast->value = visitor_visit(visitor, ast->value, stack);
 
   return ast;
 }
@@ -490,7 +489,7 @@ AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* stack)
 
       if (!child)
         continue;
-      
+
       ast->list_value->items[i] = visitor_visit(visitor, child, stack);
       char* n = ast_get_string(child);
       if (!n)
@@ -846,7 +845,8 @@ AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* stack)
           ast->type == AST_JSX_COMPOUND || ast->type == AST_CONDITION || ast->type == AST_WHILE ||
           ast->type == AST_COMPOUND || ast->type == AST_JSX_ELEMENT ||
           ast->type == AST_JSX_TEMPLATE_STRING || ast->type == AST_FOR || ast->type == AST_DO ||
-          ast->type == AST_TRY || ast->type == AST_STATE || ast->type == AST_IMPORT || ast->is_require_call)) {
+          ast->type == AST_TRY || ast->type == AST_STATE || ast->type == AST_IMPORT ||
+          ast->is_require_call)) {
       /**
        * We really want to call this method as few times as possible.
        * It's very expensive.

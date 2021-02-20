@@ -247,7 +247,8 @@ char* emit(AST_T* ast)
   if (ast->flags) {
     for (unsigned int i = 0; i < ast->flags->size; i++) {
       AST_T* ast_flag = (AST_T*)ast->flags->items[i];
-      if (ast_flag->flag_type == TOKEN_LET || ast_flag->flag_type == TOKEN_CONST) ast_flag->name = strdup("var");
+      if (ast_flag->flag_type == TOKEN_LET || ast_flag->flag_type == TOKEN_CONST)
+        ast_flag->name = strdup("var");
       char* ast_flag_str = emit(ast_flag);
       str = str_append(&str, ast_flag_str);
       free(ast_flag_str);
@@ -892,7 +893,10 @@ char* emit_binop(AST_T* ast)
         optional_chain, str, (strlen(leftstr) * 3) + (strlen(rightstr) * 3) + 1, leftstr, rightstr);
     } else {
       if (ast->token->type == TOKEN_DOT || ast->token->type == TOKEN_COMMA ||
-          ast->token->type == TOKEN_PLUS || ast->token->type == TOKEN_EQUALS_EQUALS_EQUALS || ast->token->type == TOKEN_EQUALS_EQUALS || ast->token->type == TOKEN_NOT_EQUALS || ast->token->type == TOKEN_NOT_EQUALS_EQUALS || ast->token->type == TOKEN_MINUS || ast->token->type == TOKEN_STAR || ast->token->type == TOKEN_OPTIONAL_CHAIN) {
+          ast->token->type == TOKEN_PLUS || ast->token->type == TOKEN_EQUALS_EQUALS_EQUALS ||
+          ast->token->type == TOKEN_EQUALS_EQUALS || ast->token->type == TOKEN_NOT_EQUALS ||
+          ast->token->type == TOKEN_NOT_EQUALS_EQUALS || ast->token->type == TOKEN_MINUS ||
+          ast->token->type == TOKEN_STAR || ast->token->type == TOKEN_OPTIONAL_CHAIN) {
         str = str_append(&str, leftstr);
         str = str_append(&str, tokstr);
         str = str_append(&str, rightstr);
