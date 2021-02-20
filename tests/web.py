@@ -1,5 +1,6 @@
 import os
 import subprocess
+import time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
@@ -20,7 +21,8 @@ pages = [
     dict(
         entry="index.jsx",
         url="./fjb-samples/with_react",
-        text='It\'s so simple!'
+        text="simple",
+        f=lambda x: x.find_element_by_id('root')
     ),
     dict(
         entry="index.ts",
@@ -38,7 +40,7 @@ for page in pages:
     print(res.stdout, res.stderr)
 
     res = subprocess.run(
-        f"../fjb.out {p}/{entry} > {p}/dist.js",
+        f"cd {p} && ../../../fjb.out {entry} > dist.js",
         shell=True,
         capture_output=True)
 
@@ -47,6 +49,8 @@ for page in pages:
     url = f'file://{p}/index.html'
     print(url)
     driver.get(url)
+
+    time.sleep(1)
 
     assert driver.find_element_by_tag_name('body')
 

@@ -291,10 +291,14 @@ AST_T* visitor_visit_assignment(visitor_T* visitor, AST_T* ast, list_T* stack)
 
   if (ast->value && ast->left) {
     AST_T* leftptr = ast->left->ptr;
+
     AST_T* rightptr = ast->value->ptr ? ast->value->ptr : ast->value;
     char* name = ast->left->type == AST_BINOP ? ast->left->right->name : ast->left->name;
 
     AST_T* assignment = init_assignment(name, rightptr);
+
+    if (assignment->name)
+      fjb_register_assignment(assignment, assignment->name);
     gc_mark(FJB_ENV->GC, assignment);
 
     list_push(stack, assignment); // TODO: get rid of stack
@@ -498,7 +502,7 @@ AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* stack)
   if (ast->list_value)
     ast->list_value = visit_array(visitor, ast->list_value, stack);
 
-  if (ast->list_value) {
+  if (ast->list_value && ast->list_value->size) {
     for (unsigned int i = 0; i < ast->list_value->size; i++) {
       AST_T* child = (AST_T*)ast->list_value->items[i];
       if (!child)
@@ -540,7 +544,7 @@ AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* stack)
 
       list_remove(stack, child, 0);
 
-      if (child->name) {
+      if (child->name && strcmp(ast->name, child->name) != 0) {
         map_unset(FJB_ENV->map, child->name);
       }
     }
@@ -859,7 +863,6 @@ AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* stack)
 
   if (ast && ast->name && (map_size != visitor->map_size || !ast->stack_frame)) {
     if ((FJB_ENV->map && FJB_ENV->map->len_used_buckets && FJB_ENV->map->nrkeys) &&
-        !ast->stack_frame &&
         !(ast->type == AST_NOOP || ast->type == AST_UNDEFINED || ast->type == AST_INT ||
           ast->type == AST_INT_MIN || ast->type == AST_FLOAT || ast->type == AST_FUNCTION ||
           ast->type == AST_ARROW_DEFINITION || ast->type == AST_CLASS || ast->type == AST_OBJECT ||

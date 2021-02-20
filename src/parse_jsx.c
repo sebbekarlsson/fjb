@@ -125,10 +125,15 @@ AST_T* parse_jsx_attr(parser_T* parser, parser_options_T options)
   }
 
   if (left->name) {
-    char* after = str_get_after(left->name, "on");
-    if (after && is_js_event(after)) {
-      left->name = strdup(after);
+    if (jsx_type != JSX_REACT && strcmp(left->name, "className") == 0) {
+      left->name = strdup("class");
     }
+    char* after = str_get_after(left->name, "on");
+
+    if (jsx_type != JSX_REACT && after && is_js_event(after)) {
+      left->name = strlow(strdup(after));
+    }
+    assignment->name = strdup(left->name);
   }
 
   if (parser->token->type == TOKEN_EQUALS) {
