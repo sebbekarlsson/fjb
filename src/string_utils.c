@@ -532,6 +532,16 @@ char char_tolower(unsigned char ch)
   return ch;
 }
 
+char* strlow(char* source)
+{
+  unsigned int len = strlen(source);
+
+  for (unsigned int i = 0; i < len; i++)
+    source[i] = char_tolower(source[i]);
+
+  return source;
+}
+
 int strcasecmp(const char* s1, const char* s2)
 {
   const unsigned char *us1 = (const u_char*)s1, *us2 = (const u_char*)s2;
@@ -590,7 +600,10 @@ char* str_get_after(char* source, char* after)
   if (!str_contains(source, after))
     return source;
 
-  char* newstr = strdup(source);
-  char* tok = strtok(newstr, after);
-  return tok;
+  char* found = strstr(source, after);
+  int pos = (found - source) + strlen(after);
+  char* v = source + pos;
+  if (!v)
+    return source;
+  return source + pos;
 }

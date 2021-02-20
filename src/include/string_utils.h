@@ -25,6 +25,8 @@ char* resolve_import(char* basepath, char* filepath, unsigned int node_modules);
 
 char* remove_whitespace(char* source);
 
+char* strlow(char* source);
+
 char* get_indent(unsigned int size);
 
 char* str_get_after(char* source, char* after);

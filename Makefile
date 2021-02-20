@@ -68,6 +68,7 @@ clean:
 	-rm *.o
 	-rm *.a
 	-rm src/*.o
+	-rm src/hooks/*.o
 	-rm -rf .tmp
 
 lint:
