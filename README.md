@@ -35,11 +35,7 @@
 
 ## How does one use it?
 ```bash
-fjb index.js
-```
-## What if I want the output in a file?
-```bash
-fjb index.js > dist.js
+fjb index.js -o dist.js
 ```
 
 ### Features
