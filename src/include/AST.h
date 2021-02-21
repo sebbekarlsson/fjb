@@ -27,7 +27,6 @@ typedef struct FJB_AST_STRUCT
   struct FJB_AST_STRUCT* node;
   struct FJB_AST_STRUCT* ast;
   struct FJB_AST_STRUCT* condition;
-  struct FJB_AST_STRUCT* module_root;
   struct FJB_AST_STRUCT* name_ast;
   struct FJB_AST_STRUCT* typedata;
   token_T* token;
@@ -59,6 +58,7 @@ typedef struct FJB_AST_STRUCT
   unsigned int writable;
   unsigned int bool_value;
   unsigned int dead;
+  unsigned int is_require_call;
   int line;
 
   unsigned int is_resolved;
@@ -68,6 +68,7 @@ typedef struct FJB_AST_STRUCT
 
   char* basename;
   char* comment;
+  int flag_type;
 
   map_T* map;
 
@@ -83,13 +84,7 @@ AST_T* init_ast_string(char* string_value);
 
 AST_T* init_ast_name(char* name);
 
-void ast_init_parent_lists(AST_T* ast);
-
-unsigned int ast_is_in_list(AST_T* ast, list_T* list);
-
 char* ast_type_to_str(AST_T* ast);
-
-char* ast_binop_to_str(AST_T* ast, int indent);
 
 typedef struct QUERY_STRUCT_T
 {
@@ -101,8 +96,6 @@ typedef struct QUERY_STRUCT_T
 
 AST_T* ast_search_pointer(AST_T* ast, int type);
 
-char* ast_encode_strings(list_T* strings);
-
 char* ast_get_string(AST_T* ast);
 
 char* ast_get_string_copy(AST_T* ast);
@@ -110,6 +103,8 @@ char* ast_get_string_copy(AST_T* ast);
 void list_free(gc_T* gc, list_T* list);
 
 void ast_free(AST_T* ast);
+
+list_T* ast_get_parents(AST_T* ast);
 
 #define NEW_STACK init_list(sizeof(AST_T*))
 

@@ -7,6 +7,7 @@ AST_T* eval(visitor_T* visitor, AST_T* ast)
   switch (ast->type) {
     case AST_BINOP: return eval_binop(visitor, ast); break;
     case AST_NAME: return eval_name(visitor, ast); break;
+    case AST_FLOAT: return eval_float(visitor, ast); break;
     default: return 0; break;
   }
 
@@ -14,6 +15,11 @@ AST_T* eval(visitor_T* visitor, AST_T* ast)
 }
 
 AST_T* eval_name(visitor_T* visitor, AST_T* ast)
+{
+  return ast;
+}
+
+AST_T* eval_float(visitor_T* visitor, AST_T* ast)
 {
   return ast;
 }

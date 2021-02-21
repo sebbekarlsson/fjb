@@ -79,7 +79,7 @@ void test_with_jquery()
 
   AST_T* root = run_get_ast(filepath, 0);
 
-  assert_node_exists(root, AST_ASSIGNMENT, "$", "test AST_ASSIGNMENT exists");
+  assert_node_exists(root, AST_NAME, "$", "test AST_NAME exists");
   destroy_fjb_env();
 }
 

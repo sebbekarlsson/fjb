@@ -1,1 +1,1 @@
-;if (typeof this !== "undefined"){this.%s=%s;}
+;if(typeof this !=="undefined"){this.%s=%s;}

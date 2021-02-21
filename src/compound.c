@@ -41,6 +41,9 @@ list_T* get_imported_symbols(AST_T* lookup)
     if (!imp)
       continue;
 
+    if (imp->ast)
+      resolved = imp->ast;
+
     for (unsigned int k = 0; k < nr_types; k++) {
       if (!resolved) {
         if (types[k] == AST_FUNCTION) {
@@ -76,6 +79,15 @@ unsigned int get_deps(AST_T* ast, options_T args, fjb_env_T* env)
 {
   if (!ast)
     return 0;
+  if (ast->dead)
+    return 0;
+  if (ast == FJB_ENV->current_import)
+    return 0;
+  if (ast->is_require_call || ast->type == AST_STRING || ast->type == AST_INT ||
+      ast->type == AST_FLOAT || ast->type == AST_REGEX || ast->type == AST_NOOP ||
+      ast->type == AST_UNDEFINED || ast->type == AST_IMPORT || ast->type == AST_BOOL ||
+      ast->type == AST_INT_MIN)
+    return 0;
   if (!ast->parent && ast->type != AST_COMPOUND && ast->type != AST_SCOPE)
     return 0;
 
@@ -99,8 +111,8 @@ unsigned int get_deps(AST_T* ast, options_T args, fjb_env_T* env)
   if (ast->condition)
     get_deps(ast->condition, args, env);
 
-  if (ast && ast->list_value && ast->type != AST_FUNCTION && ast->type != AST_IMPORT &&
-      ast->type != AST_ARROW_DEFINITION && ast->type != AST_SIGNATURE) {
+  if (ast && ast->list_value && ast->type != AST_FUNCTION && ast->type != AST_ARROW_DEFINITION &&
+      ast->type != AST_SIGNATURE) {
     LOOP_NODES(
       ast->list_value, i, child, if (child) { get_deps(child, args, env); });
   }
@@ -112,6 +124,10 @@ unsigned int get_deps(AST_T* ast, options_T args, fjb_env_T* env)
 
   AST_T* ptr = 0;
 
+  if (ast->ptr && (ast->ptr->type == AST_FUNCTION ||
+                   (ast->ptr->type == AST_ASSIGNMENT && ast->ptr->flags && ast->ptr->flags->size)))
+    ptr = ast->ptr;
+
   if (ast->name) {
     query_T query;
     query.name = ast->name;
@@ -120,29 +136,31 @@ unsigned int get_deps(AST_T* ast, options_T args, fjb_env_T* env)
     int types[] = { AST_ASSIGNMENT, AST_FUNCTION };
     size_t nr_types = 2;
 
-    for (unsigned int i = 0; i < nr_types; i++) {
-      query.type = types[i];
+    if (!ptr) {
+      for (unsigned int i = 0; i < nr_types; i++) {
+        query.type = types[i];
 
-      if (types[i] == AST_FUNCTION) {
-        ptr = (AST_T*)map_get_value(FJB_ENV->functions, ast->name);
-      } else {
-        ptr = (AST_T*)map_get_value(FJB_ENV->assignments, ast->name);
-        if (ptr && !ptr->flags) {
-          ptr = 0;
-          continue;
+        if (types[i] == AST_FUNCTION) {
+          ptr = (AST_T*)map_get_value(FJB_ENV->functions, ast->name);
+        } else {
+          ptr = (AST_T*)map_get_value(FJB_ENV->assignments, ast->name);
+          if (ptr && !ptr->flags) {
+            ptr = 0;
+            continue;
+          }
         }
-      }
 
-      if (ptr) {
-        if (query.parent && ptr->parent && (ptr->parent != query.parent))
+        if (ptr) {
+          if (query.parent && ptr->parent && (ptr->parent != query.parent))
+            continue;
+        }
+
+        if (!ptr)
           continue;
-      }
 
-      if (!ptr)
-        continue;
-
-      if (ptr) {
-        break;
+        if (ptr) {
+          break;
+        }
       }
     }
   }
@@ -179,11 +197,11 @@ AST_T* new_compound(AST_T* lookup, fjb_env_T* env)
   if (!env)
     return lookup;
 
-  if (FJB_ENV->level <= 0)
+  if (FJB_ENV->level <= 0 || (!lookup->list_value) ||
+      (lookup->list_value && !lookup->list_value->size))
     return lookup;
 
   AST_T* compound = init_ast(AST_COMPOUND);
-  compound->module_root = lookup->module_root;
   list_T* syms = get_imported_symbols(lookup);
   list_T* imported_symbols = syms ? syms : NEW_STACK;
   compound->list_value = imported_symbols;

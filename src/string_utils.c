@@ -156,8 +156,19 @@ char* int_to_str(int x)
 
 char* float_to_str(float x)
 {
+  int v = (int)x;
+  if (v == x)
+    return int_to_str(v);
+
   char* str = calloc(32, sizeof(char));
-  sprintf(str, "%12.6f", x);
+  sprintf(str, "%f", x);
+
+  for (unsigned int i = strlen(str); i > 0; i--) {
+    if (str[i - 1] == '0')
+      str[i - 1] = 0;
+    else
+      break;
+  }
 
   return str;
 }
