@@ -40,7 +40,7 @@ for page in pages:
     print(res.stdout, res.stderr)
 
     res = subprocess.run(
-        f"cd {p} && ../../../fjb.out {entry} > dist.js",
+        f"cd {p} && ../../../fjb.out {entry} -o dist.js",
         shell=True,
         capture_output=True)
 

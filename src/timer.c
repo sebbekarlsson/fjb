@@ -27,7 +27,7 @@ void* timer_thread_run(void* ptr)
 
   time(&start);
 
-  while (1) {
+  while (timer_thread) {
     time(&current);
     diff_t = difftime(current, start);
 
@@ -67,4 +67,14 @@ void timer_thread_start()
      * We dont necessarily need to die here.
      */
   }
+}
+
+void timer_thread_stop()
+{
+  if (!timer_thread)
+    return;
+
+  pthread_cancel(timer_thread);
+
+  timer_thread = 0;
 }

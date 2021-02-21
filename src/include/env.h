@@ -17,6 +17,7 @@ typedef struct FJB_ENV_STRUCT
 
   char* source;
   char* filepath;
+  char* outfile;
   char* dumped_tree;
 
   map_T* imports;
@@ -48,6 +49,8 @@ void destroy_fjb_env();
 void fjb_set_source(char* source);
 
 void fjb_set_filepath(char* filepath);
+
+void fjb_set_outfile(char* filepath);
 
 void fjb_set_aliased_import(unsigned int aliased_import);
 

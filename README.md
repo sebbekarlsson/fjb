@@ -56,6 +56,7 @@ fjb index.js > dist.js
 - [x] [Plugin support](PLUGINS.md)
 - [x] Removing dead code (Tree shaking)
 - [x] Supports package.json
+- [x] Watchdog (`--watch`)
 
 ### Planned Features
 - [ ] Lazy imports
