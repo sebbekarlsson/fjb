@@ -172,6 +172,10 @@ compiler_result_T* fjb()
     }
   }
 
+#ifndef DEBUG
+  timer_thread_stop();
+#endif
+
   return result;
 }
 

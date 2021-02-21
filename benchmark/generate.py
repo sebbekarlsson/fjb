@@ -29,7 +29,7 @@ POI_PATH = '/benchmark/node_modules/.bin/poi'
 POI_DIST = '/dist/assets/js/index.js'
 POI_ARGS = ''
 FJB_PATH = "/fjb.out"
-FJB_ARGS = ' > ./dist.js'
+FJB_ARGS = ' -o ./dist.js'
 
 DUMP_NAME = PWD + '/bench.json'
 GRAPH_DIR = PWD + '/graphs'

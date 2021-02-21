@@ -114,6 +114,14 @@ void fjb_set_filepath(char* filepath)
   FJB_ENV->filepath = filepath ? strdup(filepath) : 0;
 }
 
+void fjb_set_outfile(char* filepath)
+{
+  if (!filepath)
+    return;
+
+  FJB_ENV->outfile = filepath ? strdup(filepath) : 0;
+}
+
 list_T* fjb_get_hooks()
 {
   return FJB_ENV->hooks;

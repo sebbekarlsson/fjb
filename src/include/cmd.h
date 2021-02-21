@@ -8,6 +8,8 @@ typedef struct CMD_OPT_STRUCT
 
 cmd_opt_T cmd_getopt(int argc, char* argv[], const char* key, cmd_opt_T* opt);
 cmd_opt_T cmd_getflag(int argc, char* argv[], const char* key, cmd_opt_T* opt);
+cmd_opt_T cmd_getarg(int argc, char* argv[], const char* key, cmd_opt_T* opt);
 int cmd_help();
 int cmd_version();
+int cmd_watch();
 #endif

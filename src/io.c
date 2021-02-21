@@ -59,6 +59,8 @@ void fjb_write_file(const char* filename, char* outbuffer)
 
   fputs(outbuffer, fp);
 
+  printf("Wrote to: %s\n", filename);
+
   fclose(fp);
 }
 
