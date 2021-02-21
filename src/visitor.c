@@ -11,6 +11,7 @@
 #include "include/io.h"
 #include "include/node.h"
 #include "include/plugin.h"
+#include "include/resolve.h"
 #include "include/string_utils.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -481,6 +482,22 @@ AST_T* visitor_visit_class(visitor_T* visitor, AST_T* ast, list_T* stack)
 
 AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* stack)
 {
+  if (ast->name) {
+    fjb_register_function(ast, ast->name);
+    list_push(stack, ast); // TODO: get rid of stack
+
+    imported_T* im = fjb_get_imported(ast->name);
+
+    if (im) {
+      im->ast = ast;
+      ast->bool_value = 1;
+    } else {
+      ast->not_exported = 1;
+    }
+  }
+
+  if (!ast->bool_value && !(ast->body && ast->body->bool_value))
+    return ast;
   unsigned int stack_before = stack->size;
 
   if (ast->list_value && ast->list_value->size) {
@@ -491,6 +508,10 @@ AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* stack)
         continue;
 
       ast->list_value->items[i] = visitor_visit(visitor, child, stack);
+
+      if (!ast->body)
+        continue;
+
       char* n = ast_get_string(child);
       if (!n)
         continue;
@@ -500,20 +521,7 @@ AST_T* visitor_visit_function(visitor_T* visitor, AST_T* ast, list_T* stack)
     }
   }
 
-  if (ast->name) {
-    fjb_register_function(ast, ast->name);
-    list_push(stack, ast); // TODO: get rid of stack
-
-    imported_T* im = fjb_get_imported(ast->name);
-
-    if (im) {
-      im->ast = ast;
-    } else {
-      ast->not_exported = 1;
-    }
-  }
-
-  if (ast->body)
+  if (ast->body && (ast->bool_value || ast->body->bool_value))
     ast->body = visitor_visit(visitor, ast->body, stack);
 
   unsigned int new_size = stack->size;
@@ -562,6 +570,9 @@ AST_T* visitor_visit_compound(visitor_T* visitor, AST_T* ast, list_T* stack)
       if (!child)
         continue;
 
+      if (child->type == AST_NOOP || child->type == AST_UNDEFINED)
+        continue;
+
       ast->list_value->items[i] = visitor_visit(visitor, child, stack);
 
       if (child->value && child->type == AST_STATE && child->token &&
@@ -588,6 +599,9 @@ AST_T* visitor_visit_ternary(visitor_T* visitor, AST_T* ast, list_T* stack)
 
 AST_T* visitor_visit_name(visitor_T* visitor, AST_T* ast, list_T* stack)
 {
+  if (ast->dead)
+    return ast;
+
   if (ast->left)
     ast->left = visitor_visit(visitor, ast->left, stack);
 
@@ -671,7 +685,7 @@ AST_T* visitor_visit_decrement(visitor_T* visitor, AST_T* ast, list_T* stack)
 
 AST_T* visitor_visit_call(visitor_T* visitor, AST_T* ast, list_T* stack)
 {
-  if (ast->left)
+  if (ast->left && !ast->left->ptr)
     ast->left = visitor_visit(visitor, ast->left, stack);
   if (ast->right)
     ast->right = visitor_visit(visitor, ast->right, stack);
@@ -790,16 +804,6 @@ AST_T* visitor_visit_binop(visitor_T* visitor, AST_T* ast, list_T* stack)
   return ast;
 }
 
-AST_T* visitor_visit_undefined(visitor_T* visitor, AST_T* ast, list_T* stack)
-{
-  return ast;
-}
-
-AST_T* visitor_visit_noop(visitor_T* visitor, AST_T* ast, list_T* stack)
-{
-  return ast;
-}
-
 AST_T* visitor_visit_unop(visitor_T* visitor, AST_T* ast, list_T* stack)
 {
   if (ast->left)
@@ -828,8 +832,6 @@ AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* stack)
     printf("[Visitor]: Encountered %p AST.\n", ast);
     exit(1);
   }
-
-  ast->module_root = visitor->root;
 
   ast = fjb_call_all_hooks(HOOK_BEFORE_EVAL, ast);
 
@@ -868,7 +870,7 @@ AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* stack)
     case AST_FOR: ast = visitor_visit_for(visitor, ast, stack); break;
     case AST_COMPOUND: ast = visitor_visit_compound(visitor, ast, stack); break;
     case AST_IMPORT: ast = visitor_visit_import(visitor, ast, stack); break;
-    case AST_UNDEFINED: ast = visitor_visit_undefined(visitor, ast, stack); break;
+    case AST_UNDEFINED: return ast; break;
     case AST_CALL: ast = visitor_visit_call(visitor, ast, stack); break;
     case AST_FUNCTION: ast = visitor_visit_function(visitor, ast, stack); break;
     case AST_CLASS: ast = visitor_visit_class(visitor, ast, stack); break;
@@ -886,7 +888,7 @@ AST_T* visitor_visit(visitor_T* visitor, AST_T* ast, list_T* stack)
     case AST_TRY: ast = visitor_visit_try(visitor, ast, stack); break;
     case AST_TERNARY: ast = visitor_visit_ternary(visitor, ast, stack); break;
     case AST_DO: ast = visitor_visit_do(visitor, ast, stack); break;
-    case AST_NOOP: ast = visitor_visit_noop(visitor, ast, stack); break;
+    case AST_NOOP: return ast; break;
     case AST_TUPLE: ast = visitor_visit_tuple(visitor, ast, stack); break;
     case AST_JSX_TEMPLATE_VALUE: ast = eval_jsx(visitor, ast, stack); break;
     case AST_JSX_COMPOUND: ast = eval_jsx(visitor, ast, stack); break;

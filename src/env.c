@@ -49,7 +49,7 @@ void init_fjb_env()
   FJB_ENV->filepath = 0;
   FJB_ENV->hooks = init_list(sizeof(plugin_hook));
   FJB_ENV->resolved_imports = init_list(sizeof(char*));
-  FJB_ENV->imports = NEW_MAP();
+  FJB_ENV->imports = init_map(32);
   FJB_ENV->functions = NEW_MAP();
   FJB_ENV->assignments = NEW_MAP();
   FJB_ENV->map = NEW_MAP();
@@ -191,7 +191,8 @@ unsigned int fjb_ast_is_imported(AST_T* ast)
   if (!ast)
     return 0;
 
-  return (ast->name && (map_get(FJB_ENV->imports, ast->name) != 0) ||
+  return (ast->name && (map_get(FJB_ENV->imports, ast->name) != 0 ||
+                        map_get(FJB_ENV->compiled_imports, ast->name) != 0) ||
           (ast->left && ast->left->name &&
            (map_get(FJB_ENV->imports, ast->left->name) != 0 ||
             map_get(FJB_ENV->compiled_imports, ast->left->name) != 0)));

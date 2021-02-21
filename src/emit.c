@@ -605,7 +605,7 @@ char* emit_import(AST_T* ast)
   }
 
   char* requirements = 0;
-  AST_T* current = ast; // ast->module_root;
+  AST_T* current = ast;
   if (current) {
     unsigned int x = 0;
     unsigned int len;

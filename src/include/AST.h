@@ -27,7 +27,6 @@ typedef struct FJB_AST_STRUCT
   struct FJB_AST_STRUCT* node;
   struct FJB_AST_STRUCT* ast;
   struct FJB_AST_STRUCT* condition;
-  struct FJB_AST_STRUCT* module_root;
   struct FJB_AST_STRUCT* name_ast;
   struct FJB_AST_STRUCT* typedata;
   token_T* token;
@@ -104,6 +103,8 @@ char* ast_get_string_copy(AST_T* ast);
 void list_free(gc_T* gc, list_T* list);
 
 void ast_free(AST_T* ast);
+
+list_T* ast_get_parents(AST_T* ast);
 
 #define NEW_STACK init_list(sizeof(AST_T*))
 

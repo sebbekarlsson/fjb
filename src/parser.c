@@ -256,6 +256,18 @@ AST_T* parser_parse_id(parser_T* parser, parser_options_T options)
   ast->parent = options.parent;
   ast->string_value = strdup(parser->token->value);
   ast->name = strdup(ast->string_value);
+
+  if (fjb_ast_is_imported(ast)) {
+    list_T* parents = ast_get_parents(ast);
+
+    for (unsigned int i = 0; i < parents->size; i++) {
+      AST_T* p = (AST_T*)parents->items[i];
+      if (!p)
+        continue;
+      p->bool_value = 1;
+    }
+  }
+
   ast->from_module = parser->env->filepath ? strdup(parser->env->filepath) : 0;
 
   parser_eat_any(parser);
@@ -550,6 +562,17 @@ AST_T* parser_parse_class(parser_T* parser, parser_options_T options)
   parser_eat(parser, TOKEN_RBRACE);
 
   gc_mark(parser->env->GC, ast);
+
+  if (fjb_ast_is_imported(ast)) {
+    list_T* parents = ast_get_parents(ast);
+
+    for (unsigned int i = 0; i < parents->size; i++) {
+      AST_T* p = (AST_T*)parents->items[i];
+      if (!p)
+        continue;
+      p->bool_value = 1;
+    }
+  }
 
   return ast;
 }
@@ -902,6 +925,9 @@ AST_T* parser_parse_function(parser_T* parser, parser_options_T options)
     ast->body = parser_parse(parser, options);
     if (ast->name)
       ast->body->name = strdup(ast->name);
+
+    if (ast->body->type == AST_COMPOUND)
+      ast->body->string_value = emit(ast->body);
   }
 
   parser_eat(parser, TOKEN_RBRACE);
@@ -911,6 +937,17 @@ AST_T* parser_parse_function(parser_T* parser, parser_options_T options)
   }
 
   gc_mark(parser->env->GC, ast);
+
+  if (fjb_ast_is_imported(ast)) {
+    list_T* parents = ast_get_parents(ast);
+
+    for (unsigned int i = 0; i < parents->size; i++) {
+      AST_T* p = (AST_T*)parents->items[i];
+      if (!p)
+        continue;
+      p->bool_value = 1;
+    }
+  }
 
   options.parent = ast->parent;
 

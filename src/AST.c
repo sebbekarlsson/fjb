@@ -147,3 +147,16 @@ char* ast_type_to_str(AST_T* ast)
     return 0;
   return (char*)AST_TYPE_STR[ast->type];
 }
+
+list_T* ast_get_parents(AST_T* ast)
+{
+  list_T* l = NEW_STACK;
+  AST_T* p = ast->parent;
+
+  while (p) {
+    list_push(l, p);
+    p = p->parent;
+  }
+
+  return l;
+}
