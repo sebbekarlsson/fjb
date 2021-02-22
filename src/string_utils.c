@@ -22,25 +22,6 @@ char* str_append(char** source, const char* piece)
   return src;
 }
 
-/*
-char* str_append(char** source, const char* piece)
-{
-  char* src = *source;
-
-  if (!piece)
-    return src;
-
-  if (!src) {
-    src = calloc((strlen(piece) + 1), sizeof(char));
-  } else {
-    src = realloc(src, (strlen(src) + strlen(piece) + 1) * sizeof(char));
-  }
-
-  strcat(src, piece);
-
-  return src;
-}*/
-
 char* str_prefix(char** source, const char* piece)
 {
   char* v = strdup(*source);
@@ -326,8 +307,8 @@ char* get_entry(char* dir)
   return entry_point;
 }
 
-const char* extensions[] = { ".js", ".ts", ".jsx" };
-const size_t nr_extensions = 3;
+const char* extensions[] = { ".js", ".ts", ".jsx", ".tsx" };
+const size_t nr_extensions = 4;
 
 char* try_resolve_index(char* path)
 {
@@ -505,7 +486,11 @@ char* resolve_import(char* basepath, char* filepath, unsigned int node_modules)
     path = try_every_dir(basepath, filepath);
   }
 
-  return file_exists(path) && !is_dir(path) ? path : 0;
+  if (file_exists(path) && !is_dir(path))
+    return path;
+
+  printf("Unable to resolve `%s`\n", filepath);
+  exit(1);
 }
 
 char* remove_whitespace(char* source)
