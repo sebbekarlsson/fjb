@@ -1,6 +1,6 @@
 #include "include/gc.h"
 #include "include/AST.h"
-#include "include/list.h"
+#include <list/list.h>
 #include <stdio.h>
 
 gc_T* init_gc()

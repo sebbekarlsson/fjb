@@ -40,3 +40,28 @@ AST_T* resolve(AST_T* ast, unsigned int (*query)(AST_T* ast, query_T data), quer
 
   return 0;
 }
+
+AST_T* resolve_name(AST_T* ast, char* name)
+{
+  if (!name)
+    return 0;
+
+  AST_T* x = 0;
+
+  if (ast->name && strcmp(ast->name, name) == 0)
+    x = ast;
+  if (!x && ast->left)
+    x = resolve_name(ast->left, name);
+  if (!x && ast->right)
+    x = resolve_name(ast->right, name);
+  if (!x && ast->next)
+    x = resolve_name(ast->next, name);
+  if (!x && ast->value)
+    x = resolve_name(ast->value, name);
+  if (!x && ast->expr)
+    x = resolve_name(ast->expr, name);
+  if (!x && ast->body)
+    x = resolve_name(ast->body, name);
+
+  return x;
+}

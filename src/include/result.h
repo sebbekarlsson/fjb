@@ -1,7 +1,7 @@
 #ifndef FJB_RESULT_H
 #define FJB_RESULT_H
 #include "AST.h"
-#include "list.h"
+#include <list/list.h>
 typedef struct FJB_COMPILER_RESULT
 {
   char* stdout;

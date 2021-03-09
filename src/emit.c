@@ -173,6 +173,31 @@ char* emit_tuple(list_T* list_value)
   return str ? str : strdup("");
 }
 
+char* emit_semi_tuple(list_T* list_value)
+{
+  char* str = 0;
+
+  list_T* living = list_value;
+
+  for (unsigned int i = 0; i < living->size; i++) {
+    AST_T* child = (AST_T*)living->items[i];
+
+    char* child_str = emit(child);
+
+    if (!child_str)
+      continue;
+
+    str = str_append(&str, child_str);
+
+    if (i < living->size - 1 && child->type != AST_NOOP && child->type != AST_UNDEFINED)
+      str = str_append(&str, ",");
+
+    free(child_str);
+  }
+
+  return str ? str : strdup("");
+}
+
 char* emit(AST_T* ast)
 {
   if (!ast) {
@@ -420,8 +445,17 @@ char* emit_assignment(AST_T* ast)
     return strdup("");
   }
 
-  if ((fjb_ast_should_be_exposed(ast)) && ast->left && ast->left->name) {
-    TEMPLATE(expose_def, expose_str, strlen(ast->left->name) * 2, ast->left->name, ast->left->name);
+  char* name = 0;
+  if (ast->left) {
+    name = ast_get_alias(ast->left);
+  }
+
+  if (!name) {
+    name = ast_get_alias(ast);
+  }
+
+  if ((fjb_ast_should_be_exposed(ast)) && ast->left && name) {
+    TEMPLATE(expose_def, expose_str, strlen(name) * 2, name, name);
   }
 
   if (!expose_str)
@@ -453,9 +487,11 @@ char* emit_colon_assignment(AST_T* ast)
 {
   char* str = 0;
 
-  if (ast->left || ast->name) {
-    if (ast->name && !ast->left) {
-      str = str_append(&str, ast->name);
+  char* name = ast_get_alias(ast);
+
+  if (ast->left || name) {
+    if (name && !ast->left) {
+      str = str_append(&str, name);
     }
     str = str_append(&str, "");
 
@@ -542,6 +578,9 @@ char* emit_compound(AST_T* ast)
   for (unsigned int i = 0; i < living->size; i++) {
     AST_T* child_ast = (AST_T*)living->items[i];
 
+    if (!child_ast)
+      continue;
+
     if (child_ast->string_value && strcmp(child_ast->string_value, "use strict") == 0)
       continue;
 
@@ -558,10 +597,10 @@ char* emit_compound(AST_T* ast)
 
     str = str_append(&str, child_str);
 
-    free(child_str);
+    // free(child_str);
   }
 
-  return str ? str : strdup("");
+  return str ? strdup(str) : strdup("");
 }
 
 char* emit_import(AST_T* ast)
@@ -587,6 +626,7 @@ char* emit_import(AST_T* ast)
         continue;
 
       char* name = ast_get_string(child);
+      char* alias = child->alias ? child->alias : name;
 
       if (!name)
         continue;
@@ -594,7 +634,12 @@ char* emit_import(AST_T* ast)
       char* defstr = 0;
 
       if (ast->not_exported == 0 && child->not_exported == 0)
-        TEMPLATE(export_def, defstr, (strlen(name) * 3) + (strlen(encoding) * 2), name, encoding);
+        TEMPLATE(export_def,
+                 defstr,
+                 strlen(alias) + (strlen(name) * 3) + (strlen(encoding) * 2),
+                 alias,
+                 encoding,
+                 name);
 
       if (!defstr)
         continue;
@@ -694,8 +739,10 @@ char* emit_call(AST_T* ast)
     return emit_import(ast);
   }
 
-  if (!ast->left && ast->name) {
-    str = str_append(&str, ast->name);
+  char* name = ast_get_alias(ast);
+
+  if (!ast->left && name) {
+    str = str_append(&str, name);
   }
 
   str = emit_args(ast->list_value);
@@ -833,7 +880,7 @@ char* emit_signature(AST_T* ast)
 
 char* emit_name(AST_T* ast)
 {
-  return ast_get_string_copy(ast);
+  return ast->alias ? strdup(ast->alias) : ast_get_string_copy(ast);
 }
 
 char* emit_state(AST_T* ast)

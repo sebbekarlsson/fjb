@@ -6,6 +6,8 @@ AST_T* eval(visitor_T* visitor, AST_T* ast)
 {
   switch (ast->type) {
     case AST_BINOP: return eval_binop(visitor, ast); break;
+    case AST_UNOP: return eval_unop(visitor, ast); break;
+    case AST_CALL: return eval_call(visitor, ast); break;
     case AST_NAME: return eval_name(visitor, ast); break;
     case AST_FLOAT: return eval_float(visitor, ast); break;
     default: return 0; break;
@@ -16,12 +18,17 @@ AST_T* eval(visitor_T* visitor, AST_T* ast)
 
 AST_T* eval_name(visitor_T* visitor, AST_T* ast)
 {
-  return ast;
+  return 0;
 }
 
 AST_T* eval_float(visitor_T* visitor, AST_T* ast)
 {
-  return ast;
+  return 0;
+}
+
+AST_T* eval_call(visitor_T* visitor, AST_T* ast)
+{
+  return 0;
 }
 
 static AST_T* _eval_string(char* leftstr, char* rightstr, int token_type)
@@ -79,6 +86,8 @@ static AST_T* _eval_number(int left, int right, int token_type)
 
   return ast;
 }
+
+AST_T* eval_unop(visitor_T* visitor, AST_T* ast) {}
 
 AST_T* eval_binop(visitor_T* visitor, AST_T* ast)
 {

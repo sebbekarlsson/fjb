@@ -2,7 +2,7 @@
 #define FJB_ENV_H
 #include "AST.h"
 #include "imported.h"
-#include "list.h"
+#include <list/list.h>
 #include <hashmap/map.h>
 
 typedef struct FJB_ENV_STRUCT
@@ -35,6 +35,8 @@ typedef struct FJB_ENV_STRUCT
   AST_T* current_import;
 
   map_T* compiled_imports;
+  map_T* aliases;
+  map_T* global_imports;
 
   struct FJB_LEXER_STRUCT* lexer;
   struct FJB_PARSER_STRUCT* parser;

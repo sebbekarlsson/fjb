@@ -10,7 +10,7 @@
 pthread_t timer_thread;
 
 // the time we allow the compilation to run.
-const int TIME_LIMIT_SECONDS = 4;
+const int TIME_LIMIT_SECONDS = 6;
 
 extern fjb_env_T* FJB_ENV;
 
@@ -31,7 +31,7 @@ void* timer_thread_run(void* ptr)
     time(&current);
     diff_t = difftime(current, start);
 
-    if (diff_t >= 4) {
+    if (diff_t >= TIME_LIMIT_SECONDS) {
       printf("Took too long. (probably stuck)\n");
 
       if (FJB_ENV->lexer) {

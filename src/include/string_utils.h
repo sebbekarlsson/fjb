@@ -42,4 +42,6 @@ char char_tolower(unsigned char ch);
 char* strip_ext(char* filepath);
 
 int strcasecmp(const char* s1, const char* s2);
+
+unsigned int str_is_upper(char* source);
 #endif

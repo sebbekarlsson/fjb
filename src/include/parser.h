@@ -3,7 +3,7 @@
 #include "AST.h"
 #include "env.h"
 #include "lexer.h"
-#include "list.h"
+#include <list/list.h>
 
 typedef struct FJB_PARSER_STRUCT
 {

@@ -13,9 +13,13 @@ char* str_append(char** source, const char* piece)
 {
   char* src = *source;
 
+  if (!src) return strdup(piece);
+  if (!piece) return src;
+
   size_t slen = src ? strlen(src) : 0;
   size_t plen = piece ? strlen(piece) : 0;
   size_t len = slen + plen + 1;
+  
   src = realloc(src, len * sizeof(char));
   memcpy(src + slen, piece, plen + 1);
 
@@ -438,6 +442,9 @@ char* resolve_import(char* basepath, char* filepath, unsigned int node_modules)
   basepath = dirname(basepath);
 
   char* with_e = try_resolve(filepath);
+
+  if (!with_e) with_e = resolve_file(strdup("node_modules"), filepath);
+  
   if (with_e)
     return with_e;
 
@@ -448,6 +455,7 @@ char* resolve_import(char* basepath, char* filepath, unsigned int node_modules)
   full_path = str_append(&full_path, basepath);
   full_path = str_append(&full_path, "/");
   full_path = str_append(&full_path, filepath);
+
 
   if (full_path && is_dir(full_path)) {
     char* entry = get_entry(full_path);
@@ -489,7 +497,7 @@ char* resolve_import(char* basepath, char* filepath, unsigned int node_modules)
   if (file_exists(path) && !is_dir(path))
     return path;
 
-  printf("Unable to resolve `%s`\n", filepath);
+  printf("Unable to resolve `%s` (%s, %s)\n", filepath, basepath, path ? path : "");
   exit(1);
 }
 
@@ -602,4 +610,11 @@ char* str_get_after(char* source, char* after)
   if (!v)
     return source;
   return source + pos;
+}
+
+unsigned int str_is_upper(char* source)
+{
+  if (!source)
+    return 0;
+  return source[0] >= 'A' && source[0] <= 'Z';
 }

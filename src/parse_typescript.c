@@ -45,7 +45,7 @@ AST_T* parser_parse_interface(parser_T* parser, parser_options_T options)
   }
 
   // extends ... etc
-  while (parser->token->type != TOKEN_LBRACE) {
+  while (parser->token->type != TOKEN_LBRACE && parser->token->type != TOKEN_EOF) {
     AST_T* statement = parser_parse_statement(parser, options);
     list_push(ast->options, statement);
   }

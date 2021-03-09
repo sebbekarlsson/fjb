@@ -48,7 +48,9 @@ char* emit_jsx_template_string(AST_T* ast)
   str = str_append(&str, m);
   str = str_append(&str, "${");
 
-  if (ast->string_value) {
+  if (ast->alias) {
+    str = str_append(&str, ast->alias);
+  } else if (ast->string_value) {
     str = str_append(&str, ast->string_value);
   } else if (ast->expr) {
     char* v = emit(ast->expr);

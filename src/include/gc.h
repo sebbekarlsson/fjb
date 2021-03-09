@@ -1,6 +1,6 @@
 #ifndef FJB_GC_H
 #define FJB_GC_H
-#include "list.h"
+#include <list/list.h>
 
 typedef struct FJB_AST_STRUCT AST_T;
 

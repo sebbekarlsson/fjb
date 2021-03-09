@@ -4,7 +4,7 @@
 #include "AST.h"
 #include "env.h"
 #include "gc.h"
-#include "list.h"
+#include <list/list.h>
 #include "parser.h"
 
 #define NONE -1

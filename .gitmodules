@@ -10,3 +10,6 @@
 [submodule "tests/fjb-samples"]
 	path = tests/fjb-samples
 	url = https://github.com/sebbekarlsson/fjb-samples.git
+[submodule "external/liblist"]
+	path = external/liblist
+	url = https://github.com/sebbekarlsson/liblist.git

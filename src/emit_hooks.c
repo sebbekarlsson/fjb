@@ -88,6 +88,7 @@ compiler_result_T* emit_hooks_css(list_T* imports)
     assignment->exported = 1;
 
     value = emit(assignment);
+    fjb_register_assignment(assignment, assignment->name);
   } else if (FJB_ENV->aliased_import || (!imp && !imp_name)) {
     AST_T* state = init_ast(AST_STATE);
     state->value = css_ast;

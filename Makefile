@@ -47,6 +47,9 @@ libjson.a:
 libscss.a:
 	cd external/scss ; make clean ; make ; make install; mv ./libscss.a ../../.
 
+liblist.a:
+	cd external/liblist ; make clean ; make ; make install ; mv *.a ../../.
+
 libhashmap.a:
 	cd external/hashmap ; make clean ; make ; make install ; mv ./libhashmap.a ../../.
 

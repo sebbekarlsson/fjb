@@ -3,6 +3,7 @@
 #include "include/AST.h"
 #include "include/imported.h"
 #include "include/resolve.h"
+#include <list/list.h>
 #include <stdio.h>
 #include <string.h>
 

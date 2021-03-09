@@ -9,7 +9,7 @@
 #include "include/js/jsx_headers.js.h"
 #include "include/js/optional_chain_headers.js.h"
 #include "include/lexer.h"
-#include "include/list.h"
+#include <list/list.h>
 #include "include/parser.h"
 #include "include/plugin.h"
 #include "include/string_utils.h"

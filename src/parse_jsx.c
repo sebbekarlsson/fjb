@@ -1,5 +1,6 @@
 #include "include/parse_jsx.h"
 #include "include/env.h"
+#include "include/id.h"
 #include "include/js.h"
 #include "include/jsx.h"
 #include "include/string_utils.h"
@@ -128,10 +129,13 @@ AST_T* parse_jsx_attr(parser_T* parser, parser_options_T options)
     if (jsx_type != JSX_REACT && strcmp(left->name, "className") == 0) {
       left->name = strdup("class");
     }
-    char* after = str_get_after(left->name, "on");
 
-    if (jsx_type != JSX_REACT && after && is_js_event(after)) {
-      left->name = strlow(strdup(after));
+    if (strstr(left->name, "on")) {
+      char* after = str_get_after(left->name, "on");
+
+      if (jsx_type != JSX_REACT && after && is_js_event(after)) {
+        left->name = strlow(strdup(after));
+      }
     }
     assignment->name = strdup(left->name);
   }
@@ -178,6 +182,7 @@ AST_T* parse_jsx(parser_T* parser, parser_options_T options)
   ast->list_value = NEW_STACK;
 
   parser_eat(parser, TOKEN_LT);
+  if (parser->token->type == TOKEN_GT) return ast;
 
   ast->name = strdup(parser->token->value);
   ast->name_ast = parse_jsx_name(parser, options);

@@ -53,7 +53,9 @@ void init_fjb_env()
   FJB_ENV->functions = NEW_MAP();
   FJB_ENV->assignments = NEW_MAP();
   FJB_ENV->map = NEW_MAP();
+  FJB_ENV->aliases = NEW_MAP();
   FJB_ENV->GC = init_gc();
+  FJB_ENV->global_imports = init_map(32);
 
   register_process_object();
 
@@ -61,21 +63,26 @@ void init_fjb_env()
 
   /* ==== Built-in globals ==== */
   AST_T* module = init_ast(AST_OBJECT);
+  module->map = NEW_MAP();
   module->name = strdup("module");
   module->list_value = init_list(sizeof(AST_T*));
   gc_mark(FJB_ENV->GC, module);
-
-  AST_T* module_assignment = init_assignment("module", module);
-  gc_mark(FJB_ENV->GC, module_assignment);
+  map_set(FJB_ENV->map, module->name, module);
 
   AST_T* exports = init_ast(AST_OBJECT);
   exports->list_value = init_list(sizeof(AST_T*));
+  exports->map = NEW_MAP();
   exports->name = strdup("exports");
   gc_mark(FJB_ENV->GC, exports);
+  map_set(module->map, exports->name, exports);
+  map_set(FJB_ENV->map, exports->name, module);
 
-  AST_T* exports_assignment = init_assignment("exports", exports);
-  gc_mark(FJB_ENV->GC, exports_assignment);
-  list_push(module->list_value, exports_assignment);
+  AST_T* document = init_ast(AST_OBJECT);
+  document->map = NEW_MAP();
+  document->name = strdup("document");
+  document->list_value = init_list(sizeof(AST_T*));
+  gc_mark(FJB_ENV->GC, document);
+  map_set(FJB_ENV->map, document->name, document);
 
   register_builtin_hooks();
 }
