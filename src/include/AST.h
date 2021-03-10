@@ -2,9 +2,9 @@
 #define FJB_AST_H
 #include "enums/AST_TYPES.gpp.h"
 #include "gc.h"
-#include <list/list.h>
 #include "token.h"
 #include <hashmap/map.h>
+#include <list/list.h>
 typedef struct FJB_AST_STRUCT
 {
   enum AST_TYPE type;
@@ -60,6 +60,7 @@ typedef struct FJB_AST_STRUCT
   unsigned int from_call;
   unsigned int visited;
   unsigned int no_ptr;
+  unsigned int optional;
   int line;
 
   unsigned int is_resolved;

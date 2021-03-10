@@ -182,7 +182,8 @@ AST_T* parse_jsx(parser_T* parser, parser_options_T options)
   ast->list_value = NEW_STACK;
 
   parser_eat(parser, TOKEN_LT);
-  if (parser->token->type == TOKEN_GT) return ast;
+  if (parser->token->type == TOKEN_GT)
+    return ast;
 
   ast->name = strdup(parser->token->value);
   ast->name_ast = parse_jsx_name(parser, options);

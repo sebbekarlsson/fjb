@@ -2,8 +2,8 @@
 #define FJB_ENV_H
 #include "AST.h"
 #include "imported.h"
-#include <list/list.h>
 #include <hashmap/map.h>
+#include <list/list.h>
 
 typedef struct FJB_ENV_STRUCT
 {

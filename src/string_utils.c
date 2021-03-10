@@ -13,13 +13,19 @@ char* str_append(char** source, const char* piece)
 {
   char* src = *source;
 
-  if (!src) return strdup(piece);
-  if (!piece) return src;
+  if ((!src || !source) && piece)
+    return strdup(piece);
+  if (!piece && src)
+    return src;
+  if (!piece && !src)
+    return 0;
+  if (!piece && !source)
+    return 0;
 
   size_t slen = src ? strlen(src) : 0;
   size_t plen = piece ? strlen(piece) : 0;
   size_t len = slen + plen + 1;
-  
+
   src = realloc(src, len * sizeof(char));
   memcpy(src + slen, piece, plen + 1);
 
@@ -297,22 +303,67 @@ char* get_slashed_path(char* path)
   return str;
 }
 
+const char* extensions[] = { ".js", ".ts", ".jsx", ".tsx" };
+const size_t nr_extensions = 4;
+
 char* get_entry(char* dir)
 {
   char* entry_point = 0;
 
-  if (!entry_point)
+  if (!entry_point) {
     entry_point = package_get(dir, "main");
+    if (entry_point) {
+      char* full_path = 0;
+      full_path = str_append(&full_path, dir);
+      full_path = str_append(&full_path, "/");
+      full_path = str_append(&full_path, entry_point);
+      if (!file_exists(full_path)) {
+        free(entry_point);
+        free(full_path);
+        entry_point = 0;
+      };
+    }
+  }
 
   if (!entry_point) {
     entry_point = package_get(dir, "jsnext:main");
+    if (entry_point && (!file_exists(entry_point) || is_dir(entry_point))) {
+      free(entry_point);
+      entry_point = 0;
+    };
+
+    if (entry_point) {
+      char* full_path = 0;
+      full_path = str_append(&full_path, dir);
+      full_path = str_append(&full_path, "/");
+      full_path = str_append(&full_path, entry_point);
+      if (!file_exists(full_path)) {
+        free(entry_point);
+        free(full_path);
+        entry_point = 0;
+      };
+    }
+  }
+
+  if (!entry_point) {
+    for (unsigned int i = 0; i < nr_extensions; i++) {
+      char* p = 0;
+      p = str_append(&p, dir);
+      p = str_append(&p, "/");
+      p = str_append(&p, "index");
+      p = str_append(&p, extensions[i]);
+
+      if (p && file_exists(p) && !is_dir(p)) {
+        entry_point = p;
+        break;
+      } else if (p) {
+        free(p);
+      }
+    }
   }
 
   return entry_point;
 }
-
-const char* extensions[] = { ".js", ".ts", ".jsx", ".tsx" };
-const size_t nr_extensions = 4;
 
 char* try_resolve_index(char* path)
 {
@@ -365,12 +416,12 @@ char* resolve_file(char* basepath, char* filepath)
   path_to_file = str_append(&path_to_file, basepath);
   path_to_file = str_append(&path_to_file, "/");
   path_to_file = str_append(&path_to_file, filepath);
-  char* index = try_resolve_index(path_to_file);
 
   char* m = try_resolve(path_to_file);
   if (m)
     return m;
 
+  char* index = try_resolve_index(path_to_file);
   if (index)
     return index;
 
@@ -443,8 +494,9 @@ char* resolve_import(char* basepath, char* filepath, unsigned int node_modules)
 
   char* with_e = try_resolve(filepath);
 
-  if (!with_e) with_e = resolve_file(strdup("node_modules"), filepath);
-  
+  if (!with_e)
+    with_e = resolve_file(strdup("node_modules"), filepath);
+
   if (with_e)
     return with_e;
 
@@ -455,7 +507,6 @@ char* resolve_import(char* basepath, char* filepath, unsigned int node_modules)
   full_path = str_append(&full_path, basepath);
   full_path = str_append(&full_path, "/");
   full_path = str_append(&full_path, filepath);
-
 
   if (full_path && is_dir(full_path)) {
     char* entry = get_entry(full_path);

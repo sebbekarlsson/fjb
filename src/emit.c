@@ -309,8 +309,9 @@ char* emit(AST_T* ast)
 
     str = str_append(&str, ")");
 
-    free(body);
+    // free(body);
   } else if (body) {
+    body = strdup(body);
     if (leftstr) {
       str = str_append(&str, leftstr);
       free(leftstr);
@@ -420,7 +421,7 @@ char* emit_arrow_definition(AST_T* ast)
   if (bodystr)
     free(bodystr);
 
-  return str;
+  return str ? str : strdup("");
 }
 
 char* emit_assignment(AST_T* ast)

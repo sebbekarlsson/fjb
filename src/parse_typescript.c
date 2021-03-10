@@ -9,6 +9,11 @@ AST_T* parser_parse_interface_child(parser_T* parser, parser_options_T options)
 
   colon_ass->left = parser_parse_factor(parser, options);
 
+  if (parser->token->type == TOKEN_QUESTION) {
+    EAT(TOKEN_QUESTION);
+    colon_ass->optional = 1;
+  }
+
   if (parser->token->type != TOKEN_COLON) {
     return colon_ass->left;
   }
@@ -32,7 +37,9 @@ AST_T* parser_parse_interface(parser_T* parser, parser_options_T options)
   AST_T* ast = init_ast_line(AST_INTERFACE, parser->lexer->line);
   ast->list_value = NEW_STACK;
   ast->options = NEW_STACK;
-  EAT(TOKEN_INTERFACE);
+
+  if (parser->token->type == TOKEN_INTERFACE)
+    EAT(TOKEN_INTERFACE);
 
   if (parser->token->type == TOKEN_ID) {
     ast->name = strdup(parser->token->value);
@@ -105,6 +112,11 @@ AST_T* parser_parse_custom_type(parser_T* parser, parser_options_T options)
   return name;
 }
 
+AST_T* parser_parse_typed_object(parser_T* parser, parser_options_T options)
+{
+  return parser_parse_interface(parser, options);
+}
+
 AST_T* parser_parse_hint(parser_T* parser, parser_options_T options)
 {
   AST_T* left = 0;
@@ -113,6 +125,8 @@ AST_T* parser_parse_hint(parser_T* parser, parser_options_T options)
     case TOKEN_TYPE_NUMBER:
     case TOKEN_TYPE_STRING: left = parser_parse_type(parser, options); break;
     case TOKEN_ID: left = parser_parse_custom_type(parser, options); break;
+    case TOKEN_LBRACE: left = parser_parse_typed_object(parser, options); break;
+    case TOKEN_TYPEOF: left = parser_parse_state(parser, options); break;
     default: {
       left = 0;
     }
@@ -145,6 +159,13 @@ AST_T* parser_parse_typehints(parser_T* parser, parser_options_T options)
     parser_eat(parser, parser->token->type);
     binop->right = parser_parse_typehints(parser, options);
     left = binop;
+  }
+
+  if (parser->token->type == TOKEN_LBRACKET) {
+    AST_T* ast_arr = parser_parse_array(parser, options);
+    ast_arr->parent = options.parent;
+    ast_arr->left = left;
+    left = ast_arr;
   }
 
   return left;

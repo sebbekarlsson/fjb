@@ -77,7 +77,7 @@ void ast_free(AST_T* ast)
   }
 
   if (ast->compiled_value) {
-    free(ast->compiled_value);
+    //  free(ast->compiled_value);
   }
 
   if (ast->name) {

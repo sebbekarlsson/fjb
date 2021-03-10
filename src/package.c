@@ -12,6 +12,8 @@ char* package_get(const char* path, const char* key)
   full_path = str_append(&full_path, path);
   full_path = str_append(&full_path, "/");
   full_path = str_append(&full_path, PACKAGE_NAME);
+  if (!file_exists(full_path) || is_dir(full_path))
+    return 0;
   // load the parser with the file
   char* contents = fjb_read_file(full_path);
   char* v = 0;

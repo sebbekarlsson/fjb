@@ -43,5 +43,7 @@ char* strip_ext(char* filepath);
 
 int strcasecmp(const char* s1, const char* s2);
 
+int is_dir(const char* path);
+
 unsigned int str_is_upper(char* source);
 #endif

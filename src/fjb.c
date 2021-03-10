@@ -9,12 +9,12 @@
 #include "include/js/jsx_headers.js.h"
 #include "include/js/optional_chain_headers.js.h"
 #include "include/lexer.h"
-#include <list/list.h>
 #include "include/parser.h"
 #include "include/plugin.h"
 #include "include/string_utils.h"
 #include "include/timer.h"
 #include "include/visitor.h"
+#include <list/list.h>
 #include <stdio.h>
 #include <string.h>
 

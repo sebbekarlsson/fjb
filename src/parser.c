@@ -281,8 +281,9 @@ AST_T* parser_parse_id(parser_T* parser, parser_options_T options)
   }
 
   if ((options.parent &&
-      (options.parent->type == AST_CALL || options.parent->type == AST_CLASS ||
-       options.parent->type == AST_FUNCTION || options.parent->type == AST_ASSIGNMENT || options.parent->type == AST_ARROW_DEFINITION || options.parent->type == AST_COMPOUND)) &&
+       (options.parent->type == AST_CALL || options.parent->type == AST_CLASS ||
+        options.parent->type == AST_FUNCTION || options.parent->type == AST_ASSIGNMENT ||
+        options.parent->type == AST_ARROW_DEFINITION || options.parent->type == AST_COMPOUND)) &&
       parser->lexer->is_using_ts && parser->token->type == TOKEN_COLON) {
     ast->typedata = parser_parse_typehints(parser, options);
   }
@@ -371,13 +372,21 @@ AST_T* parser_parse_import(parser_T* parser, parser_options_T options)
   if (parser->token->type == TOKEN_LBRACE) {
     parser_eat(parser, TOKEN_LBRACE);
 
-    AST_T* ast_import_arg = parser_parse_id(parser, options);
-    list_push(ast->list_value, ast_import_arg);
-
-    while (parser->token->type == TOKEN_COMMA) {
-      parser_eat(parser, TOKEN_COMMA);
+    if (parser->token->type != TOKEN_RBRACE) {
       AST_T* ast_import_arg = parser_parse_id(parser, options);
       list_push(ast->list_value, ast_import_arg);
+
+      while (parser->token->type == TOKEN_COMMA) {
+        parser_eat(parser, TOKEN_COMMA);
+
+        if (parser->token->type != TOKEN_RBRACE) {
+          AST_T* ast_import_arg = parser_parse_id(parser, options);
+          list_push(ast->list_value, ast_import_arg);
+        }
+      }
+
+      if (parser->token->type == TOKEN_COMMA)
+        parser_eat(parser, TOKEN_COMMA);
     }
 
     parser_eat(parser, TOKEN_RBRACE);
@@ -395,7 +404,7 @@ AST_T* parser_parse_import(parser_T* parser, parser_options_T options)
     list_push(ast->list_value, ast_import_arg);
   }
 
-  if ((ast->list_value->size > 0) || ast->alias) {
+  if (parser->token->type == TOKEN_FROM) {
     parser_eat(parser, TOKEN_FROM);
   }
   ast->string_value = strdup(parser->token->value);
@@ -485,8 +494,8 @@ AST_T* parser_parse_assignment(parser_T* parser, parser_options_T options, AST_T
     return tuple_ast;
   }
   if (ast->value && parser->lexer->is_using_ts && parser->token->type == TOKEN_COLON) {
-      ast->value->typedata = parser_parse_typehints(parser, options);
-    }
+    ast->value->typedata = parser_parse_typehints(parser, options);
+  }
   return ast;
 }
 
@@ -799,7 +808,7 @@ AST_T* parser_parse_object_child(parser_T* parser, parser_options_T options)
     token_T* next_tok = lexer_peek_next_token(parser->lexer);
 
     if (next_tok->type != TOKEN_COLON)
-      return parser_parse_expr(parser, options);
+      return parser_parse_statement(parser, options);
   }
 
   AST_T* colon_ass = init_ast_line(AST_COLON_ASSIGNMENT, parser->lexer->line);
@@ -1001,13 +1010,14 @@ AST_T* parser_parse_function_signature_argument(parser_T* parser, parser_options
 
 AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
 {
-  if (parser->token->type == TOKEN_EOF) return init_ast(AST_NOOP);
-  
+  if (parser->token->type == TOKEN_EOF)
+    return init_ast(AST_NOOP);
+
   AST_T* left = 0;
 
   if (parser->token->type == TOKEN_LPAREN) {
     parser_eat(parser, TOKEN_LPAREN);
-    AST_T* expr = parser_parse_expr(parser, options); 
+    AST_T* expr = parser_parse_expr(parser, options);
 
     if (parser->token->type == TOKEN_COMMA) {
       AST_T* tuple = init_ast(AST_TUPLE);
@@ -1021,7 +1031,7 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
 
     expr->parent = options.parent;
     expr->not_exported = 1;
-    parser_eat(parser, TOKEN_RPAREN); 
+    parser_eat(parser, TOKEN_RPAREN);
     left = expr;
 
     while (left && (parser->token->type == TOKEN_LPAREN || parser->token->type == TOKEN_LBRACKET)) {
@@ -1131,8 +1141,6 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
     }; break;
   }
 
-  
-
   while (left && parser->token->type == TOKEN_ARROW_RIGHT) {
     left->capsulated = 0;
     parser_eat(parser, TOKEN_ARROW_RIGHT);
@@ -1189,8 +1197,9 @@ AST_T* parser_parse_factor(parser_T* parser, parser_options_T options)
 
 AST_T* parser_parse_term(parser_T* parser, parser_options_T options)
 {
-  if (parser->token->type == TOKEN_EOF) return init_ast(AST_NOOP);
-  
+  if (parser->token->type == TOKEN_EOF)
+    return init_ast(AST_NOOP);
+
   AST_T* left = parser_parse_factor(parser, options);
   AST_T* binop = 0;
 
@@ -1243,8 +1252,9 @@ AST_T* parser_parse_term(parser_T* parser, parser_options_T options)
 
 AST_T* parser_parse_expr(parser_T* parser, parser_options_T options)
 {
-  if (parser->token->type == TOKEN_EOF) return init_ast(AST_NOOP);
-  
+  if (parser->token->type == TOKEN_EOF)
+    return init_ast(AST_NOOP);
+
   AST_T* left = parser_parse_term(parser, options);
   AST_T* binop = 0;
 
@@ -1391,8 +1401,9 @@ AST_T* parser_parse_case(parser_T* parser, parser_options_T options)
 
 AST_T* parser_parse_statement(parser_T* parser, parser_options_T options)
 {
-  if (parser->token->type == TOKEN_EOF) return init_ast(AST_NOOP);
-  
+  if (parser->token->type == TOKEN_EOF)
+    return init_ast(AST_NOOP);
+
   AST_T* left = 0;
 
   while (parser->token->type == TOKEN_SEMI)
@@ -1447,7 +1458,7 @@ AST_T* parser_parse_statement_or_expr(parser_T* parser, parser_options_T options
   if (left->type == AST_NAME && parser->token->type == TOKEN_COLON) {
     AST_T* label = init_ast_line(AST_LABEL, parser->lexer->line);
     label->left = left;
-    parser_eat(parser, TOKEN_COLON); 
+    parser_eat(parser, TOKEN_COLON);
     gc_mark(parser->env->GC, label);
     left = label;
   }
