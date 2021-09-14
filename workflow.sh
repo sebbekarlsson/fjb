@@ -54,4 +54,4 @@ ls -lart
 cp ./gpp.out $HOME/.local/bin/gpp
 sudo cp ./gpp.out /usr/bin/gpp
 
-make && ./run.sh
+./run.sh
