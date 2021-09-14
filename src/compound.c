@@ -1,5 +1,5 @@
 #include "include/compound.h"
-#include "../external/hashmap/src/include/map.h"
+#include <hashmap/map.h>
 #include "include/AST.h"
 #include "include/imported.h"
 #include "include/resolve.h"

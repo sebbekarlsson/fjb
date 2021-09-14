@@ -1,6 +1,6 @@
 #ifndef FJB_VISITOR_H
 #define FJB_VISITOR_H
-#include "../../external/hashmap/src/include/map.h"
+#include <hashmap/map.h>
 #include "AST.h"
 #include "env.h"
 #include "gc.h"

@@ -1,4 +1,4 @@
-#include "include/visitor.h"
+#include <hashmap/map.h>
 #include "include/compound.h"
 #include "include/emit.h"
 #include "include/emit_hooks.h"
