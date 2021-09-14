@@ -1,7 +1,7 @@
 exec = fjb.out
 sources = $(wildcard src/*.c) $(wildcard src/hooks/*.c)
 objects = $(sources:.c=.o)
-flags = -I$$HOME/.local/include -lm -ldl -fPIC -rdynamic -L$$HOME/.local/lib -lhashmap -ljson -lscss -lpthread
+flags = -I$$HOME/.local/include -I./src/include -lm -ldl -fPIC -rdynamic -L$$HOME/.local/lib -lhashmap -ljson -lscss -lpthread
 
 objects_no_main = $(filter-out src/main.o, $(objects))
 
