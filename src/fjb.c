@@ -5,9 +5,9 @@
 #include "include/env.h"
 #include "include/gc.h"
 #include "include/io.h"
-#include "include/js/headers.js.h"
-#include "include/js/jsx_headers.js.h"
-#include "include/js/optional_chain_headers.js.h"
+#include <js/headers.js.h>
+#include <js/jsx_headers.js.h>
+#include <js/optional_chain_headers.js.h>
 #include "include/lexer.h"
 #include "include/list.h"
 #include "include/parser.h"

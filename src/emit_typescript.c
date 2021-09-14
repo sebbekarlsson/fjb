@@ -1,7 +1,7 @@
 #include "include/emit_typescript.h"
 #include "include/emit.h"
 #include "include/env.h"
-#include "include/js/data_type.js.h"
+#include <js/data_type.js.h>
 #include "include/string_utils.h"
 #include <stdio.h>
 #include <string.h>

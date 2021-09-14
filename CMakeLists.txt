@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.20)
 
 project(fjb)
 
+include_directories(${CMAKE_SOURCE_DIR}/src/include)
+
 
 FILE(GLOB sources src/*.c)
 FILE(GLOB sources_enums src/enums/*.c)

@@ -1,5 +1,5 @@
 #include "include/env.h"
-#include "include/hooks/register.h"
+#include <hooks/register.h>
 #include "include/jsx.h"
 #include "include/plugin.h"
 #include "include/result.h"
