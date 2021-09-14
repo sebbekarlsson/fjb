@@ -1,6 +1,8 @@
 cd ..
+./pull_deps.sh
 make clean
 make
+./build.sh
 cd tests
 cd ./fjb-samples
 ./init.sh
