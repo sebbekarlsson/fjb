@@ -26,20 +26,22 @@ export PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/.local/bin:$PATH"
 
 
-# cd ./external/hashmap
-# make
-# make install
-# cd $P
+./pull_deps.sh
 
-#cd ./external/libjson
-#make
-#make install
-#cd $P
+cd ./external/hashmap
+make
+make install
+cd $P
 
-#cd ./external/scss
-#make
-#make install
-#cd $P
+cd ./external/libjson
+make
+make install
+cd $P
+
+cd ./external/scss
+make
+make install
+cd $P
 
 make install
 
