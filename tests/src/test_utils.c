@@ -1,4 +1,4 @@
-#include "include/test_utils.h"
+#include <test_utils.h>
 #include <fjb/fjb.h>
 #include <fjb/io.h>
 #include <fjb/lexer.h>

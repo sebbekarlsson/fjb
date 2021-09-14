@@ -11,6 +11,7 @@ FILE(GLOB sources_js src/js/*.c)
 
 add_executable(fjb ${sources} ${sources_enums} ${sources_hooks} ${sources_src})
 
+add_library(fjb_l ${sources} ${sources_enums} ${sources_hooks} ${sources_src})
 
 include(FetchContent)
 
@@ -39,3 +40,4 @@ add_compile_options(dl pthread)
 
 
 target_link_libraries(fjb dl pthread json scss hashmap)
+target_link_libraries(fjb_l dl pthread json scss hashmap)

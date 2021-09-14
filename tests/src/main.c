@@ -1,4 +1,4 @@
-#include "include/test_utils.h"
+#include <test_utils.h>
 #include <fjb/AST.h>
 #include <fjb/env.h>
 #include <stdio.h>
