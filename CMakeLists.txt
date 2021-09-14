@@ -45,5 +45,5 @@ use_lib(scss https://github.com/sebbekarlsson/scss.git master)
 # add_compile_options(dl pthread)
 
 
-target_link_libraries(fjb dl pthread json scss hashmap)
-target_link_libraries(fjb_l dl pthread json scss hashmap)
+target_link_libraries(fjb m dl pthread json scss hashmap)
+target_link_libraries(fjb_l m dl pthread json scss hashmap)
