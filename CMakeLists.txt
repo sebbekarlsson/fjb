@@ -11,9 +11,13 @@ FILE(GLOB sources_enums src/enums/*.c)
 FILE(GLOB sources_hooks src/hooks/*.c)
 FILE(GLOB sources_js src/js/*.c)
 
-add_executable(fjb ${sources} ${sources_enums} ${sources_hooks} ${sources_src})
+add_executable(fjb ${sources} ${sources_enums} ${sources_hooks} ${sources_js})
 
-add_library(fjb_l ${sources} ${sources_enums} ${sources_hooks} ${sources_src})
+add_compile_options(-ldl)
+
+list(FILTER sources EXCLUDE REGEX ".*main.c$")
+
+add_library(fjb_l SHARED ${sources} ${sources_enums} ${sources_hooks} ${sources_js})
 
 include(FetchContent)
 
