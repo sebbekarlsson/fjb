@@ -41,7 +41,7 @@ PATH="$HOME/.local/bin:$PATH"
 #make install
 #cd $P
 
-#make install
+make install
 
 cd $P
 
