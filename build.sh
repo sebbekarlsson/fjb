@@ -1,9 +1,5 @@
-P=$(pwd)
-./pull_deps.sh
-
-cd $P
-
-make
+mkdir -p build
+cd build && cmake .. && make
 
 echo "---------------------****---------------------"
 echo "---------------------DONE---------------------"
