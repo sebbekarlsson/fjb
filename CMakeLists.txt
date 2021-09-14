@@ -38,7 +38,7 @@ use_lib(hashmap https://github.com/sebbekarlsson/hashmap.git master)
 use_lib(json https://github.com/sebbekarlsson/libjson.git master)
 use_lib(scss https://github.com/sebbekarlsson/scss.git master)
 
-add_compile_options(dl pthread)
+# add_compile_options(dl pthread)
 
 
 target_link_libraries(fjb dl pthread json scss hashmap)

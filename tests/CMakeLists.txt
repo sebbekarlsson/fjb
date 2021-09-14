@@ -51,6 +51,6 @@ file(COPY ${g} DESTINATION ${CMAKE_BINARY_DIR}/_deps/include/fjb)
 add_compile_options(dl pthread)
 
 target_link_directories(test PUBLIC ${CMAKE_SOURCE_DIR}/../build)
-target_link_libraries(test dl pthread json scss hashmap fjb_l)
+target_link_libraries(test dl fjb_l pthread json scss hashmap)
 
 file(COPY ${CMAKE_SOURCE_DIR}/fjb-samples DESTINATION ${CMAKE_BINARY_DIR})

@@ -13,6 +13,7 @@ make
 make install
 cd $P
 cp gpp/a.out ./gpp.out
+pwd
 cp gpp/a.out ./tests/gpp.out
 cd $P
 rm -rf ./gpp

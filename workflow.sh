@@ -51,7 +51,7 @@ cd tests
 
 ls -lart
 
-../pull_deps.sh
+#../pull_deps.sh
 
 cp ./gpp.out $HOME/.local/bin/gpp
 sudo cp ./gpp.out /usr/bin/gpp
